@@ -48,7 +48,8 @@ function ContadorAnimado({ valor, formato = redondear, duracion = 1.6, className
       duration: duracion,
       ease: CURVA_SALIDA,
       onUpdate: (actual) => {
-        ref.current.textContent = formato(actual)
+        // Al cambiar de página el elemento puede desaparecer antes de que termine el conteo.
+        if (ref.current) ref.current.textContent = formato(actual)
       },
     })
     return () => controles.stop()

@@ -7,17 +7,19 @@ import ContadorAnimado from '../components/animaciones/ContadorAnimado'
 import EtiquetaDescuento from '../components/animaciones/EtiquetaDescuento'
 import Magnetico from '../components/animaciones/Magnetico'
 import TarjetaInteractiva from '../components/animaciones/TarjetaInteractiva'
+import { usePerfil } from '../hooks/usePerfil'
 import { formatearMoneda } from '../utils/formato'
 import { CURVA_SALIDA } from '../utils/animaciones'
 
 /**
- * Cifras del resumen. Son DATOS DE EJEMPLO para ver las animaciones;
- * se reemplazarán por los del perfil y las metas del usuario.
+ * Arma las cifras del resumen. El ahorro mensual sale del perfil real;
+ * metas activas y ya ahorrado son DATOS DE EJEMPLO hasta construir las metas.
  *
- * @type {{ titulo: string, valor: number, formato?: (v: number) => string, Icono: import('lucide-react').LucideIcon, color: string }[]}
+ * @param {number} ahorroMensual - Ahorro mensual del perfil.
+ * @returns {{ titulo: string, valor: number, formato?: (v: number) => string, Icono: import('lucide-react').LucideIcon, color: string }[]}
  */
-const RESUMEN_EJEMPLO = [
-  { titulo: 'Ahorro mensual', valor: 350000, formato: formatearMoneda, Icono: PiggyBank, color: 'text-menta' },
+const armarResumen = (ahorroMensual) => [
+  { titulo: 'Ahorro mensual', valor: ahorroMensual, formato: formatearMoneda, Icono: PiggyBank, color: 'text-menta' },
   { titulo: 'Metas activas', valor: 3, Icono: Target, color: 'text-violeta dark:text-violet-300' },
   { titulo: 'Ya ahorrado', valor: 1280000, formato: formatearMoneda, Icono: Sparkles, color: 'text-rosa' },
 ]
@@ -35,15 +37,18 @@ const ANTOJOS_EJEMPLO = [
 
 /**
  * Página de inicio (ruta `/`).
- * Saludo, resumen de metas y antojos destacados.
+ * Saludo con el nombre del perfil, resumen de metas y antojos destacados.
  *
- * Por ahora usa datos de ejemplo para mostrar el sistema de animaciones:
+ * Salvo el nombre y el ahorro mensual, usa datos de ejemplo para mostrar el sistema de animaciones:
  * banner con texto animado, botón magnético, contadores, tarjetas 3D con foco de luz,
  * etiquetas tipo manilla y barras de progreso con brillo.
  *
  * @returns {JSX.Element}
  */
 function Inicio() {
+  // RequierePerfil garantiza que aquí el perfil ya existe.
+  const { perfil } = usePerfil()
+
   return (
     <div className="space-y-10">
       {/* Banner principal con el degradado violeta → rosa */}
@@ -64,7 +69,7 @@ function Inicio() {
           />
 
           <div className="relative max-w-xl">
-            <p className="font-medium text-white/80">¡Hola! 👋</p>
+            <p className="font-medium text-white/80">¡Hola, {perfil.nombre}! 👋</p>
             <h1 className="mt-2 font-titulo text-4xl leading-tight font-bold sm:text-5xl">
               {/* Cada palabra entra por separado, en cascada */}
               {'¿Qué te quieres comprar?'.split(' ').map((palabra, i) => (
@@ -99,7 +104,7 @@ function Inicio() {
 
       {/* Resumen con contadores */}
       <section className="grid gap-4 sm:grid-cols-3">
-        {RESUMEN_EJEMPLO.map(({ titulo, valor, formato, Icono, color }, i) => (
+        {armarResumen(perfil.ahorroMensual).map(({ titulo, valor, formato, Icono, color }, i) => (
           <Aparecer key={titulo} orden={i}>
             <TarjetaInteractiva className="p-6" inclinacion={6}>
               <Icono className={`size-7 ${color}`} />
