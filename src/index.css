@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+/* Modo oscuro por clase (.dark en <html>) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Paleta "Fintech festival" y fuentes de Alcanza */
+@theme {
+  --color-violeta: #7c3aed;
+  --color-menta: #10b981;
+  --color-rosa: #ec4899;
+  --color-amarillo: #facc15;
+  --color-fondo: #fafaf9;
+  --color-fondo-oscuro: #0f172a;
+
+  --font-titulo: "Poppins", sans-serif;
+  --font-texto: "Inter", sans-serif;
+
+  /* Destello que recorre las barras de progreso (clase animate-brillo) */
+  --animate-brillo: brillo 2.4s ease-in-out infinite;
+
+  @keyframes brillo {
+    0% { transform: translateX(0); }
+    60%, 100% { transform: translateX(300%); }
+  }
+}
+
+body {
+  @apply bg-fondo text-slate-800 font-texto antialiased dark:bg-fondo-oscuro dark:text-slate-100;
+}

@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<title>Alcanza · Documento de idea</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+<!--
+  Fuente del PDF "ALCANZA_idea_presentable.pdf".
+  Para regenerarlo (Windows, con Microsoft Edge):
+  & "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --headless --disable-gpu --no-pdf-header-footer --virtual-time-budget=15000 --print-to-pdf="ALCANZA_idea_presentable.pdf" "docs/documento-idea.html"
+-->
+<style>
+  @page { size: Letter; margin: 0; }
+  :root {
+    --violeta: #7c3aed; --menta: #10b981; --rosa: #ec4899; --amarillo: #facc15;
+    --fondo: #fafaf9; --noche: #0f172a; --tinta: #1e293b; --suave: #64748b; --borde: #e5e7eb;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { font-family: Inter, sans-serif; color: var(--tinta); font-size: 13.5px; line-height: 1.5; background: #ccc; }
+  b, strong { font-weight: 600; color: #0f172a; }
+  code { font-family: "JetBrains Mono", monospace; font-size: 11.5px; color: #6d28d9; background: #f3e8ff; padding: 1px 5px; border-radius: 4px; }
+
+  .pagina { position: relative; width: 816px; height: 1056px; margin: 0 auto; overflow: hidden; background: var(--fondo); padding: 62px 77px 0; page-break-after: always; break-after: page; }
+  .pagina:last-child { page-break-after: auto; break-after: auto; }
+  .pagina::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 6px; background: linear-gradient(90deg, var(--violeta), var(--rosa), #fb923c, var(--amarillo)); }
+  .pie { position: absolute; left: 77px; right: 77px; bottom: 44px; display: flex; justify-content: space-between; border-top: 1px solid var(--borde); padding-top: 10px; font-size: 11px; color: var(--suave); }
+
+  /* Portada */
+  .portada { background: var(--noche); color: #e2e8f0; padding: 96px 86px 0; }
+  .portada::before { display: none; }
+  .luz { position: absolute; border-radius: 50%; }
+  .chip-portada { display: inline-block; font-family: Poppins; font-weight: 600; font-size: 11px; letter-spacing: .08em; color: #fff; padding: 6px 16px; border-radius: 999px; background: linear-gradient(90deg, var(--violeta), var(--rosa)); }
+  .logo { display: inline-block; margin-top: 220px; padding-bottom: 6px; font-family: Poppins; font-weight: 800; font-size: 96px; line-height: 1; letter-spacing: -2px; background: linear-gradient(90deg, #a78bfa, var(--rosa), #fb923c, var(--amarillo)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .portada h2 { margin-top: 20px; font-family: Poppins; font-weight: 600; font-size: 22px; color: #e2e8f0; }
+  .portada .lema { margin-top: 18px; max-width: 480px; font-size: 15px; color: #94a3b8; }
+  .puntos { display: flex; gap: 8px; margin-top: 18px; }
+  .puntos span { width: 11px; height: 11px; border-radius: 50%; }
+  .datos { position: absolute; left: 86px; right: 86px; bottom: 96px; display: grid; grid-template-columns: 1.5fr 1.15fr 1fr; gap: 24px; border-top: 1px solid #334155; padding-top: 26px; }
+  .datos small { display: block; font-size: 12px; color: #94a3b8; }
+  .datos b { color: #fff; font-size: 14px; }
+
+  /* Títulos */
+  .seccion { display: flex; align-items: center; gap: 12px; margin: 0 0 16px; }
+  .seccion + * { margin-top: 0; }
+  .num { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 8px; color: #fff; font-family: Poppins; font-weight: 700; font-size: 14px; background: linear-gradient(135deg, var(--violeta), var(--rosa)); }
+  .seccion h1 { font-family: Poppins; font-weight: 700; font-size: 24px; color: #0f172a; letter-spacing: -.3px; }
+  h3 { font-family: Poppins; font-weight: 600; font-size: 15px; color: var(--violeta); margin: 16px 0 8px; }
+  p + p { margin-top: 8px; }
+  .bloque { margin-top: 30px; }
+
+  .destacado { border: 1px solid #ddd6fe; border-radius: 14px; padding: 14px 20px; background: linear-gradient(120deg, #f5f3ff, #fdf2f8); margin-bottom: 12px; }
+  .tarjeta { background: #fff; border: 1px solid var(--borde); border-radius: 14px; padding: 14px 18px; box-shadow: 0 2px 8px rgba(15,23,42,.04); }
+
+  /* Páginas con mucho contenido: espacios más apretados para que no choquen con el pie */
+  .compacta { padding-top: 54px; font-size: 13px; }
+  .compacta h3 { margin: 12px 0 6px; }
+  .compacta .tarjeta { padding: 11px 16px; }
+  .compacta .destacado { padding: 11px 18px; margin-bottom: 10px; }
+  .compacta ul.lista li { margin-bottom: 2px; }
+  .compacta .bloque { margin-top: 22px; }
+  .compacta .rejilla2, .compacta .rejilla3 { gap: 10px; }
+  .rejilla2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .rejilla3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+
+  ul.lista { list-style: none; }
+  ul.lista li { position: relative; padding-left: 18px; margin-bottom: 4px; }
+  ul.lista li::before { content: ""; position: absolute; left: 2px; top: 8px; width: 7px; height: 7px; border-radius: 50%; background: var(--violeta); }
+
+  .cifra { font-family: Poppins; font-weight: 700; font-size: 28px; line-height: 1.2; }
+
+  /* Paleta */
+  .color { border: 1px solid var(--borde); border-radius: 12px; overflow: hidden; background: #fff; }
+  .color .muestra { height: 34px; }
+  .color div:last-child { padding: 8px 12px 10px; font-size: 11.5px; line-height: 1.4; }
+  .color b { display: block; font-family: Poppins; font-size: 13px; }
+  .color code { background: none; padding: 0; color: var(--suave); font-size: 11px; }
+  .barra-degradado { margin-top: 12px; border-radius: 10px; padding: 9px 16px; color: #fff; font-weight: 600; font-size: 12px; background: linear-gradient(90deg, var(--violeta), var(--rosa)); }
+  .fuente { font-size: 32px; line-height: 1.1; color: var(--violeta); }
+
+  /* Tablas */
+  table { width: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid var(--borde); border-radius: 14px; overflow: hidden; font-size: 12.5px; }
+  th { background: var(--noche); color: #fff; font-family: Poppins; font-weight: 600; text-align: left; padding: 10px 14px; font-size: 12px; }
+  td { padding: 9px 14px; vertical-align: top; border-top: 1px solid var(--borde); line-height: 1.5; }
+  .compacta table { font-size: 12px; }
+  .compacta td { padding: 7px 12px; line-height: 1.4; }
+  .compacta td code { font-size: 9.5px; white-space: nowrap; }
+  .compacta td:first-child { white-space: normal; }
+  tr:nth-child(even) td { background: #faf5ff; }
+  tr:nth-child(odd) td { background: #fff; }
+  td:first-child { font-weight: 600; color: #0f172a; white-space: nowrap; }
+
+  .nota { margin-top: 14px; border-left: 4px solid var(--amarillo); background: #fefce8; border-radius: 0 10px 10px 0; padding: 12px 16px; font-size: 12.5px; }
+
+  /* Rutas de la API */
+  .ruta { display: flex; align-items: center; gap: 8px; padding: 5px 0; border-bottom: 1px dashed var(--borde); font-size: 12.5px; }
+  .ruta:last-child { border-bottom: 0; }
+  .metodo { display: inline-block; min-width: 50px; text-align: center; color: #fff; font-family: Poppins; font-weight: 600; font-size: 10.5px; padding: 3px 8px; border-radius: 6px; }
+  .get { background: var(--menta); } .post { background: var(--violeta); } .put { background: #f59e0b; } .delete { background: var(--rosa); }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chips span { border: 1px solid #ddd6fe; color: #6d28d9; border-radius: 999px; padding: 4px 12px; font-size: 12px; background: #fff; }
+
+  /* Página nueva de animaciones */
+  .efecto { display: flex; gap: 12px; }
+  .efecto .icono { flex: none; width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; font-size: 17px; }
+  .efecto b { display: block; font-family: Poppins; font-size: 13.5px; margin-bottom: 2px; }
+  .efecto p { font-size: 12.5px; line-height: 1.5; }
+  .nuevo { display: inline-block; margin-left: 8px; vertical-align: middle; font-family: Poppins; font-size: 10px; font-weight: 700; color: #713f12; background: var(--amarillo); padding: 2px 8px; border-radius: 999px; transform: rotate(-4deg); }
+</style>
+</head>
+<body>
+
+<!-- 1 · Portada -->
+<section class="pagina portada">
+  <div class="luz" style="width:620px;height:620px;right:-230px;top:-200px;background:radial-gradient(circle, rgba(124,58,237,.75), rgba(124,58,237,.18) 45%, transparent 70%)"></div>
+  <div class="luz" style="width:440px;height:440px;left:-250px;top:520px;background:radial-gradient(circle, rgba(236,72,153,.5), rgba(236,72,153,.12) 45%, transparent 70%)"></div>
+  <div class="luz" style="width:230px;height:230px;right:70px;top:580px;background:radial-gradient(circle, rgba(250,204,21,.45), rgba(250,204,21,.1) 45%, transparent 70%)"></div>
+  <div style="position:relative">
+    <span class="chip-portada">DOCUMENTO DE IDEA · PROYECTO FINAL DE REACT</span>
+    <div class="logo">Alcanza</div>
+    <h2>¿Cuándo me lo puedo comprar?</h2>
+    <p class="lema">Una aplicación web que convierte cada antojo en una meta de ahorro con fecha, y cada abono en una pequeña celebración.</p>
+    <div class="puntos"><span style="background:var(--violeta)"></span><span style="background:var(--menta)"></span><span style="background:var(--rosa)"></span><span style="background:var(--amarillo)"></span></div>
+  </div>
+  <div class="datos">
+    <div><small>Autor</small><b>Harold Alexander Ceballos Henao</b></div>
+    <div><small>Módulo</small><b>Creación de páginas web 2</b></div>
+    <div><small>Fecha</small><b>30 de octubre de 2026</b></div>
+  </div>
+</section>
+
+<!-- 2 · Resumen, temática, objetivo -->
+<section class="pagina">
+  <div class="seccion"><span class="num">1</span><h1>Resumen</h1></div>
+  <div class="destacado"><b>Alcanza</b> es una aplicación web hecha en React que responde una pregunta muy común: <i>"¿cuándo me lo puedo comprar?"</i>. El usuario elige un producto que quiere (su "antojo"), indica cuánto ahorra al mes y la aplicación le muestra la fecha en que podrá comprarlo, cómo acelerar ese momento y si existen ofertas que lo acerquen.</div>
+  <p>La aplicación reúne en un solo lugar un catálogo de productos con descuento, un simulador de ahorro y el seguimiento de metas, con una interfaz moderna, animada y adaptable a celular y computador.</p>
+
+  <div class="bloque">
+    <div class="seccion"><span class="num">2</span><h1>Temática y concepto</h1></div>
+    <p>La temática es el <b>ahorro personal con propósito</b>. En lugar de una app de finanzas fría, Alcanza convierte cada meta de ahorro en algo concreto y emocionante: un celular, unos audífonos, unos tenis o un mueble. Cada abono acerca al usuario a su antojo y cada meta cumplida se celebra.</p>
+    <p>El concepto combina dos ideas: la claridad de una aplicación financiera y la energía de un festival. De ahí nace el estilo visual del proyecto, llamado <b>"Fintech festival"</b>.</p>
+  </div>
+
+  <div class="bloque">
+    <div class="seccion"><span class="num">3</span><h1>Objetivo</h1></div>
+    <div class="tarjeta"><b>Objetivo general:</b> desarrollar una aplicación funcional en React que haga realidad la idea de Alcanza y que reúna los conceptos aprendidos en el curso: componentes, props, estado, eventos, listas, efectos, rutas, formularios y estilos con Tailwind CSS.</div>
+    <h3>Objetivos específicos</h3>
+    <ul class="lista">
+      <li>Calcular y mostrar en cuánto tiempo el usuario puede comprar un producto según su ahorro mensual.</li>
+      <li>Consumir dos APIs gratuitas: una de productos con descuento y otra de cambio de moneda.</li>
+      <li>Permitir filtrar los productos por categorías de "antojos".</li>
+      <li>Ofrecer un simulador interactivo que recalcule la fecha en tiempo real.</li>
+      <li>Guardar el perfil, las metas y los abonos en una base de datos mediante una API propia en Laravel.</li>
+      <li>Presentar una interfaz atractiva, animada y responsive, con modo claro y oscuro.</li>
+    </ul>
+  </div>
+  <div class="pie"><span>ALCANZA · Documento de idea</span><span>2</span></div>
+</section>
+
+<!-- 3 · Público y funcionalidades -->
+<section class="pagina">
+  <div class="seccion"><span class="num">4</span><h1>Público objetivo</h1></div>
+  <div class="rejilla2">
+    <div class="tarjeta"><div class="cifra" style="color:var(--violeta)">16–30</div>Jóvenes, estudiantes o personas con su primer trabajo, que quieren comprarse algo y no saben cuánto tiempo les tomará.</div>
+    <div class="tarjeta"><div class="cifra" style="color:var(--menta)">Ahorro</div>Personas que están aprendiendo a ahorrar y necesitan una forma visual y motivadora de hacerlo.</div>
+  </div>
+  <p style="margin-top:12px">Por este público, la aplicación debe ser sencilla, rápida de entender, cómoda en el celular y con un tono cercano y divertido.</p>
+
+  <div class="bloque">
+    <div class="seccion"><span class="num">5</span><h1>Funcionalidades</h1></div>
+    <ul class="lista">
+      <li><b>Recorrido de bienvenida:</b> la primera vez que se entra, tres pantallas cortas explican cómo funciona la app.</li>
+      <li><b>Perfil rápido sin registro:</b> el usuario escribe su nombre y cuánto ahorra al mes; la app lo saluda y hace todos los cálculos con esos datos.</li>
+      <li><b>Catálogo de antojos:</b> productos con foto, precio y porcentaje de descuento.</li>
+      <li><b>Filtro por categoría:</b> Tecnología, Moda, Hogar, Belleza, Deporte y movilidad (y Entretenimiento con productos de ejemplo propios, ya que la API no incluye esa categoría).</li>
+      <li><b>Cambio de moneda:</b> selector para ver los precios en dólares (USD), pesos colombianos (COP) o euros (EUR).</li>
+      <li><b>¿Cuándo me lo compro?:</b> al convertir un producto en meta, la app calcula la fecha en que se alcanza.</li>
+      <li><b>Simulador "¿y si...?":</b> deslizadores para cambiar el ahorro mensual, sumar un ingreso extra o aplicar el descuento, y ver cómo la fecha se mueve en vivo.</li>
+      <li><b>Comparador de antojos:</b> dos productos lado a lado con precio, descuento y tiempo para lograr cada uno.</li>
+      <li><b>Línea de tiempo visual:</b> una barra con los antojos ubicados en el mes en que se alcanzan (por ejemplo, "enero: audífonos, abril: celular").</li>
+      <li><b>Mis metas:</b> progreso de cada meta, registro de abonos y celebración con confeti al llegar al 100%.</li>
+      <li><b>Compartir mi antojo:</b> genera una tarjeta con la meta y su fecha ("¡En marzo tendré mis audífonos!") para descargarla como imagen.</li>
+      <li><b>Modo oscuro:</b> botón en el menú para cambiar entre tema claro y oscuro.</li>
+      <li><b>Animaciones interactivas:</b> la interfaz reacciona al mouse con luces, tarjetas 3D y botones magnéticos (ver sección 6.5).</li>
+    </ul>
+  </div>
+  <div class="pie"><span>ALCANZA · Documento de idea</span><span>3</span></div>
+</section>
+
+<!-- 4 · Estilo visual -->
+<section class="pagina compacta">
+  <div class="seccion"><span class="num">6</span><h1>Estilo visual: "Fintech festival"</h1></div>
+  <h3 style="margin-top:0">6.1 Personalidad</h3>
+  <div class="destacado">Una aplicación de finanzas ordenada y confiable, con la energía de un festival: cada ahorro se siente como una pequeña celebración. La regla es <b>80% limpio y 20% fiesta</b>, para que se vea moderna y divertida sin perder seriedad.</div>
+
+  <h3>6.2 Paleta de colores</h3>
+  <div class="rejilla3">
+    <div class="color"><div class="muestra" style="background:#7c3aed"></div><div><b>Violeta eléctrico</b><code>#7C3AED</code><br>Color principal: botones, enlaces, elementos activos.</div></div>
+    <div class="color"><div class="muestra" style="background:#10b981"></div><div><b>Verde menta</b><code>#10B981</code><br>Dinero y progreso: barras de avance, montos ahorrados.</div></div>
+    <div class="color"><div class="muestra" style="background:#ec4899"></div><div><b>Rosa fiesta</b><code>#EC4899</code><br>Acento: etiquetas de oferta, insignias, celebraciones.</div></div>
+    <div class="color"><div class="muestra" style="background:#facc15"></div><div><b>Amarillo sol</b><code>#FACC15</code><br>Acento: logros, destacados, confeti.</div></div>
+    <div class="color"><div class="muestra" style="background:#fafaf9;border-bottom:1px solid var(--borde)"></div><div><b>Blanco hueso</b><code>#FAFAF9</code><br>Fondo en modo claro.</div></div>
+    <div class="color"><div class="muestra" style="background:#0f172a"></div><div><b>Azul noche</b><code>#0F172A</code><br>Fondo en modo oscuro.</div></div>
+  </div>
+  <div class="barra-degradado">Degradado violeta → rosa: banner principal y botón "Crear antojo"</div>
+
+  <h3>6.3 Tipografía</h3>
+  <div class="rejilla2">
+    <div class="tarjeta"><div class="fuente" style="font-family:Poppins;font-weight:700">Poppins</div>Negrita: títulos y números grandes, como un tablero de festival.</div>
+    <div class="tarjeta"><div class="fuente" style="font-family:Inter;color:#0f172a">Inter</div>Textos, botones y formularios, por su gran legibilidad.</div>
+  </div>
+
+  <h3>6.4 Elementos de interfaz</h3>
+  <ul class="lista">
+    <li>Tarjetas blancas con esquinas redondeadas y sombra suave.</li>
+    <li>Etiquetas de descuento con forma de "manilla de festival", inclinadas y de colores.</li>
+    <li>Montos que suben con animación de conteo.</li>
+    <li>Barras de progreso con degradado que brillan al avanzar.</li>
+    <li>Confeti e insignia al cumplir una meta.</li>
+    <li>En modo oscuro, los acentos se ven casi neón, como luces de escenario.</li>
+    <li>Efectos que siguen al mouse: luces de fondo, tarjetas 3D y botones magnéticos (ver 6.5).</li>
+    <li>Diseño responsive: una columna en celular y cuadrícula de varias columnas en computador.</li>
+  </ul>
+  <div class="pie"><span>ALCANZA · Documento de idea</span><span>4</span></div>
+</section>
+
+<!-- 5 · NUEVA: Animaciones interactivas -->
+<section class="pagina compacta">
+  <h3 style="margin-top:0;font-size:20px">6.5 Animaciones interactivas <span class="nuevo">NUEVO</span></h3>
+  <div class="destacado">La interfaz reacciona al mouse para que explorar la app se sienta vivo, como un escenario que responde al público. Todos los efectos comparten los <b>mismos resortes de movimiento</b> (archivo <code>utils/animaciones.js</code>), así el fondo, las tarjetas y los botones se sienten como una sola familia y no como efectos sueltos.</div>
+
+  <div class="rejilla2" style="margin-top:6px">
+    <div class="tarjeta efecto"><span class="icono" style="background:#ede9fe">🌌</span><div><b>Fondo con luces vivas</b><p>Las luces violeta, rosa, amarillo y menta de la portada flotan detrás del contenido y se desplazan con el mouse a distintas profundidades (parallax). Un halo suave sigue al cursor.</p></div></div>
+    <div class="tarjeta efecto"><span class="icono" style="background:#fce7f3">🃏</span><div><b>Tarjetas 3D con foco de luz</b><p>Las tarjetas de productos y metas se inclinan hacia el cursor y un brillo lo sigue por dentro, como un reflector de escenario.</p></div></div>
+    <div class="tarjeta efecto"><span class="icono" style="background:#d1fae5">🧲</span><div><b>Botones magnéticos</b><p>"Crear antojo" y los botones principales se dejan atraer por el cursor y vuelven a su sitio con un rebote.</p></div></div>
+    <div class="tarjeta efecto"><span class="icono" style="background:#fef9c3">🎟️</span><div><b>Manillas que se balancean</b><p>Las etiquetas de descuento se mueven como si colgaran de la tarjeta al pasar el mouse.</p></div></div>
+    <div class="tarjeta efecto"><span class="icono" style="background:#ede9fe">✨</span><div><b>Entrada en cascada</b><p>Las tarjetas aparecen una tras otra, subiendo y enfocándose, al cargar la página y al hacer scroll.</p></div></div>
+    <div class="tarjeta efecto"><span class="icono" style="background:#fce7f3">🔀</span><div><b>Transiciones entre páginas</b><p>Al navegar, la página que se va sube y se desvanece, y la nueva entra desde abajo.</p></div></div>
+  </div>
+  <p style="margin-top:12px">A esto se suman los efectos de la sección 6.4: montos con conteo, barras de progreso con destello y el título del banner que entra palabra por palabra.</p>
+
+  <h3>Accesibilidad y rendimiento</h3>
+  <ul class="lista">
+    <li><b>Celular y tablet:</b> como no hay mouse, los efectos de seguimiento se desactivan solos y quedan las animaciones de entrada y de toque.</li>
+    <li><b>"Reducir movimiento":</b> si el usuario activó esta opción en su sistema, la app la respeta y deja solo cambios suaves de opacidad.</li>
+    <li><b>Sin trabajo extra para React:</b> la posición del mouse se guarda en valores de movimiento de Framer Motion (<code>MotionValue</code>), que animan directo sin volver a renderizar los componentes.</li>
+  </ul>
+
+  <h3>Componentes y hooks reutilizables</h3>
+  <div class="chips">
+    <span>FondoAnimado</span><span>TarjetaInteractiva</span><span>Magnetico</span><span>EtiquetaDescuento</span><span>Aparecer</span><span>ContadorAnimado</span><span>BarraProgreso</span><span>usePosicionMouse</span><span>usePuedeAnimarMouse</span>
+  </div>
+  <div class="pie"><span>ALCANZA · Documento de idea</span><span>5</span></div>
+</section>
+
+<!-- 6 · Páginas y APIs -->
+<section class="pagina compacta">
+  <div class="seccion"><span class="num">7</span><h1>Páginas y orden</h1></div>
+  <p style="margin-bottom:12px">Todas las páginas comparten un menú superior (logo, navegación y botón de modo oscuro) y un pie de página con los créditos de las APIs.</p>
+  <div class="rejilla2">
+    <div class="tarjeta"><h3 style="margin:0">1 · Bienvenida</h3>Solo la primera vez: recorrido de tres pantallas y perfil rápido con nombre y ahorro mensual.</div>
+    <div class="tarjeta"><h3 style="margin:0">2 · Inicio</h3>Saludo con el nombre del usuario, resumen de sus metas, línea de tiempo y ofertas destacadas.</div>
+    <div class="tarjeta"><h3 style="margin:0">3 · Antojos</h3>Catálogo con filtro por categorías, buscador, selector de moneda y botón para convertir un producto en meta.</div>
+    <div class="tarjeta"><h3 style="margin:0">4 · Detalle del antojo</h3>Foto, precio, descuento, fecha en que se logra, simulador "¿y si...?" y botón de compartir.</div>
+    <div class="tarjeta"><h3 style="margin:0">5 · Comparador</h3>Dos antojos lado a lado.</div>
+    <div class="tarjeta"><h3 style="margin:0">6 · Mis metas</h3>Todas las metas con su progreso, registro de abonos y celebración al 100%.</div>
+  </div>
+  <div class="tarjeta" style="margin-top:14px"><b style="color:var(--violeta);font-family:Poppins">7 · Página 404</b> — Mensaje temático "Saldo insuficiente: esta página no existe" con botón para volver al inicio.</div>
+
+  <div class="bloque">
+    <div class="seccion"><span class="num">8</span><h1>APIs que se usarán</h1></div>
+    <table>
+      <tr><th style="width:27%">API</th><th style="width:32%">Qué es</th><th>Función en la página</th></tr>
+      <tr><td>DummyJSON<br><code>dummyjson.com</code></td><td>API gratuita de productos de prueba, sin registro ni clave. Cada producto trae nombre, foto, precio, categoría y porcentaje de descuento.</td><td>Alimenta el catálogo de antojos, el filtro por categorías, el buscador, el detalle de cada producto, las ofertas destacadas y el comparador. El descuento se usa para recalcular la fecha en que se alcanza la meta.</td></tr>
+      <tr><td>ExchangeRate-API<br><span style="font-weight:400;color:var(--suave);font-size:11.5px">(versión abierta)</span><br><code>open.er-api.com/v6/latest/USD</code></td><td>API gratuita de tasas de cambio, sin registro ni clave, con más de 150 monedas (incluido el peso colombiano). Se actualiza una vez al día.</td><td>Convierte los precios de DummyJSON (en dólares) a la moneda elegida por el usuario en el selector USD / COP / EUR. Exige poner un enlace de crédito, que irá en el pie de página.</td></tr>
+    </table>
+    <div class="nota"><b>Nota:</b> los productos de DummyJSON son ficticios, lo cual es adecuado para esta primera versión. El código se organizará en un servicio de ofertas independiente para poder cambiar esta fuente por una API real (por ejemplo, Mercado Libre) en una versión futura.</div>
+  </div>
+  <div class="pie"><span>ALCANZA · Documento de idea</span><span>6</span></div>
+</section>
+
+<!-- 7 · Frameworks -->
+<section class="pagina">
+  <div class="seccion"><span class="num">9</span><h1>Frameworks y librerías</h1></div>
+  <table>
+    <tr><th style="width:25%">Herramienta</th><th>Función en la página</th></tr>
+    <tr><td>React</td><td>Librería principal para construir la interfaz con componentes.</td></tr>
+    <tr><td>Vite</td><td>Herramienta para crear, ejecutar y compilar el proyecto de forma rápida.</td></tr>
+    <tr><td>Tailwind CSS</td><td>Estilos de toda la página: paleta "Fintech festival", diseño responsive y modo oscuro.</td></tr>
+    <tr><td>React Router</td><td>Navegación entre páginas, incluida la ruta del detalle de cada antojo y la página 404.</td></tr>
+    <tr><td>Recharts</td><td>Gráfico de ahorro mes a mes y apoyo visual en la línea de tiempo.</td></tr>
+    <tr><td>Framer Motion</td><td>Animaciones de toda la interfaz: efectos que siguen al mouse (luces de fondo con parallax, tarjetas 3D con foco de luz, botones magnéticos), entrada en cascada, conteo de montos y transiciones entre páginas y del recorrido de bienvenida. Respeta la opción "reducir movimiento" del sistema.</td></tr>
+    <tr><td>Lucide React</td><td>Íconos de la interfaz (menú, búsqueda, categorías, metas, compartir).</td></tr>
+    <tr><td>canvas-confetti</td><td>Efecto de confeti cuando una meta llega al 100%.</td></tr>
+    <tr><td>html-to-image</td><td>Convierte la tarjeta de "Compartir mi antojo" en una imagen descargable.</td></tr>
+    <tr><td>localStorage</td><td>Guarda preferencias rápidas en el navegador, como el modo oscuro y si ya se vio el recorrido de bienvenida.</td></tr>
+    <tr><td>JSDoc o Storybook</td><td>Documentación del código (componentes, hooks y servicios), en una etapa posterior.</td></tr>
+    <tr><td>Git y GitHub</td><td>Control de versiones del proyecto; despliegue gratuito en Vercel o Netlify.</td></tr>
+  </table>
+  <div class="pie"><span>ALCANZA · Documento de idea</span><span>7</span></div>
+</section>
+
+<!-- 8 · Backend -->
+<section class="pagina compacta">
+  <div class="seccion"><span class="num">10</span><h1>Backend y base de datos</h1></div>
+  <p>Alcanza tendrá un backend propio desarrollado en <b>Laravel</b>, que se conecta a una base de datos y entrega la información a React mediante una API. Así el perfil, las metas y los abonos del usuario quedan guardados de forma permanente y no dependen solo del navegador.</p>
+  <h3>10.1 Herramientas del backend</h3>
+  <ul class="lista">
+    <li><b>Laravel:</b> framework de PHP que crea la API, maneja la lógica del proyecto y se comunica con la base de datos.</li>
+    <li><b>MySQL:</b> base de datos donde se guardan el perfil, las metas y los abonos.</li>
+    <li><b>Docker (Laravel Sail):</b> ejecuta Laravel y MySQL en contenedores, para que el proyecto funcione igual en cualquier computador.</li>
+    <li><b>Postman:</b> permite probar cada ruta de la API antes de conectarla con React.</li>
+    <li><b>Axios:</b> librería que usa React para hacer las peticiones a la API de Laravel.</li>
+  </ul>
+  <h3>10.2 Tablas principales</h3>
+  <div class="rejilla3">
+    <div class="tarjeta"><b style="color:var(--violeta);font-family:Poppins">perfiles</b><br>Nombre del usuario y ahorro mensual.</div>
+    <div class="tarjeta"><b style="color:var(--menta);font-family:Poppins">metas</b><br>Producto, precio, moneda, descuento, fecha estimada y estado (en progreso o cumplida).</div>
+    <div class="tarjeta"><b style="color:var(--rosa);font-family:Poppins">abonos</b><br>Monto, fecha y meta a la que pertenece.</div>
+  </div>
+  <h3>10.3 Rutas de la API</h3>
+  <div class="tarjeta" style="padding:8px 20px">
+    <div class="ruta"><span class="metodo get">GET</span><code>/api/metas</code> Lista las metas del usuario.</div>
+    <div class="ruta"><span class="metodo post">POST</span><code>/api/metas</code> Crea una meta nueva.</div>
+    <div class="ruta"><span class="metodo get">GET</span><code>/api/metas/{id}</code> Muestra el detalle de una meta.</div>
+    <div class="ruta"><span class="metodo put">PUT</span><code>/api/metas/{id}</code> Actualiza una meta.</div>
+    <div class="ruta"><span class="metodo delete">DELETE</span><code>/api/metas/{id}</code> Elimina una meta.</div>
+    <div class="ruta"><span class="metodo post">POST</span><code>/api/metas/{id}/abonos</code> Registra un abono en una meta.</div>
+    <div class="ruta"><span class="metodo get">GET</span><span class="metodo post">POST</span><code>/api/perfil</code> Consulta y guarda el perfil del usuario.</div>
+  </div>
+  <h3>10.4 Conexión entre React y Laravel</h3>
+  <p>React consume la API con Axios, usando la dirección guardada en la variable <code>VITE_API_URL</code> del archivo <code>.env</code>. En Laravel se configura CORS (archivo <code>config/cors.php</code>) para permitir las peticiones desde el servidor de desarrollo de React (<code>localhost:5173</code>). Si más adelante se agrega inicio de sesión, se usará Laravel Sanctum.</p>
+  <div class="pie"><span>ALCANZA · Documento de idea</span><span>8</span></div>
+</section>
+
+<!-- 9 · Conceptos, escalabilidad, documentación -->
+<section class="pagina">
+  <div class="seccion"><span class="num">11</span><h1>Conceptos de React que se aplican</h1></div>
+  <ul class="lista">
+    <li><b>Componentes y props:</b> tarjetas de producto, barras de progreso, deslizadores, filtros, menú, tarjeta para compartir y componentes de animación reutilizables.</li>
+    <li><b>Estado y eventos:</b> filtro de categorías, buscador, selector de moneda, simulador en vivo, modo oscuro y eventos del mouse en las animaciones.</li>
+    <li><b>Listas y keys:</b> productos, categorías, metas, abonos y línea de tiempo.</li>
+    <li><b>Efectos (<code>useEffect</code>):</b> consultar las APIs externas y la API de Laravel, guardar preferencias en localStorage y escuchar el movimiento del mouse.</li>
+    <li><b>Rutas:</b> navegación entre páginas y ruta con parámetro para el detalle del antojo.</li>
+    <li><b>Formularios controlados:</b> perfil rápido y registro de abonos, con validaciones.</li>
+    <li><b>Context API:</b> compartir el perfil, las metas, la moneda y el tema en toda la aplicación.</li>
+    <li><b>Renderizado condicional:</b> primera visita, metas vacías, meta cumplida, carga y error de las APIs.</li>
+    <li><b>Hooks personalizados:</b> <code>useFetch</code> para las APIs, <code>useLocalStorage</code> para las preferencias, <code>useTema</code> para el modo oscuro, y <code>usePosicionMouse</code> y <code>usePuedeAnimarMouse</code> para las animaciones interactivas.</li>
+  </ul>
+
+  <div class="bloque">
+    <div class="seccion"><span class="num">12</span><h1>Escalabilidad</h1></div>
+    <p style="margin-bottom:10px">Alcanza está pensada para crecer. Estas son algunas líneas de crecimiento:</p>
+    <div class="chips">
+      <span>Cuentas de usuario con inicio de sesión (Laravel Sanctum) y backend en la nube</span>
+      <span>Productos y precios reales de tiendas mediante una API comercial</span>
+      <span>Metas compartidas con amigos o pareja</span>
+      <span>Alertas cuando baja el precio de un antojo</span>
+      <span>Versión para celular</span>
+    </div>
+  </div>
+
+  <div class="bloque">
+    <div class="seccion"><span class="num">13</span><h1>Documentación prevista</h1></div>
+    <div class="rejilla2">
+      <div class="tarjeta"><b style="color:var(--violeta);font-family:Poppins">Documentación general</b><br>Descripción, instalación, uso y capturas del proyecto.</div>
+      <div class="tarjeta"><b style="color:var(--rosa);font-family:Poppins">Documentación del código</b><br>Comentarios JSDoc en componentes, hooks y servicios, generada con una herramienta de documentación.</div>
+    </div>
+    <p style="margin-top:12px">Ambas se desarrollarán en una etapa posterior.</p>
+  </div>
+  <div class="pie"><span>ALCANZA · Documento de idea</span><span>9</span></div>
+</section>
+
+</body>
+</html>
