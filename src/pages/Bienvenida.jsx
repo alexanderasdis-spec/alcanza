@@ -1,6 +1,7 @@
 import { Navigate, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import BotonTema from '../components/BotonTema'
+import SinConexion from '../components/SinConexion'
 import FormularioPerfil from '../components/bienvenida/FormularioPerfil'
 import RecorridoBienvenida from '../components/bienvenida/RecorridoBienvenida'
 import { useLocalStorage } from '../hooks/useLocalStorage'
@@ -17,11 +18,12 @@ import { TRANSICION_ENTRADA } from '../utils/animaciones'
  * @returns {JSX.Element | null}
  */
 function Bienvenida() {
-  const { perfil, cargando, guardarPerfil } = usePerfil()
+  const { perfil, cargando, error, reintentar, guardarPerfil } = usePerfil()
   const [recorridoVisto, setRecorridoVisto] = useLocalStorage('alcanza-recorrido-visto', false)
   const navigate = useNavigate()
 
   if (cargando) return null
+  if (error) return <SinConexion onReintentar={reintentar} />
   if (perfil) return <Navigate to="/" replace />
 
   /** Guarda el perfil y entra a la app. */

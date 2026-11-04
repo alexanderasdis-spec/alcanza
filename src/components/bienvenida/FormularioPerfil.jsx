@@ -4,6 +4,7 @@ import { Sparkles } from 'lucide-react'
 import Magnetico from '../animaciones/Magnetico'
 import { formatearMoneda } from '../../utils/formato'
 import { validarPerfil } from '../../utils/validaciones'
+import { erroresDeValidacion } from '../../services/api'
 
 /** Valores iniciales del formulario: los inputs siempre guardan texto. */
 const DATOS_INICIALES = { nombre: '', ahorroMensual: '' }
@@ -51,6 +52,8 @@ function FormularioPerfil({ onGuardar }) {
   const [errores, setErrores] = useState({})
   const [intentoEnviar, setIntentoEnviar] = useState(false)
   const [enviando, setEnviando] = useState(false)
+  // Mensaje cuando falla el guardado por algo que no es un campo (por ejemplo, sin conexión).
+  const [errorGeneral, setErrorGeneral] = useState('')
 
   /** Actualiza el campo que cambió, usando el atributo `name` del input. */
   const alCambiar = (evento) => {
@@ -70,7 +73,16 @@ function FormularioPerfil({ onGuardar }) {
     if (Object.keys(encontrados).length > 0) return
 
     setEnviando(true)
-    await onGuardar({ nombre: datos.nombre.trim(), ahorroMensual: Number(datos.ahorroMensual) })
+    setErrorGeneral('')
+    try {
+      await onGuardar({ nombre: datos.nombre.trim(), ahorroMensual: Number(datos.ahorroMensual) })
+    } catch (error) {
+      // Si la API rechazó algún campo (422), se muestra junto a ese campo; si no, un aviso general.
+      const delServidor = erroresDeValidacion(error, { ahorro_mensual: 'ahorroMensual' })
+      if (delServidor) setErrores(delServidor)
+      else setErrorGeneral('No pudimos guardar tu perfil. Revisa que el servidor esté encendido e inténtalo de nuevo.')
+      setEnviando(false)
+    }
   }
 
   const ahorro = Number(datos.ahorroMensual)
@@ -138,6 +150,12 @@ function FormularioPerfil({ onGuardar }) {
           </p>
         )}
       </div>
+
+      {errorGeneral && (
+        <p role="alert" className="mt-6 rounded-2xl bg-rosa/10 px-4 py-3 text-sm font-medium text-rosa">
+          {errorGeneral}
+        </p>
+      )}
 
       <div className="mt-10 flex justify-end">
         <Magnetico>

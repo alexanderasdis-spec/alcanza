@@ -7,6 +7,8 @@ import { createContext } from 'react'
  * @type {import('react').Context<{
  *   perfil: import('../services/perfilService').Perfil | null,
  *   cargando: boolean,
+ *   error: Error | null,
+ *   reintentar: () => void,
  *   guardarPerfil: (perfil: import('../services/perfilService').Perfil) => Promise<void>
  * } | null>}
  */

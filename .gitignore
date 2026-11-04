@@ -13,6 +13,8 @@ dist
 docs/codigo
 dist-ssr
 *.local
+# Configuración local (la plantilla es .env.example)
+.env
 
 # Editor directories and files
 .vscode/*

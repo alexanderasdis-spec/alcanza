@@ -7,8 +7,11 @@ import { PerfilContext } from '../context/perfilContext'
  * @returns {{
  *   perfil: import('../services/perfilService').Perfil | null,
  *   cargando: boolean,
+ *   error: Error | null,
+ *   reintentar: () => void,
  *   guardarPerfil: (perfil: import('../services/perfilService').Perfil) => Promise<void>
- * }} `perfil` es `null` si el usuario aún no lo ha creado; `cargando` es `true` mientras se consulta.
+ * }} `perfil` es `null` si el usuario aún no lo ha creado; `cargando` es `true` mientras se consulta;
+ *   `error` tiene valor si la API no respondió, y `reintentar` vuelve a consultarla.
  * @throws {Error} Si se usa fuera de `PerfilProvider`.
  *
  * @example
