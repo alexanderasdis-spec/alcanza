@@ -27,11 +27,13 @@ Correr todo en este orden y reportar el resultado real de cada paso (si algo fal
 4. Colección de Postman con Newman (imagen `postman/newman:alpine`, ya descargada):
 
 ```bash
-docker run --rm -v ~/alcanza-api/postman:/etc/newman postman/newman:alpine \
+docker run --rm --network alcanza-api_sail -v ~/alcanza-api/postman:/etc/newman postman/newman:alpine \
   run alcanza-api.postman_collection.json \
   -e alcanza-api-local.postman_environment.json \
-  --env-var host=http://host.docker.internal
+  --env-var host=http://laravel.test
 ```
+
+Newman se conecta a la red interna de Sail y llama a Laravel por su nombre de servicio (`laravel.test`). Con `host.docker.internal` falla por tiempo de espera (firewall de Windows).
 
 ## Al final
 

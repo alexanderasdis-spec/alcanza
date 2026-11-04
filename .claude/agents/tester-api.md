@@ -18,11 +18,13 @@ Eres el probador de la API de **Alcanza** (Laravel 13 + Sail en WSL, base `data_
 Corre la colección con **Newman** (la versión de consola de Postman; la imagen `postman/newman:alpine` ya está descargada):
 
 ```bash
-docker run --rm -v ~/alcanza-api/postman:/etc/newman postman/newman:alpine \
+docker run --rm --network alcanza-api_sail -v ~/alcanza-api/postman:/etc/newman postman/newman:alpine \
   run alcanza-api.postman_collection.json \
   -e alcanza-api-local.postman_environment.json \
-  --env-var host=http://host.docker.internal
+  --env-var host=http://laravel.test
 ```
+
+Newman entra a la red interna de Sail (`alcanza-api_sail`) y llama a Laravel por su nombre de servicio. No uses `host.docker.internal`: se queda esperando por el firewall de Windows.
 
 Desde PowerShell, escribe ese comando en un script `.sh` y ejecútalo con `wsl -d Ubuntu-24.04 -- bash /mnt/c/ruta/al/script.sh` (las comillas se rompen si se pasa directo).
 
