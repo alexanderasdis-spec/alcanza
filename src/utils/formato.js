@@ -39,3 +39,27 @@ export function formatearMoneda(valor, moneda = 'COP') {
 export function formatearMes(fecha) {
   return new Intl.DateTimeFormat('es-CO', { month: 'long', year: 'numeric' }).format(fecha)
 }
+
+/**
+ * Convierte una fecha al formato `AAAA-MM-DD` que espera la API, usando la fecha local
+ * (no `toISOString`, que pasa a hora UTC y en Colombia puede devolver el día anterior).
+ *
+ * @param {Date} fecha
+ * @returns {string} Por ejemplo "2027-03-01".
+ */
+export function aFechaApi(fecha) {
+  const mes = String(fecha.getMonth() + 1).padStart(2, '0')
+  const dia = String(fecha.getDate()).padStart(2, '0')
+  return `${fecha.getFullYear()}-${mes}-${dia}`
+}
+
+/**
+ * Muestra una fecha `AAAA-MM-DD` de la API como mes y año, por ejemplo "marzo de 2027".
+ *
+ * @param {string} texto - Fecha en formato `AAAA-MM-DD`.
+ * @returns {string}
+ */
+export function formatearMesApi(texto) {
+  const [anio, mes, dia] = texto.split('-').map(Number)
+  return formatearMes(new Date(anio, mes - 1, dia))
+}

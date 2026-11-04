@@ -3,6 +3,7 @@ import { MotionConfig } from 'framer-motion'
 import { TemaProvider } from './context/TemaProvider'
 import { PerfilProvider } from './context/PerfilProvider'
 import { MonedaProvider } from './context/MonedaProvider'
+import { MetasProvider } from './context/MetasProvider'
 import FondoAnimado from './components/animaciones/FondoAnimado'
 import RequierePerfil from './components/RequierePerfil'
 import LayoutPrincipal from './layouts/LayoutPrincipal'
@@ -34,27 +35,29 @@ function App() {
   return (
     <TemaProvider>
       <PerfilProvider>
-        <MonedaProvider>
-          <MotionConfig reducedMotion="user">
-            <FondoAnimado />
-            <BrowserRouter>
-              <Routes>
-                <Route path="/bienvenida" element={<Bienvenida />} />
+        <MetasProvider>
+          <MonedaProvider>
+            <MotionConfig reducedMotion="user">
+              <FondoAnimado />
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/bienvenida" element={<Bienvenida />} />
 
-                <Route element={<RequierePerfil />}>
-                  <Route element={<LayoutPrincipal />}>
-                    <Route path="/" element={<Inicio />} />
-                    <Route path="/antojos" element={<Antojos />} />
-                    <Route path="/antojos/:id" element={<DetalleAntojo />} />
-                    <Route path="/comparador" element={<Comparador />} />
-                    <Route path="/metas" element={<MisMetas />} />
-                    <Route path="*" element={<NoEncontrada />} />
+                  <Route element={<RequierePerfil />}>
+                    <Route element={<LayoutPrincipal />}>
+                      <Route path="/" element={<Inicio />} />
+                      <Route path="/antojos" element={<Antojos />} />
+                      <Route path="/antojos/:id" element={<DetalleAntojo />} />
+                      <Route path="/comparador" element={<Comparador />} />
+                      <Route path="/metas" element={<MisMetas />} />
+                      <Route path="*" element={<NoEncontrada />} />
+                    </Route>
                   </Route>
-                </Route>
-              </Routes>
-            </BrowserRouter>
-          </MotionConfig>
-        </MonedaProvider>
+                </Routes>
+              </BrowserRouter>
+            </MotionConfig>
+          </MonedaProvider>
+        </MetasProvider>
       </PerfilProvider>
     </TemaProvider>
   )

@@ -6,6 +6,7 @@ import Aparecer from '../components/animaciones/Aparecer'
 import EtiquetaDescuento from '../components/animaciones/EtiquetaDescuento'
 import TarjetaInteractiva from '../components/animaciones/TarjetaInteractiva'
 import ImagenAntojo from '../components/antojos/ImagenAntojo'
+import BotonConvertirMeta from '../components/metas/BotonConvertirMeta'
 import EstadoMensaje from '../components/EstadoMensaje'
 import { buscarCategoria } from '../data/categorias'
 import { useAlcance } from '../hooks/useAlcance'
@@ -106,9 +107,9 @@ function CuandoLoAlcanzo({ precioUSD }) {
 /**
  * Página de detalle de un antojo (ruta con parámetro `/antojos/:id`).
  * Muestra fotos, precio con descuento en la moneda elegida, marca, calificación,
- * descripción y en qué mes lo alcanza el usuario.
+ * descripción, en qué mes lo alcanza el usuario y el botón para convertirlo en meta.
  *
- * Pendiente para las siguientes etapas: simulador "¿y si...?", convertir en meta y botón de compartir.
+ * Pendiente para las siguientes etapas: simulador "¿y si...?" y botón de compartir.
  *
  * @returns {JSX.Element}
  */
@@ -223,6 +224,10 @@ function DetalleAntojo() {
             </div>
             <CuandoLoAlcanzo precioUSD={precioFinal} />
           </TarjetaInteractiva>
+
+          <div className="mt-6">
+            <BotonConvertirMeta antojo={antojo} />
+          </div>
         </Aparecer>
       </div>
     </div>
