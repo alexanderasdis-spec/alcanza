@@ -436,6 +436,7 @@ typedoc.json            <span class="x">Configuración del generador de document
           <li>Catálogo con DummyJSON: buscador, filtros y detalle.</li>
           <li>Cambio de moneda con ExchangeRate-API y meses para alcanzar.</li>
           <li>Documentación automática con TypeDoc.</li>
+          <li>Agentes y skills de Claude Code (sección 15).</li>
         </ul>
       </div>
       <div class="tarjeta"><b class="t" style="color:#854d0e">Pendiente</b>
@@ -451,6 +452,48 @@ typedoc.json            <span class="x">Configuración del generador de document
     </div>
   </div>
   <div class="pie"><span>ALCANZA · Cómo funciona el código</span><span>10</span></div>
+</section>
+
+<!-- 11 · Agentes y skills -->
+<section class="pagina">
+  <div class="seccion"><span class="num">15</span><h1>Agentes y skills de Claude Code</h1></div>
+  <div class="destacado">El proyecto se desarrolla con ayuda de <b>Claude Code</b>. Para que siempre siga las mismas reglas, el repositorio incluye <b>skills</b> y <b>agentes</b>: archivos de texto que viajan con el código.</div>
+  <div class="rejilla2">
+    <div class="tarjeta"><b class="t" style="color:var(--violeta)">Skill</b>Un instructivo guardado en <code>.claude/skills/&lt;nombre&gt;/SKILL.md</code> que enseña a hacer una tarea repetible siempre de la misma forma: pasos, carpetas, reglas y cómo verificar.</div>
+    <div class="tarjeta"><b class="t" style="color:var(--rosa)">Agente (subagente)</b>Un especialista definido en <code>.claude/agents/&lt;nombre&gt;.md</code>, con su propio rol, sus propias herramientas permitidas y su propio formato de reporte. Se le delega una parte del trabajo.</div>
+  </div>
+
+  <h3>Skills del proyecto</h3>
+  <table>
+    <tr><th style="width:27%">Skill</th><th>Qué asegura</th></tr>
+    <tr><td><code>crear-componente</code></td><td>Piezas del frontend con JSDoc, paleta, modo oscuro, animaciones, accesibilidad y capas.</td></tr>
+    <tr><td><code>crear-recurso-laravel</code></td><td>Backend como en clase: migración, modelo, repositorio, servicio, Form Requests, controlador y Postman.</td></tr>
+    <tr><td><code>actualizar-documentacion</code></td><td>Regenerar TypeDoc y actualizar los dos PDF y el README.</td></tr>
+    <tr><td><code>verificar-proyecto</code></td><td>Lint, compilación, documentación, navegador y, con backend, Postman con Newman.</td></tr>
+  </table>
+
+  <h3>Agentes del proyecto</h3>
+  <table>
+    <tr><th style="width:20%">Agente</th><th>Rol</th><th style="width:27%">Herramientas</th></tr>
+    <tr><td><code>revisor-react</code></td><td>Revisa hooks, capas, estados de carga, JSDoc y accesibilidad; reporta por gravedad.</td><td>Solo lectura</td></tr>
+    <tr><td><code>experto-laravel</code></td><td>Construye <code>~/alcanza-api</code> con Sail siguiendo <code>crear-recurso-laravel</code>.</td><td>Leer, escribir y ejecutar</td></tr>
+    <tr><td><code>tester-api</code></td><td>Corre Postman con Newman, prueba errores (422, 404) y explica cada fallo.</td><td>Leer y ejecutar</td></tr>
+  </table>
+
+  <h3>Cómo trabajan juntos</h3>
+  <div class="flujo">
+    <div class="caja"><b>experto-laravel</b>Crea perfiles, metas y abonos</div>
+    <div class="flecha">→</div>
+    <div class="caja menta"><b>tester-api</b>Prueba cada endpoint con Newman</div>
+    <div class="flecha">→</div>
+    <div class="caja rosa"><b>crear-componente</b>Conecta el frontend con Axios</div>
+    <div class="flecha">→</div>
+    <div class="caja"><b>revisor-react</b>Revisa el código nuevo</div>
+    <div class="flecha">→</div>
+    <div class="caja noche"><b>verificar + documentar</b>Lint, build, PDF y commit</div>
+  </div>
+  <div class="nota"><b>Separación de responsabilidades:</b> quien prueba no cambia el código que prueba, y el revisor no edita lo que revisa. Así los errores se reportan en vez de "arreglarse" en silencio, como en un equipo real.</div>
+  <div class="pie"><span>ALCANZA · Cómo funciona el código</span><span>11</span></div>
 </section>
 
 </body>
