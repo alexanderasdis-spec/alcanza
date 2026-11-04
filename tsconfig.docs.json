@@ -1,0 +1,15 @@
+{
+  // Solo lo usa TypeDoc para leer el código y generar la documentación (npm run docs).
+  // El proyecto sigue siendo JavaScript: no se compila con TypeScript.
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": false,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "skipLibCheck": true
+  },
+  "include": ["src"]
+}

@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<title>Alcanza · Cómo funciona el código</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<!--
+  Fuente del PDF "ALCANZA_documentacion_codigo.pdf".
+  Para regenerarlo (Windows, con Microsoft Edge):
+  & "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --headless --disable-gpu --no-pdf-header-footer --virtual-time-budget=15000 --print-to-pdf="ALCANZA_documentacion_codigo.pdf" "docs/documento-codigo.html"
+-->
+<style>
+  @page { size: Letter; margin: 0; }
+  :root {
+    --violeta: #7c3aed; --menta: #10b981; --rosa: #ec4899; --amarillo: #facc15;
+    --fondo: #fafaf9; --noche: #0f172a; --tinta: #1e293b; --suave: #64748b; --borde: #e5e7eb;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { font-family: Inter, sans-serif; color: var(--tinta); font-size: 12.5px; line-height: 1.5; background: #ccc; }
+  b, strong { font-weight: 600; color: #0f172a; }
+  /* Sin ligaduras: que "=>" y "===" se vean tal como se escriben en el código */
+  code, pre, .arbol { font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0; }
+  code { font-family: "JetBrains Mono", monospace; font-size: 10.5px; color: #6d28d9; background: #f3e8ff; padding: 1px 4px; border-radius: 4px; }
+
+  .pagina { position: relative; width: 816px; height: 1056px; margin: 0 auto; overflow: hidden; background: var(--fondo); padding: 54px 72px 0; page-break-after: always; break-after: page; }
+  .pagina:last-child { page-break-after: auto; break-after: auto; }
+  .pagina::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 6px; background: linear-gradient(90deg, var(--violeta), var(--rosa), #fb923c, var(--amarillo)); }
+  .pie { position: absolute; left: 72px; right: 72px; bottom: 40px; display: flex; justify-content: space-between; border-top: 1px solid var(--borde); padding-top: 9px; font-size: 10.5px; color: var(--suave); }
+
+  /* Portada */
+  .portada { background: var(--noche); color: #e2e8f0; padding: 96px 86px 0; }
+  .portada::before { display: none; }
+  .luz { position: absolute; border-radius: 50%; }
+  .chip-portada { display: inline-block; font-family: Poppins; font-weight: 600; font-size: 11px; letter-spacing: .08em; color: #fff; padding: 6px 16px; border-radius: 999px; background: linear-gradient(90deg, var(--violeta), var(--rosa)); }
+  .logo { display: inline-block; margin-top: 200px; padding-bottom: 6px; font-family: Poppins; font-weight: 800; font-size: 96px; line-height: 1; letter-spacing: -2px; background: linear-gradient(90deg, #a78bfa, var(--rosa), #fb923c, var(--amarillo)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .portada h2 { margin-top: 18px; font-family: Poppins; font-weight: 600; font-size: 24px; color: #e2e8f0; }
+  .portada .lema { margin-top: 16px; max-width: 500px; font-size: 15px; color: #94a3b8; }
+  .datos { position: absolute; left: 86px; right: 86px; bottom: 96px; display: grid; grid-template-columns: 1.4fr 1.1fr 1.1fr; gap: 20px; border-top: 1px solid #334155; padding-top: 26px; }
+  .datos small { display: block; font-size: 12px; color: #94a3b8; }
+  .datos b { color: #fff; font-size: 14px; }
+
+  /* Títulos */
+  .seccion { display: flex; align-items: center; gap: 12px; margin: 0 0 12px; }
+  .num { display: grid; place-items: center; min-width: 30px; height: 30px; padding: 0 6px; border-radius: 8px; color: #fff; font-family: Poppins; font-weight: 700; font-size: 14px; background: linear-gradient(135deg, var(--violeta), var(--rosa)); }
+  .seccion h1 { font-family: Poppins; font-weight: 700; font-size: 22px; color: #0f172a; letter-spacing: -.3px; }
+  h3 { font-family: Poppins; font-weight: 600; font-size: 14px; color: var(--violeta); margin: 14px 0 6px; }
+  p + p { margin-top: 7px; }
+  .bloque { margin-top: 26px; }
+
+  .destacado { border: 1px solid #ddd6fe; border-radius: 14px; padding: 12px 18px; background: linear-gradient(120deg, #f5f3ff, #fdf2f8); margin-bottom: 10px; }
+  .tarjeta { background: #fff; border: 1px solid var(--borde); border-radius: 14px; padding: 12px 16px; box-shadow: 0 2px 8px rgba(15,23,42,.04); }
+  .rejilla2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .rejilla3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .tarjeta b.t { display: block; font-family: Poppins; font-size: 13px; margin-bottom: 2px; }
+
+  ul.lista { list-style: none; }
+  ul.lista li { position: relative; padding-left: 16px; margin-bottom: 3px; }
+  ul.lista li::before { content: ""; position: absolute; left: 2px; top: 7px; width: 6px; height: 6px; border-radius: 50%; background: var(--violeta); }
+  ol.pasos { list-style: none; counter-reset: paso; }
+  ol.pasos li { counter-increment: paso; position: relative; padding-left: 30px; margin-bottom: 6px; }
+  ol.pasos li::before { content: counter(paso); position: absolute; left: 0; top: 0; width: 20px; height: 20px; border-radius: 6px; display: grid; place-items: center; font-family: Poppins; font-weight: 700; font-size: 11px; color: #fff; background: linear-gradient(135deg, var(--violeta), var(--rosa)); }
+
+  table { width: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid var(--borde); border-radius: 12px; overflow: hidden; font-size: 11.5px; }
+  th { background: var(--noche); color: #fff; font-family: Poppins; font-weight: 600; text-align: left; padding: 8px 12px; font-size: 11px; }
+  td { padding: 6px 12px; vertical-align: top; border-top: 1px solid var(--borde); line-height: 1.4; }
+  tr:nth-child(even) td { background: #faf5ff; }
+  tr:nth-child(odd) td { background: #fff; }
+  td:first-child { font-weight: 600; color: #0f172a; white-space: nowrap; }
+  td code { white-space: nowrap; }
+
+  pre { font-family: "JetBrains Mono", monospace; font-size: 10.5px; line-height: 1.55; background: var(--noche); color: #e2e8f0; border-radius: 12px; padding: 12px 16px; white-space: pre; overflow: hidden; }
+  pre .c { color: #94a3b8; } pre .k { color: #c4b5fd; } pre .s { color: #6ee7b7; } pre .f { color: #f9a8d4; }
+
+  .arbol { font-family: "JetBrains Mono", monospace; font-size: 10.5px; line-height: 1.6; background: #fff; border: 1px solid var(--borde); border-radius: 12px; padding: 12px 16px; white-space: pre; }
+  .arbol .d { color: var(--violeta); font-weight: 500; } .arbol .x { color: var(--suave); font-family: Inter; }
+
+  .nota { margin-top: 10px; border-left: 4px solid var(--amarillo); background: #fefce8; border-radius: 0 10px 10px 0; padding: 10px 14px; font-size: 11.5px; }
+
+  /* Diagramas */
+  .flujo { display: flex; align-items: stretch; gap: 0; }
+  .caja { flex: 1; background: #fff; border: 1.5px solid #ddd6fe; border-radius: 12px; padding: 10px 10px; text-align: center; font-size: 11px; line-height: 1.35; }
+  .caja b { display: block; font-family: Poppins; font-size: 12px; color: var(--violeta); margin-bottom: 3px; }
+  .caja.menta { border-color: #a7f3d0; } .caja.menta b { color: #059669; }
+  .caja.rosa { border-color: #fbcfe8; } .caja.rosa b { color: #db2777; }
+  .caja.noche { background: var(--noche); border-color: var(--noche); color: #cbd5e1; } .caja.noche b { color: #fff; }
+  .flecha { display: grid; place-items: center; width: 22px; color: var(--violeta); font-weight: 700; font-size: 15px; }
+  .anidado { border: 1.5px dashed #c4b5fd; border-radius: 14px; padding: 8px 10px 10px; background: rgba(124,58,237,.03); }
+  .anidado > small { display: block; font-family: "JetBrains Mono", monospace; font-size: 10.5px; color: var(--violeta); font-weight: 500; margin-bottom: 6px; }
+  .anidado .anidado { margin-top: 4px; }
+  .estado { display: inline-block; font-family: Poppins; font-size: 10px; font-weight: 600; padding: 1px 8px; border-radius: 999px; }
+  .ok { background: #d1fae5; color: #047857; } .wip { background: #fef9c3; color: #854d0e; } .pend { background: #f1f5f9; color: #475569; }
+</style>
+</head>
+<body>
+
+<!-- 1 · Portada -->
+<section class="pagina portada">
+  <div class="luz" style="width:620px;height:620px;right:-230px;top:-200px;background:radial-gradient(circle, rgba(124,58,237,.75), rgba(124,58,237,.18) 45%, transparent 70%)"></div>
+  <div class="luz" style="width:440px;height:440px;left:-250px;top:520px;background:radial-gradient(circle, rgba(16,185,129,.45), rgba(16,185,129,.1) 45%, transparent 70%)"></div>
+  <div class="luz" style="width:230px;height:230px;right:70px;top:580px;background:radial-gradient(circle, rgba(236,72,153,.5), rgba(236,72,153,.1) 45%, transparent 70%)"></div>
+  <div style="position:relative">
+    <span class="chip-portada">DOCUMENTACIÓN TÉCNICA · PROYECTO FINAL DE REACT</span>
+    <div class="logo">Alcanza</div>
+    <h2>Cómo funciona el código</h2>
+    <p class="lema">Arquitectura, carpetas, flujo de datos, hooks, servicios y componentes: una guía para entender, mantener y defender el proyecto.</p>
+  </div>
+  <div class="datos">
+    <div><small>Autor</small><b>Harold Alexander Ceballos Henao</b></div>
+    <div><small>Módulo</small><b>Creación de páginas web 2</b></div>
+    <div><small>Fecha</small><b>3 de noviembre de 2026</b></div>
+  </div>
+</section>
+
+<!-- 2 · Visión general y cómo ejecutar -->
+<section class="pagina">
+  <div class="seccion"><span class="num">1</span><h1>Visión general</h1></div>
+  <div class="destacado">Alcanza es una <b>aplicación de una sola página</b> (SPA) hecha con <b>React 19</b> y <b>Vite</b>. El navegador descarga la app una vez y después React cambia de página sin recargar. Los productos vienen de <b>DummyJSON</b>, las tasas de cambio de <b>ExchangeRate-API</b> y, en la siguiente etapa, el perfil, las metas y los abonos se guardarán en una <b>API propia en Laravel</b> con MySQL.</div>
+  <p>El código está organizado en <b>capas</b>, y cada una tiene una sola responsabilidad. Las páginas nunca hablan directamente con una API ni con <code>localStorage</code>: siempre pasan por un hook y un servicio. Así, cambiar una fuente de datos (por ejemplo, DummyJSON por Mercado Libre, o <code>localStorage</code> por Laravel) solo toca un archivo.</p>
+
+  <h3>Herramientas</h3>
+  <table>
+    <tr><th style="width:24%">Herramienta</th><th>Para qué se usa en el código</th></tr>
+    <tr><td>React 19 + Vite 8</td><td>Componentes, estado y servidor de desarrollo con recarga instantánea.</td></tr>
+    <tr><td>Tailwind CSS 4</td><td>Estilos con clases. La paleta "Fintech festival" está en <code>src/index.css</code> con <code>@theme</code>; el modo oscuro usa la clase <code>.dark</code>.</td></tr>
+    <tr><td>React Router 7</td><td>Rutas, ruta con parámetro (<code>/antojos/:id</code>), filtros en la URL y guardián de rutas.</td></tr>
+    <tr><td>Framer Motion</td><td>Animaciones: efectos con el mouse, entradas en cascada, transiciones y contadores.</td></tr>
+    <tr><td>Axios</td><td>Peticiones HTTP a DummyJSON, ExchangeRate-API y, más adelante, a Laravel.</td></tr>
+    <tr><td>Lucide React</td><td>Íconos de toda la interfaz.</td></tr>
+    <tr><td>oxlint</td><td>Revisa el código en busca de errores y malas prácticas (reglas de hooks, exportaciones).</td></tr>
+    <tr><td>TypeDoc</td><td>Genera el sitio de documentación a partir de los comentarios JSDoc.</td></tr>
+  </table>
+
+  <div class="bloque">
+    <div class="seccion"><span class="num">2</span><h1>Cómo ejecutar el proyecto</h1></div>
+    <table>
+      <tr><th style="width:24%">Comando</th><th>Qué hace</th></tr>
+      <tr><td><code>npm install</code></td><td>Instala las dependencias de <code>package.json</code> (solo la primera vez).</td></tr>
+      <tr><td><code>npm run dev</code></td><td>Levanta el servidor de desarrollo en <code>http://localhost:5173</code>. Cada vez que se guarda un archivo, la página se actualiza sola.</td></tr>
+      <tr><td><code>npm run build</code></td><td>Compila la versión de producción en la carpeta <code>dist/</code>, lista para Vercel o Netlify.</td></tr>
+      <tr><td><code>npm run lint</code></td><td>Revisa todo el código con oxlint.</td></tr>
+      <tr><td><code>npm run docs</code></td><td>Genera la documentación del código en <code>docs/codigo/</code> (abrir <code>index.html</code>).</td></tr>
+    </table>
+    <div class="nota"><b>Si aparece el error "Invalid hook call"</b> después de agregar código que usa una librería nueva: detener <code>npm run dev</code> (<code>Ctrl + C</code>) y volver a iniciarlo. Es la caché de Vite, no un error del código.</div>
+  </div>
+  <div class="pie"><span>ALCANZA · Cómo funciona el código</span><span>2</span></div>
+</section>
+
+<!-- 3 · Estructura de carpetas -->
+<section class="pagina">
+  <div class="seccion"><span class="num">3</span><h1>Estructura de carpetas</h1></div>
+  <p style="margin-bottom:10px">Todo el código de la aplicación vive en <code>src/</code>. Cada carpeta agrupa un tipo de pieza:</p>
+<div class="arbol"><span class="d">src/</span>
+├─ <span class="d">components/</span>          <span class="x">Piezas reutilizables de la interfaz</span>
+│  ├─ <span class="d">animaciones/</span>       <span class="x">FondoAnimado, TarjetaInteractiva, Magnetico, Aparecer, ContadorAnimado…</span>
+│  ├─ <span class="d">antojos/</span>           <span class="x">TarjetaAntojo, ImagenAntojo, FiltroCategorias, Buscador</span>
+│  ├─ <span class="d">bienvenida/</span>        <span class="x">RecorridoBienvenida, FormularioPerfil</span>
+│  └─ Navbar, Footer, BotonTema, SelectorMoneda, RequierePerfil, EstadoMensaje
+├─ <span class="d">context/</span>             <span class="x">Estado global con Context API: tema, perfil y moneda</span>
+├─ <span class="d">data/</span>                <span class="x">Datos fijos: categorías y productos propios de Entretenimiento</span>
+├─ <span class="d">hooks/</span>               <span class="x">Hooks personalizados (useFetch, useMoneda, useAlcance…)</span>
+├─ <span class="d">layouts/</span>             <span class="x">LayoutPrincipal: menú + página + pie, con transición entre páginas</span>
+├─ <span class="d">pages/</span>               <span class="x">Una página por ruta: Inicio, Antojos, DetalleAntojo, Bienvenida…</span>
+├─ <span class="d">services/</span>            <span class="x">Única capa que habla con APIs o con el almacenamiento</span>
+│  └─ <span class="d">fuentes/</span>           <span class="x">Adaptadores de cada API de productos (hoy: dummyjson.js)</span>
+├─ <span class="d">utils/</span>               <span class="x">Funciones puras: cálculos, formatos, validaciones, ajustes de animación</span>
+├─ App.jsx               <span class="x">Proveedores de contexto + definición de todas las rutas</span>
+├─ main.jsx              <span class="x">Punto de entrada: monta &lt;App /&gt; en el &lt;div id="root"&gt;</span>
+└─ index.css             <span class="x">Tailwind, paleta "Fintech festival", fuentes y modo oscuro</span>
+
+<span class="d">docs/</span>                   <span class="x">Fuentes HTML de los PDF y documentación generada (docs/codigo)</span>
+typedoc.json            <span class="x">Configuración del generador de documentación</span></div>
+
+  <h3>Regla de oro de las capas</h3>
+  <div class="flujo">
+    <div class="caja"><b>Página</b>Muestra datos y reacciona a eventos</div>
+    <div class="flecha">→</div>
+    <div class="caja"><b>Hook</b>Maneja estado: cargando, error, datos</div>
+    <div class="flecha">→</div>
+    <div class="caja menta"><b>Servicio</b>Sabe de dónde salen los datos</div>
+    <div class="flecha">→</div>
+    <div class="caja rosa"><b>Adaptador</b>Traduce la respuesta al formato de Alcanza</div>
+    <div class="flecha">→</div>
+    <div class="caja noche"><b>API</b>DummyJSON, ExchangeRate o Laravel</div>
+  </div>
+  <p style="margin-top:10px">Las flechas van en un solo sentido: una página puede usar un hook, pero un servicio nunca importa una página ni un componente. Las funciones de <code>utils/</code> se pueden usar desde cualquier capa porque no tienen estado.</p>
+  <div class="pie"><span>ALCANZA · Cómo funciona el código</span><span>3</span></div>
+</section>
+
+<!-- 4 · Arranque, proveedores y rutas -->
+<section class="pagina">
+  <div class="seccion"><span class="num">4</span><h1>Arranque de la app y rutas</h1></div>
+  <p><code>main.jsx</code> monta el componente <code>App</code>. <code>App.jsx</code> envuelve toda la aplicación con los <b>proveedores de contexto</b> y define las rutas. El orden importa: un proveedor puede usar a los que están por fuera de él.</p>
+
+  <div class="anidado" style="margin-top:10px"><small>&lt;TemaProvider&gt; · modo claro / oscuro</small>
+    <div class="anidado"><small>&lt;PerfilProvider&gt; · nombre y ahorro mensual</small>
+      <div class="anidado"><small>&lt;MonedaProvider&gt; · moneda elegida y tasas de cambio</small>
+        <div class="anidado"><small>&lt;MotionConfig reducedMotion="user"&gt; · respeta "reducir movimiento"</small>
+          <div class="rejilla2" style="grid-template-columns: 1fr 2fr">
+            <div class="tarjeta"><b class="t">&lt;FondoAnimado /&gt;</b>Fuera del router para que las luces no se reinicien al cambiar de página.</div>
+            <div class="anidado" style="margin:0"><small>&lt;BrowserRouter&gt; → &lt;Routes&gt;</small>
+              <div style="font-size:11px">Ruta pública <code>/bienvenida</code> y, dentro de <code>&lt;RequierePerfil&gt;</code> y <code>&lt;LayoutPrincipal&gt;</code>, todas las demás páginas.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Tabla de rutas</h3>
+  <table>
+    <tr><th style="width:22%">Ruta</th><th style="width:20%">Página</th><th>Qué hace</th><th style="width:12%">Estado</th></tr>
+    <tr><td><code>/bienvenida</code></td><td>Bienvenida</td><td>Recorrido de 3 pantallas y perfil rápido. Sin menú ni pie.</td><td><span class="estado ok">Lista</span></td></tr>
+    <tr><td><code>/</code></td><td>Inicio</td><td>Saludo con el nombre, resumen con contadores y antojos de ejemplo.</td><td><span class="estado wip">Parcial</span></td></tr>
+    <tr><td><code>/antojos</code></td><td>Antojos</td><td>Catálogo con buscador, filtro por categorías (en la URL) y precios convertidos.</td><td><span class="estado ok">Lista</span></td></tr>
+    <tr><td><code>/antojos/:id</code></td><td>DetalleAntojo</td><td>Fotos, precio, descuento y en qué mes se alcanza. Lee el <code>id</code> con <code>useParams</code>.</td><td><span class="estado wip">Parcial</span></td></tr>
+    <tr><td><code>/comparador</code></td><td>Comparador</td><td>Dos antojos lado a lado.</td><td><span class="estado pend">Pendiente</span></td></tr>
+    <tr><td><code>/metas</code></td><td>MisMetas</td><td>Metas, abonos y confeti al 100 %.</td><td><span class="estado pend">Pendiente</span></td></tr>
+    <tr><td><code>*</code></td><td>NoEncontrada</td><td>404 temática: "Saldo insuficiente".</td><td><span class="estado ok">Lista</span></td></tr>
+  </table>
+
+  <h3>Guardián de rutas: <code>RequierePerfil</code></h3>
+  <p>Es una ruta "padre" sin dirección propia. Si el perfil todavía se está consultando no pinta nada; si no existe, redirige a <code>/bienvenida</code> con <code>&lt;Navigate replace /&gt;</code>; y si existe, pinta la ruta hija con <code>&lt;Outlet /&gt;</code>. Gracias a esto, ninguna página tiene que preguntar si hay perfil: lo garantiza el guardián.</p>
+
+  <h3>Transición entre páginas: <code>LayoutPrincipal</code></h3>
+  <p>Usa <code>useOutlet()</code> para obtener la página actual y la envuelve en <code>AnimatePresence</code> con <code>key={location.pathname}</code>. Así la página que se va termina su animación de salida antes de que entre la nueva.</p>
+  <div class="pie"><span>ALCANZA · Cómo funciona el código</span><span>4</span></div>
+</section>
+
+<!-- 5 · Estado global -->
+<section class="pagina">
+  <div class="seccion"><span class="num">5</span><h1>Estado global con Context API</h1></div>
+  <p style="margin-bottom:10px">Cada contexto se divide en <b>tres archivos</b>: el contexto (<code>context/xContext.js</code>), el proveedor (<code>context/XProvider.jsx</code>) y el hook para leerlo (<code>hooks/useX.js</code>). Se separan porque oxlint pide que un archivo de componentes solo exporte componentes, para que la recarga en vivo funcione bien.</p>
+  <div class="rejilla3">
+    <div class="tarjeta"><b class="t" style="color:var(--violeta)">Tema</b><code>useTema()</code> → <code>{ oscuro, alternarTema }</code><br>Pone o quita la clase <code>dark</code> en <code>&lt;html&gt;</code>. La primera vez sigue el tema del sistema operativo. Se guarda en <code>localStorage</code>.</div>
+    <div class="tarjeta"><b class="t" style="color:var(--menta)">Perfil</b><code>usePerfil()</code> → <code>{ perfil, cargando, guardarPerfil }</code><br>Carga el perfil al abrir la app con <code>perfilService</code>. <code>cargando</code> empieza en <code>true</code> para no redirigir antes de tiempo.</div>
+    <div class="tarjeta"><b class="t" style="color:var(--rosa)">Moneda</b><code>useMoneda()</code> → <code>{ moneda, cambiarMoneda, tasas, convertir, formatear }</code><br>Guarda la moneda elegida y consulta las tasas una vez. <code>formatear(valor, desde)</code> convierte y da formato.</div>
+  </div>
+
+  <h3>¿Por qué <code>useCallback</code> y <code>useMemo</code> en <code>MonedaProvider</code>?</h3>
+  <p>Cada vez que un proveedor se vuelve a pintar, las funciones que crea son "nuevas" para React. Si <code>formatear</code> cambiara en cada render, los contadores animados que la reciben reiniciarían su conteo sin motivo. <code>useCallback</code> conserva la misma función mientras no cambien la moneda ni las tasas, y <code>useMemo</code> hace lo mismo con el objeto que comparte el contexto.</p>
+<pre><span class="k">const</span> formatear = <span class="f">useCallback</span>(
+  (valor, desde = <span class="s">'USD'</span>) =&gt; {
+    <span class="k">const</span> convertido = <span class="f">convertir</span>(valor, desde)
+    <span class="c">// Sin tasas, el valor se muestra en su moneda original</span>
+    <span class="k">return</span> convertido === <span class="k">null</span> ? <span class="f">formatearMoneda</span>(valor, desde) : <span class="f">formatearMoneda</span>(convertido, moneda)
+  },
+  [convertir, moneda],
+)</pre>
+
+  <div class="bloque">
+    <div class="seccion"><span class="num">6</span><h1>Qué se guarda en el navegador</h1></div>
+    <table>
+      <tr><th style="width:30%">Clave de localStorage</th><th>Contenido</th><th style="width:22%">Tipo</th></tr>
+      <tr><td><code>alcanza-tema-oscuro</code></td><td><code>true</code> o <code>false</code></td><td>Preferencia</td></tr>
+      <tr><td><code>alcanza-moneda</code></td><td><code>"COP"</code>, <code>"USD"</code> o <code>"EUR"</code></td><td>Preferencia</td></tr>
+      <tr><td><code>alcanza-recorrido-visto</code></td><td>Si ya se vio el recorrido de bienvenida</td><td>Preferencia</td></tr>
+      <tr><td><code>alcanza-perfil</code></td><td><code>{ nombre, ahorroMensual }</code></td><td><b>Temporal</b>: pasará a Laravel</td></tr>
+    </table>
+    <p style="margin-top:8px">Todo pasa por el hook <code>useLocalStorage</code> (que funciona como <code>useState</code> pero recuerda el valor) o por <code>perfilService</code>. Ambos usan <code>try/catch</code>: si el navegador bloquea el almacenamiento, la app sigue funcionando sin recordar.</p>
+  </div>
+  <div class="pie"><span>ALCANZA · Cómo funciona el código</span><span>5</span></div>
+</section>
+
+<!-- 6 · Hooks -->
+<section class="pagina">
+  <div class="seccion"><span class="num">7</span><h1>Hooks personalizados</h1></div>
+  <p style="margin-bottom:10px">Un hook personalizado es una función que empieza por <code>use</code> y usa otros hooks de React. Sirve para sacar lógica de los componentes y reutilizarla.</p>
+  <table>
+    <tr><th style="width:22%">Hook</th><th>Qué hace</th><th style="width:24%">Concepto de React</th></tr>
+    <tr><td><code>useFetch</code></td><td>Consulta datos asíncronos y entrega <code>{ datos, cargando, error, reintentar }</code>. Ignora respuestas que llegan tarde.</td><td><code>useState</code>, <code>useEffect</code>, <code>useMemo</code></td></tr>
+    <tr><td><code>useLocalStorage</code></td><td>Como <code>useState</code>, pero guarda el valor en <code>localStorage</code>.</td><td><code>useState</code> perezoso, <code>useEffect</code></td></tr>
+    <tr><td><code>useTema</code></td><td>Lee y cambia el modo oscuro.</td><td><code>useContext</code></td></tr>
+    <tr><td><code>usePerfil</code></td><td>Lee y guarda el perfil del usuario.</td><td><code>useContext</code></td></tr>
+    <tr><td><code>useMoneda</code></td><td>Moneda elegida, tasas, <code>convertir</code> y <code>formatear</code>.</td><td><code>useContext</code></td></tr>
+    <tr><td><code>useAlcance</code></td><td>Responde "¿cuándo me lo compro?": meses y fecha para un precio.</td><td>Hook que combina hooks</td></tr>
+    <tr><td><code>usePosicionMouse</code></td><td>Posición del mouse de -1 a 1, sin re-renderizar.</td><td><code>useEffect</code> + <code>MotionValue</code></td></tr>
+    <tr><td><code>usePuedeAnimarMouse</code></td><td>Indica si hay mouse y si el usuario acepta animaciones.</td><td><code>matchMedia</code> + <code>useEffect</code></td></tr>
+  </table>
+
+  <h3>Cómo funciona <code>useFetch</code> por dentro</h3>
+  <p>Recibe una función que devuelve una promesa (por ejemplo <code>obtenerAntojos</code>). Cada consulta recibe un "ticket" nuevo; la respuesta se guarda junto con el ticket que la pidió. Si el ticket guardado no es el de la consulta actual, la consulta actual sigue cargando. Así no se llama <code>setState</code> de forma síncrona dentro del efecto y nunca se muestra una respuesta vieja.</p>
+<pre><span class="k">const</span> consulta = <span class="f">useMemo</span>(() =&gt; ({ cargar, intento }), [cargar, intento])
+
+<span class="f">useEffect</span>(() =&gt; {
+  <span class="k">let</span> vigente = <span class="k">true</span>   <span class="c">// se apaga si el componente se desmonta</span>
+  consulta.<span class="f">cargar</span>()
+    .<span class="f">then</span>((datos) =&gt; vigente &amp;&amp; <span class="f">setRespuesta</span>({ consulta, datos, error: <span class="k">null</span> }))
+    .<span class="f">catch</span>((error) =&gt; vigente &amp;&amp; <span class="f">setRespuesta</span>({ consulta, datos: <span class="k">null</span>, error }))
+  <span class="k">return</span> () =&gt; { vigente = <span class="k">false</span> }
+}, [consulta])
+
+<span class="k">const</span> cargando = respuesta.consulta !== consulta</pre>
+  <div class="nota"><b>Regla de uso:</b> la función que se le pasa debe ser estable. Si depende de algo, se envuelve en <code>useCallback</code>: <code>const cargar = useCallback(() =&gt; obtenerAntojo(id), [id])</code>. Así solo se vuelve a consultar cuando cambia el <code>id</code>.</div>
+  <div class="pie"><span>ALCANZA · Cómo funciona el código</span><span>6</span></div>
+</section>
+
+<!-- 7 · Servicios y APIs -->
+<section class="pagina">
+  <div class="seccion"><span class="num">8</span><h1>Servicios y APIs</h1></div>
+  <p style="margin-bottom:10px">Los servicios son la única parte del código que sabe de dónde vienen los datos. Todas sus funciones devuelven <b>promesas</b>, aunque el dato esté en el navegador: así se pueden reemplazar por peticiones a Laravel sin cambiar nada más.</p>
+  <div class="rejilla3">
+    <div class="tarjeta"><b class="t" style="color:var(--violeta)">ofertasService</b><code>obtenerAntojos()</code> · <code>obtenerAntojo(id)</code><br>Junta los productos de la API con los propios de Entretenimiento. Guarda la promesa en caché: la API se consulta una vez por visita.</div>
+    <div class="tarjeta"><b class="t" style="color:var(--menta)">monedaService</b><code>obtenerTasas()</code><br>Consulta <code>open.er-api.com/v6/latest/USD</code> y devuelve <code>{ USD, COP, EUR, actualizado }</code>. También con caché.</div>
+    <div class="tarjeta"><b class="t" style="color:var(--rosa)">perfilService</b><code>obtenerPerfil()</code> · <code>guardarPerfil(p)</code><br><b>Temporal:</b> usa <code>localStorage</code>. Cuando exista la API, por dentro usará Axios contra <code>/api/perfil</code>.</div>
+  </div>
+
+  <h3>El adaptador de DummyJSON (<code>services/fuentes/dummyjson.js</code>)</h3>
+  <p>Es el único archivo que conoce cómo responde DummyJSON. Pide la lista completa con <code>limit=0</code> y solo los campos necesarios (<code>select</code>), traduce cada categoría de la API a una categoría de Alcanza y descarta las que no se usan (como <code>groceries</code>). Si un producto no existe (error 404) devuelve <code>null</code> en vez de fallar.</p>
+<pre><span class="k">function</span> <span class="f">adaptarProducto</span>(producto) {
+  <span class="k">const</span> categoria = CATEGORIA_ALCANZA[producto.category]   <span class="c">// 'smartphones' → 'tecnologia'</span>
+  <span class="k">if</span> (!categoria) <span class="k">return null</span>
+  <span class="k">return</span> {
+    id: <span class="f">String</span>(producto.id), nombre: producto.title, marca: producto.brand ?? <span class="s">'Sin marca'</span>,
+    categoria, precio: producto.price,
+    descuento: Math.<span class="f">round</span>(producto.discountPercentage),
+    imagen: producto.thumbnail, imagenes: producto.images ?? [producto.thumbnail],
+    calificacion: producto.rating,
+  }
+}</pre>
+
+  <h3>El formato propio: <code>Antojo</code></h3>
+  <table>
+    <tr><th style="width:20%">Campo</th><th>Significado</th></tr>
+    <tr><td><code>id</code></td><td>Texto único. Los productos propios empiezan por <code>ent-</code> para no chocar con los de la API.</td></tr>
+    <tr><td><code>categoria</code></td><td>Id de una categoría de Alcanza: tecnologia, moda, hogar, belleza, deporte o entretenimiento.</td></tr>
+    <tr><td><code>precio</code> / <code>descuento</code></td><td>Precio en dólares antes del descuento y porcentaje redondeado.</td></tr>
+    <tr><td><code>imagen</code> / <code>imagenes</code></td><td>Foto principal (o <code>null</code>) y galería. Sin foto se muestra el ícono de la categoría.</td></tr>
+  </table>
+  <div class="nota"><b>Cambiar de fuente de productos:</b> se crea, por ejemplo, <code>services/fuentes/mercadolibre.js</code> con las funciones <code>listarProductos</code> y <code>obtenerProducto</code>, y se cambia una sola línea en <code>ofertasService.js</code>: <code>import * as fuente from './fuentes/mercadolibre'</code>.</div>
+  <div class="pie"><span>ALCANZA · Cómo funciona el código</span><span>7</span></div>
+</section>
+
+<!-- 8 · Recorrido de datos -->
+<section class="pagina">
+  <div class="seccion"><span class="num">9</span><h1>Ejemplo completo: del catálogo a "¿cuándo me lo compro?"</h1></div>
+  <p style="margin-bottom:10px">Esto es lo que pasa, paso a paso, cuando el usuario entra a <code>/antojos?categoria=tecnologia</code>:</p>
+  <ol class="pasos">
+    <li><b>React Router</b> encuentra la ruta y pinta <code>&lt;Antojos /&gt;</code> dentro de <code>RequierePerfil</code> y <code>LayoutPrincipal</code>.</li>
+    <li><b>Antojos</b> llama <code>useFetch(obtenerAntojos)</code>. Mientras <code>cargando</code> es <code>true</code>, muestra 8 tarjetas "fantasma" que laten.</li>
+    <li><b>ofertasService</b> revisa su caché; si está vacía, le pide los productos al adaptador de DummyJSON (Axios → <code>GET /products?limit=0</code>).</li>
+    <li>El <b>adaptador</b> convierte cada producto al formato <code>Antojo</code>; el servicio le suma los 5 propios de Entretenimiento.</li>
+    <li><b>Antojos</b> lee la categoría y la búsqueda de la URL con <code>useSearchParams</code> y filtra con <code>useMemo</code>: el filtro se recalcula solo cuando cambian los productos o el texto buscado.</li>
+    <li>Cada producto se pinta con <b>TarjetaAntojo</b>, que calcula el precio con descuento (<code>precioConDescuento</code>) y lo muestra con <code>formatear()</code> de <b>useMoneda</b>.</li>
+    <li><b>useAlcance</b> pasa ese precio a pesos con las tasas del día y lo divide entre el ahorro del perfil: <code>mesesParaAlcanzar(precioCOP, ahorroMensual)</code>.</li>
+    <li>Si el usuario cambia de moneda, solo cambia el contexto de moneda: React vuelve a pintar los precios, sin volver a consultar ninguna API.</li>
+  </ol>
+
+  <h3>Los cálculos (<code>utils/calculos.js</code>)</h3>
+<pre><span class="k">export function</span> <span class="f">mesesParaAlcanzar</span>(precio, ahorroMensual) {
+  <span class="k">if</span> (ahorroMensual &lt;= 0) <span class="k">return</span> Infinity
+  <span class="c">// Siempre al menos 1 mes: aunque alcance de una vez, hay que ahorrarlo ese mes</span>
+  <span class="k">return</span> Math.<span class="f">max</span>(1, Math.<span class="f">ceil</span>(precio / ahorroMensual))
+}
+<span class="c">// Ejemplo real: MacBook US$ 1.899,99 × 3.197,3 = $ 6.074.848 COP</span>
+<span class="c">//               6.074.848 ÷ 350.000 = 17,36  →  18 meses  →  mayo de 2028</span></pre>
+  <p style="margin-top:8px">Todas las funciones de <code>utils/</code> son <b>puras</b>: con los mismos datos siempre devuelven lo mismo y no tocan el estado de React. Por eso se pueden probar y explicar por separado.</p>
+  <table style="margin-top:8px">
+    <tr><th style="width:28%">Función</th><th>Qué hace</th></tr>
+    <tr><td><code>precioConDescuento</code></td><td><code>precio × (1 − descuento / 100)</code>, redondeado a dos decimales.</td></tr>
+    <tr><td><code>convertirMoneda</code></td><td>Pasa el valor a dólares y luego a la moneda destino: <code>valor / tasas[desde] × tasas[hacia]</code>.</td></tr>
+    <tr><td><code>fechaEstimada</code></td><td>Suma los meses a hoy, fijando el día 1 para evitar saltos (31 de enero + 1 mes).</td></tr>
+    <tr><td><code>formatearMoneda</code> / <code>formatearMes</code></td><td>Usan <code>Intl</code> en español de Colombia: <code>$ 350.000</code>, <code>US$ 19,99</code>, <code>€ 19,99</code>, "mayo de 2028".</td></tr>
+    <tr><td><code>validarPerfil</code></td><td>Devuelve un objeto con un mensaje por cada campo con error; vacío si todo está bien.</td></tr>
+  </table>
+  <div class="pie"><span>ALCANZA · Cómo funciona el código</span><span>8</span></div>
+</section>
+
+<!-- 9 · Componentes, formularios y animaciones -->
+<section class="pagina">
+  <div class="seccion"><span class="num">10</span><h1>Formularios: el perfil rápido</h1></div>
+  <p><code>FormularioPerfil</code> es un <b>formulario controlado</b>: el valor de cada input vive en el estado <code>datos</code>, no en el DOM. Un solo manejador actualiza cualquier campo usando el atributo <code>name</code>:</p>
+<pre><span class="k">const</span> <span class="f">alCambiar</span> = (evento) =&gt; {
+  <span class="k">const</span> { name, value } = evento.target
+  <span class="k">const</span> nuevosDatos = { ...datos, [name]: value }      <span class="c">// copia y reemplaza solo ese campo</span>
+  <span class="f">setDatos</span>(nuevosDatos)
+  <span class="c">// Después del primer intento de enviar, los errores se actualizan en vivo</span>
+  <span class="k">if</span> (intentoEnviar) <span class="f">setErrores</span>(<span class="f">validarPerfil</span>(nuevosDatos))
+}</pre>
+  <p style="margin-top:8px">Al enviar, <code>evento.preventDefault()</code> evita que el navegador recargue la página, se valida con <code>validarPerfil</code> y, si no hay errores, se llama <code>guardarPerfil</code> del contexto y se navega a Inicio con <code>useNavigate</code>. Los inputs usan <code>aria-invalid</code> y <code>aria-describedby</code> para que los lectores de pantalla anuncien el error.</p>
+
+  <div class="bloque">
+    <div class="seccion"><span class="num">11</span><h1>Sistema de animaciones</h1></div>
+    <p style="margin-bottom:8px">Todas las animaciones comparten los ajustes de <code>utils/animaciones.js</code> (<code>RESORTE_SUAVE</code>, <code>RESORTE_RAPIDO</code>, <code>CURVA_SALIDA</code>, <code>PASO_CASCADA</code>), por eso se sienten como una sola familia.</p>
+    <table>
+      <tr><th style="width:24%">Componente</th><th>Cómo funciona</th></tr>
+      <tr><td><code>FondoAnimado</code></td><td>Cuatro luces con <code>useTransform</code> sobre la posición del mouse (parallax) y flotación infinita; un halo sigue al cursor.</td></tr>
+      <tr><td><code>TarjetaInteractiva</code></td><td>Calcula la posición del cursor dentro de la tarjeta (0 a 1), la convierte en grados de inclinación y en un degradado con <code>useMotionTemplate</code>.</td></tr>
+      <tr><td><code>Magnetico</code></td><td>Mueve su contenido una fracción de la distancia entre el cursor y su centro, con un resorte.</td></tr>
+      <tr><td><code>Aparecer</code></td><td><code>whileInView</code> con <code>viewport.once</code>: aparece una sola vez al entrar en pantalla; <code>orden</code> crea la cascada.</td></tr>
+      <tr><td><code>ContadorAnimado</code></td><td><code>animate(0, valor)</code> escribe el número directo en el elemento (<code>textContent</code>) para no re-renderizar en cada cuadro.</td></tr>
+      <tr><td><code>FiltroCategorias</code> / <code>SelectorMoneda</code></td><td>El fondo del botón activo usa <code>layoutId</code>: Framer Motion lo desliza solo de un botón a otro.</td></tr>
+    </table>
+    <h3>Rendimiento y accesibilidad</h3>
+    <ul class="lista">
+      <li>La posición del mouse se guarda en <code>MotionValue</code> en vez de <code>useState</code>: se mueve decenas de veces por segundo sin volver a pintar React.</li>
+      <li><code>usePuedeAnimarMouse</code> apaga los efectos de mouse en pantallas táctiles y con "reducir movimiento"; <code>MotionConfig reducedMotion="user"</code> hace lo mismo en todas las animaciones.</li>
+      <li>Las fotos del catálogo cargan con <code>loading="lazy"</code>, y el catálogo y las tasas se consultan una sola vez por visita.</li>
+    </ul>
+  </div>
+  <div class="pie"><span>ALCANZA · Cómo funciona el código</span><span>9</span></div>
+</section>
+
+<!-- 10 · Documentación, backend y estado -->
+<section class="pagina">
+  <div class="seccion"><span class="num">12</span><h1>Documentación automática del código</h1></div>
+  <p>Cada componente, hook, servicio y utilidad tiene un comentario <b>JSDoc</b> con su descripción, parámetros (<code>@param</code>), lo que devuelve (<code>@returns</code>) y un ejemplo (<code>@example</code>). <b>TypeDoc</b> lee esos comentarios y genera un sitio web navegable y con buscador, en español.</p>
+<pre><span class="c">/**
+ * Calcula cuántos meses de ahorro hacen falta para reunir un precio.
+ * @param {number} precio - Lo que cuesta el antojo.
+ * @param {number} ahorroMensual - Lo que el usuario ahorra cada mes.
+ * @returns {number} Meses enteros necesarios.
+ * @example mesesParaAlcanzar(1000000, 350000) // 3
+ */</span></pre>
+  <p style="margin-top:8px">Se genera con <code>npm run docs</code> y queda en <code>docs/codigo/index.html</code>. La configuración está en <code>typedoc.json</code> (incluye la traducción al español de la interfaz) y <code>tsconfig.docs.json</code>, que solo sirve para que TypeDoc lea el JavaScript. <b>¿Por qué TypeDoc y no el generador JSDoc clásico?</b> Porque el clásico no entiende tipos modernos como <code>import('react').ReactNode</code> o <code>(valor: number) =&gt; string</code>: dio 132 errores. TypeDoc lee los mismos comentarios sin problema.</p>
+
+  <div class="bloque">
+    <div class="seccion"><span class="num">13</span><h1>Backend (en construcción)</h1></div>
+    <div class="rejilla2">
+      <div class="tarjeta"><b class="t" style="color:var(--violeta)">Entorno</b>Laravel 13 con <b>Sail</b> (Docker) dentro de Ubuntu en WSL 2, en <code>~/alcanza-api</code>. Base de datos <b>MySQL 8.4</b> llamada <code>data_alcanza</code>.</div>
+      <div class="tarjeta"><b class="t" style="color:var(--menta)">Arquitectura (la vista en clase)</b>Ruta → Controlador → Servicio → Repositorio con interfaz → Modelo. Validación con Form Requests de creación y de actualización.</div>
+    </div>
+    <p style="margin-top:8px">Tablas: <code>perfiles</code>, <code>metas</code> y <code>abonos</code>. Rutas: <code>/api/perfil</code>, <code>/api/metas</code> y <code>/api/metas/{id}/abonos</code>, probadas con Postman. React se conectará con Axios usando <code>VITE_API_URL</code>, y el único archivo del frontend que cambia para el perfil es <code>perfilService.js</code>.</p>
+  </div>
+
+  <div class="bloque">
+    <div class="seccion"><span class="num">14</span><h1>Estado actual</h1></div>
+    <div class="rejilla2">
+      <div class="tarjeta"><b class="t" style="color:#047857">Listo</b>
+        <ul class="lista">
+          <li>Rutas, layout, menú, pie, 404 y modo oscuro.</li>
+          <li>Sistema de animaciones interactivas.</li>
+          <li>Bienvenida: recorrido y perfil rápido con validaciones.</li>
+          <li>Catálogo con DummyJSON: buscador, filtros y detalle.</li>
+          <li>Cambio de moneda con ExchangeRate-API y meses para alcanzar.</li>
+          <li>Documentación automática con TypeDoc.</li>
+        </ul>
+      </div>
+      <div class="tarjeta"><b class="t" style="color:#854d0e">Pendiente</b>
+        <ul class="lista">
+          <li>Backend: migraciones, modelos, servicios, repositorios y rutas.</li>
+          <li>Metas, abonos, simulador "¿y si...?" y confeti.</li>
+          <li>Comparador y línea de tiempo.</li>
+          <li>Compartir la meta como imagen.</li>
+          <li>Ofertas destacadas reales en Inicio.</li>
+          <li>README completo y despliegue.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="pie"><span>ALCANZA · Cómo funciona el código</span><span>10</span></div>
+</section>
+
+</body>
+</html>
