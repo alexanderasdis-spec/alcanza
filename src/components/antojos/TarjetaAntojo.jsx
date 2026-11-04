@@ -1,14 +1,16 @@
 import { Link } from 'react-router-dom'
-import { ArrowRight, Star } from 'lucide-react'
+import { ArrowRight, CalendarHeart, Star } from 'lucide-react'
 import TarjetaInteractiva from '../animaciones/TarjetaInteractiva'
 import EtiquetaDescuento from '../animaciones/EtiquetaDescuento'
 import ImagenAntojo from './ImagenAntojo'
 import { buscarCategoria } from '../../data/categorias'
+import { useAlcance } from '../../hooks/useAlcance'
+import { useMoneda } from '../../hooks/useMoneda'
 import { precioConDescuento } from '../../utils/calculos'
-import { formatearMoneda } from '../../utils/formato'
 
 /**
- * Tarjeta de un producto del catálogo: foto, descuento, nombre, marca y precio.
+ * Tarjeta de un producto del catálogo: foto, descuento, nombre, marca, precio
+ * en la moneda elegida y en cuántos meses lo alcanza el usuario con su ahorro.
  * Toda la tarjeta es un enlace a la página de detalle del antojo.
  *
  * @param {Object} props
@@ -18,6 +20,8 @@ import { formatearMoneda } from '../../utils/formato'
 function TarjetaAntojo({ antojo }) {
   const categoria = buscarCategoria(antojo.categoria)
   const precioFinal = precioConDescuento(antojo.precio, antojo.descuento)
+  const { formatear } = useMoneda()
+  const alcance = useAlcance(precioFinal)
   // Se alternan los colores de la manilla para que el catálogo se vea más festivo.
   const colorEtiqueta = Number.parseInt(antojo.id.replace(/\D/g, '') || '0', 10) % 2 ? 'rosa' : 'amarillo'
 
@@ -43,11 +47,17 @@ function TarjetaAntojo({ antojo }) {
           {categoria && <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{categoria.nombre}</p>}
 
           <div className="mt-auto flex items-end justify-between pt-4">
-            <div>
+            <div className="min-w-0">
               {antojo.descuento > 0 && (
-                <p className="text-sm text-slate-400 line-through">{formatearMoneda(antojo.precio, 'USD')}</p>
+                <p className="truncate text-sm text-slate-400 line-through">{formatear(antojo.precio)}</p>
               )}
-              <p className="font-titulo text-xl font-bold text-menta">{formatearMoneda(precioFinal, 'USD')}</p>
+              <p className="truncate font-titulo text-xl font-bold text-menta">{formatear(precioFinal)}</p>
+              {alcance && (
+                <p className="mt-1 flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
+                  <CalendarHeart className="size-3.5 shrink-0 text-rosa" />
+                  En {alcance.meses} {alcance.meses === 1 ? 'mes' : 'meses'}
+                </p>
+              )}
             </div>
             <span className="grid size-9 place-items-center rounded-full bg-violeta/10 text-violeta transition group-hover:bg-violeta group-hover:text-white dark:text-violet-300">
               <ArrowRight className="size-4" />

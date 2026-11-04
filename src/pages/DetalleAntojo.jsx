@@ -1,17 +1,20 @@
 import { useCallback, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ArrowLeft, PackageSearch, RefreshCw, Star, WifiOff } from 'lucide-react'
+import { ArrowLeft, CalendarHeart, PackageSearch, RefreshCw, Star, WifiOff } from 'lucide-react'
 import Aparecer from '../components/animaciones/Aparecer'
 import EtiquetaDescuento from '../components/animaciones/EtiquetaDescuento'
 import TarjetaInteractiva from '../components/animaciones/TarjetaInteractiva'
 import ImagenAntojo from '../components/antojos/ImagenAntojo'
 import EstadoMensaje from '../components/EstadoMensaje'
 import { buscarCategoria } from '../data/categorias'
+import { useAlcance } from '../hooks/useAlcance'
 import { useFetch } from '../hooks/useFetch'
+import { useMoneda } from '../hooks/useMoneda'
+import { usePerfil } from '../hooks/usePerfil'
 import { obtenerAntojo } from '../services/ofertasService'
 import { precioConDescuento } from '../utils/calculos'
-import { formatearMoneda } from '../utils/formato'
+import { formatearMes } from '../utils/formato'
 
 /** Clases del botón principal con el degradado de la marca. */
 const CLASES_BOTON =
@@ -67,11 +70,45 @@ function Galeria({ antojo }) {
 }
 
 /**
- * Página de detalle de un antojo (ruta con parámetro `/antojos/:id`).
- * Muestra fotos, precio con descuento, marca, calificación y descripción.
+ * Recuadro con la respuesta a "¿cuándo me lo compro?" para un precio dado.
  *
- * Pendiente para las siguientes etapas: fecha en que se logra, simulador "¿y si...?",
- * convertir en meta y botón de compartir.
+ * @param {Object} props
+ * @param {number} props.precioUSD - Precio final del antojo en dólares.
+ * @returns {JSX.Element}
+ */
+function CuandoLoAlcanzo({ precioUSD }) {
+  const alcance = useAlcance(precioUSD)
+  const { perfil } = usePerfil()
+  const { formatear } = useMoneda()
+
+  if (!alcance) {
+    return (
+      <p className="mt-6 rounded-2xl bg-slate-100 px-4 py-3 text-sm text-slate-500 dark:bg-slate-800 dark:text-slate-400">
+        Calculando cuándo lo alcanzas…
+      </p>
+    )
+  }
+
+  return (
+    <div className="mt-6 flex items-start gap-3 rounded-2xl bg-gradient-to-r from-amarillo/20 to-rosa/10 px-4 py-3">
+      <CalendarHeart className="mt-0.5 size-6 shrink-0 text-rosa" />
+      <p className="text-sm text-slate-700 dark:text-slate-200">
+        Ahorrando {formatear(perfil.ahorroMensual, 'COP')} al mes, lo alcanzas en{' '}
+        <strong className="font-titulo text-base">
+          {alcance.meses} {alcance.meses === 1 ? 'mes' : 'meses'}
+        </strong>
+        : <span className="font-semibold">{formatearMes(alcance.fecha)}</span>.
+      </p>
+    </div>
+  )
+}
+
+/**
+ * Página de detalle de un antojo (ruta con parámetro `/antojos/:id`).
+ * Muestra fotos, precio con descuento en la moneda elegida, marca, calificación,
+ * descripción y en qué mes lo alcanza el usuario.
+ *
+ * Pendiente para las siguientes etapas: simulador "¿y si...?", convertir en meta y botón de compartir.
  *
  * @returns {JSX.Element}
  */
@@ -82,6 +119,7 @@ function DetalleAntojo() {
   // si el usuario cambia de producto sin salir de la página, useFetch vuelve a consultar.
   const cargarAntojo = useCallback(() => obtenerAntojo(id), [id])
   const { datos: antojo, cargando, error, reintentar } = useFetch(cargarAntojo)
+  const { formatear } = useMoneda()
 
   const volver = (
     <Link
@@ -175,21 +213,15 @@ function DetalleAntojo() {
           <TarjetaInteractiva className="mt-8 p-6" inclinacion={4}>
             <div className="flex items-start justify-between gap-4">
               <div>
-                {antojo.descuento > 0 && (
-                  <p className="text-slate-400 line-through">{formatearMoneda(antojo.precio, 'USD')}</p>
-                )}
-                <p className="font-titulo text-4xl font-bold text-menta">{formatearMoneda(precioFinal, 'USD')}</p>
+                {antojo.descuento > 0 && <p className="text-slate-400 line-through">{formatear(antojo.precio)}</p>}
+                <p className="font-titulo text-4xl font-bold text-menta">{formatear(precioFinal)}</p>
                 {ahorro > 0 && (
-                  <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                    Te ahorras {formatearMoneda(ahorro, 'USD')}
-                  </p>
+                  <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Te ahorras {formatear(ahorro)}</p>
                 )}
               </div>
               {antojo.descuento > 0 && <EtiquetaDescuento porcentaje={antojo.descuento} />}
             </div>
-            <p className="mt-6 rounded-2xl bg-amarillo/15 px-4 py-3 text-sm text-slate-700 dark:text-amarillo/90">
-              Pronto: aquí verás en qué fecha lo alcanzas con tu ahorro y el simulador "¿y si...?".
-            </p>
+            <CuandoLoAlcanzo precioUSD={precioFinal} />
           </TarjetaInteractiva>
         </Aparecer>
       </div>

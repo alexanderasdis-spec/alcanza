@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { Menu, X } from 'lucide-react'
 import BotonTema from './BotonTema'
+import SelectorMoneda from './SelectorMoneda'
 
 /**
  * Enlaces del menú principal.
@@ -32,7 +33,7 @@ function clasesEnlace({ isActive }) {
 }
 
 /**
- * Menú superior que comparten todas las páginas: logo, navegación y botón de modo oscuro.
+ * Menú superior que comparten todas las páginas: logo, navegación, selector de moneda y botón de modo oscuro.
  * En celular los enlaces se esconden detrás de un botón de menú (hamburguesa).
  *
  * @returns {JSX.Element}
@@ -66,6 +67,7 @@ function Navbar() {
         </ul>
 
         <div className="flex items-center gap-1">
+          <SelectorMoneda />
           <BotonTema />
           <button
             type="button"

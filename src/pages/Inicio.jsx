@@ -1,3 +1,4 @@
+import { useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { CalendarHeart, Headphones, PiggyBank, Smartphone, Sparkles, Target, Footprints } from 'lucide-react'
@@ -7,6 +8,7 @@ import ContadorAnimado from '../components/animaciones/ContadorAnimado'
 import EtiquetaDescuento from '../components/animaciones/EtiquetaDescuento'
 import Magnetico from '../components/animaciones/Magnetico'
 import TarjetaInteractiva from '../components/animaciones/TarjetaInteractiva'
+import { useMoneda } from '../hooks/useMoneda'
 import { usePerfil } from '../hooks/usePerfil'
 import { formatearMoneda } from '../utils/formato'
 import { CURVA_SALIDA } from '../utils/animaciones'
@@ -14,14 +16,17 @@ import { CURVA_SALIDA } from '../utils/animaciones'
 /**
  * Arma las cifras del resumen. El ahorro mensual sale del perfil real;
  * metas activas y ya ahorrado son DATOS DE EJEMPLO hasta construir las metas.
+ * Los montos llegan en pesos y se pasan a la moneda elegida.
  *
- * @param {number} ahorroMensual - Ahorro mensual del perfil.
+ * @param {number} ahorroMensual - Ahorro mensual del perfil, en COP.
+ * @param {(valor: number) => number} aMonedaElegida - Convierte un valor en COP a la moneda elegida.
+ * @param {(valor: number) => string} formatoMoneda - Formatea un valor ya convertido.
  * @returns {{ titulo: string, valor: number, formato?: (v: number) => string, Icono: import('lucide-react').LucideIcon, color: string }[]}
  */
-const armarResumen = (ahorroMensual) => [
-  { titulo: 'Ahorro mensual', valor: ahorroMensual, formato: formatearMoneda, Icono: PiggyBank, color: 'text-menta' },
+const armarResumen = (ahorroMensual, aMonedaElegida, formatoMoneda) => [
+  { titulo: 'Ahorro mensual', valor: aMonedaElegida(ahorroMensual), formato: formatoMoneda, Icono: PiggyBank, color: 'text-menta' },
   { titulo: 'Metas activas', valor: 3, Icono: Target, color: 'text-violeta dark:text-violet-300' },
-  { titulo: 'Ya ahorrado', valor: 1280000, formato: formatearMoneda, Icono: Sparkles, color: 'text-rosa' },
+  { titulo: 'Ya ahorrado', valor: aMonedaElegida(1280000), formato: formatoMoneda, Icono: Sparkles, color: 'text-rosa' },
 ]
 
 /**
@@ -48,6 +53,14 @@ const ANTOJOS_EJEMPLO = [
 function Inicio() {
   // RequierePerfil garantiza que aquí el perfil ya existe.
   const { perfil } = usePerfil()
+  const { moneda, convertir, formatear } = useMoneda()
+
+  // Mientras no hay tasas, convertir() devuelve null: los montos se quedan en pesos.
+  const hayConversion = convertir(1, 'COP') !== null
+  const monedaVisible = hayConversion ? moneda : 'COP'
+  const aMonedaElegida = (valor) => convertir(valor, 'COP') ?? valor
+  // Estable mientras no cambie la moneda, para que los contadores no reinicien sin motivo.
+  const formatoMoneda = useCallback((valor) => formatearMoneda(valor, monedaVisible), [monedaVisible])
 
   return (
     <div className="space-y-10">
@@ -104,7 +117,7 @@ function Inicio() {
 
       {/* Resumen con contadores */}
       <section className="grid gap-4 sm:grid-cols-3">
-        {armarResumen(perfil.ahorroMensual).map(({ titulo, valor, formato, Icono, color }, i) => (
+        {armarResumen(perfil.ahorroMensual, aMonedaElegida, formatoMoneda).map(({ titulo, valor, formato, Icono, color }, i) => (
           <Aparecer key={titulo} orden={i}>
             <TarjetaInteractiva className="p-6" inclinacion={6}>
               <Icono className={`size-7 ${color}`} />
@@ -134,7 +147,7 @@ function Inicio() {
                 </div>
 
                 <h3 className="mt-5 font-titulo text-lg font-semibold">{antojo.nombre}</h3>
-                <p className="font-titulo text-2xl font-bold text-menta">{formatearMoneda(antojo.precio)}</p>
+                <p className="font-titulo text-2xl font-bold text-menta">{formatear(antojo.precio, 'COP')}</p>
 
                 <div className="mt-5 space-y-2">
                   <div className="flex justify-between text-sm">
