@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<title>Alcanza · Documentación del backend</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<!--
+  Fuente del PDF "ALCANZA_documentacion_backend.pdf".
+  Para regenerarlo (Windows, con Microsoft Edge):
+  & "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --headless --disable-gpu --no-pdf-header-footer --virtual-time-budget=15000 --print-to-pdf="ALCANZA_documentacion_backend.pdf" "docs/documento-backend.html"
+-->
+<style>
+  @page { size: Letter; margin: 0; }
+  :root {
+    --violeta: #7c3aed; --menta: #10b981; --rosa: #ec4899; --amarillo: #facc15;
+    --fondo: #fafaf9; --noche: #0f172a; --tinta: #1e293b; --suave: #64748b; --borde: #e5e7eb;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { font-family: Inter, sans-serif; color: var(--tinta); font-size: 12.5px; line-height: 1.5; background: #ccc; }
+  b, strong { font-weight: 600; color: #0f172a; }
+  /* Sin ligaduras: que "=>" y "->" se vean tal como se escriben en el código */
+  code, pre, .arbol { font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0; }
+  code { font-family: "JetBrains Mono", monospace; font-size: 10.5px; color: #6d28d9; background: #f3e8ff; padding: 1px 4px; border-radius: 4px; }
+
+  .pagina { position: relative; width: 816px; height: 1056px; margin: 0 auto; overflow: hidden; background: var(--fondo); padding: 54px 72px 0; page-break-after: always; break-after: page; }
+  .pagina:last-child { page-break-after: auto; break-after: auto; }
+  .pagina::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 6px; background: linear-gradient(90deg, var(--violeta), var(--rosa), #fb923c, var(--amarillo)); }
+  .pie { position: absolute; left: 72px; right: 72px; bottom: 40px; display: flex; justify-content: space-between; border-top: 1px solid var(--borde); padding-top: 9px; font-size: 10.5px; color: var(--suave); }
+
+  .portada { background: var(--noche); color: #e2e8f0; padding: 96px 86px 0; }
+  .portada::before { display: none; }
+  .luz { position: absolute; border-radius: 50%; }
+  .chip-portada { display: inline-block; font-family: Poppins; font-weight: 600; font-size: 11px; letter-spacing: .08em; color: #fff; padding: 6px 16px; border-radius: 999px; background: linear-gradient(90deg, var(--menta), var(--violeta)); }
+  .logo { display: inline-block; margin-top: 200px; padding-bottom: 6px; font-family: Poppins; font-weight: 800; font-size: 96px; line-height: 1; letter-spacing: -2px; background: linear-gradient(90deg, #a78bfa, var(--rosa), #fb923c, var(--amarillo)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .portada h2 { margin-top: 18px; font-family: Poppins; font-weight: 600; font-size: 24px; color: #e2e8f0; }
+  .portada .lema { margin-top: 16px; max-width: 520px; font-size: 15px; color: #94a3b8; }
+  .datos { position: absolute; left: 86px; right: 86px; bottom: 96px; display: grid; grid-template-columns: 1.4fr 1.1fr 1.1fr; gap: 20px; border-top: 1px solid #334155; padding-top: 26px; }
+  .datos small { display: block; font-size: 12px; color: #94a3b8; }
+  .datos b { color: #fff; font-size: 14px; }
+
+  .seccion { display: flex; align-items: center; gap: 12px; margin: 0 0 12px; }
+  .num { display: grid; place-items: center; min-width: 30px; height: 30px; padding: 0 6px; border-radius: 8px; color: #fff; font-family: Poppins; font-weight: 700; font-size: 14px; background: linear-gradient(135deg, var(--menta), var(--violeta)); }
+  .seccion h1 { font-family: Poppins; font-weight: 700; font-size: 22px; color: #0f172a; letter-spacing: -.3px; }
+  h3 { font-family: Poppins; font-weight: 600; font-size: 14px; color: var(--violeta); margin: 14px 0 6px; }
+  p + p { margin-top: 7px; }
+  .bloque { margin-top: 24px; }
+
+  .destacado { border: 1px solid #ddd6fe; border-radius: 14px; padding: 12px 18px; background: linear-gradient(120deg, #ecfdf5, #f5f3ff); margin-bottom: 10px; }
+  .tarjeta { background: #fff; border: 1px solid var(--borde); border-radius: 14px; padding: 12px 16px; box-shadow: 0 2px 8px rgba(15,23,42,.04); }
+  .tarjeta b.t { display: block; font-family: Poppins; font-size: 13px; margin-bottom: 2px; }
+  .rejilla2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .rejilla3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+
+  ul.lista { list-style: none; }
+  ul.lista li { position: relative; padding-left: 16px; margin-bottom: 3px; }
+  ul.lista li::before { content: ""; position: absolute; left: 2px; top: 7px; width: 6px; height: 6px; border-radius: 50%; background: var(--violeta); }
+  ol.pasos { list-style: none; counter-reset: paso; }
+  ol.pasos > li { counter-increment: paso; position: relative; padding-left: 30px; margin-bottom: 8px; }
+  ol.pasos > li::before { content: counter(paso); position: absolute; left: 0; top: 0; width: 20px; height: 20px; border-radius: 6px; display: grid; place-items: center; font-family: Poppins; font-weight: 700; font-size: 11px; color: #fff; background: linear-gradient(135deg, var(--menta), var(--violeta)); }
+  ol.pasos pre { margin-top: 5px; }
+
+  table { width: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid var(--borde); border-radius: 12px; overflow: hidden; font-size: 11.5px; }
+  th { background: var(--noche); color: #fff; font-family: Poppins; font-weight: 600; text-align: left; padding: 8px 12px; font-size: 11px; }
+  td { padding: 6px 12px; vertical-align: top; border-top: 1px solid var(--borde); line-height: 1.4; }
+  tr:nth-child(even) td { background: #f0fdf4; }
+  tr:nth-child(odd) td { background: #fff; }
+  td:first-child { font-weight: 600; color: #0f172a; }
+  td code { white-space: nowrap; }
+
+  pre { font-family: "JetBrains Mono", monospace; font-size: 10.5px; line-height: 1.55; background: var(--noche); color: #e2e8f0; border-radius: 12px; padding: 11px 16px; white-space: pre; overflow: hidden; }
+  pre .c { color: #94a3b8; } pre .k { color: #c4b5fd; } pre .s { color: #6ee7b7; } pre .f { color: #f9a8d4; } pre .p { color: #fde047; }
+
+  .arbol { font-family: "JetBrains Mono", monospace; font-size: 10.5px; line-height: 1.6; background: #fff; border: 1px solid var(--borde); border-radius: 12px; padding: 12px 16px; white-space: pre; }
+  .arbol .d { color: var(--violeta); font-weight: 500; } .arbol .x { color: var(--suave); font-family: Inter; }
+
+  .nota { margin-top: 10px; border-left: 4px solid var(--amarillo); background: #fefce8; border-radius: 0 10px 10px 0; padding: 10px 14px; font-size: 11.5px; }
+  .alerta { margin-top: 10px; border-left: 4px solid var(--rosa); background: #fdf2f8; border-radius: 0 10px 10px 0; padding: 10px 14px; font-size: 11.5px; }
+
+  .flujo { display: flex; align-items: stretch; }
+  .caja { flex: 1; background: #fff; border: 1.5px solid #ddd6fe; border-radius: 12px; padding: 10px; text-align: center; font-size: 11px; line-height: 1.35; }
+  .caja b { display: block; font-family: Poppins; font-size: 12px; color: var(--violeta); margin-bottom: 3px; }
+  .caja.menta { border-color: #a7f3d0; } .caja.menta b { color: #059669; }
+  .caja.rosa { border-color: #fbcfe8; } .caja.rosa b { color: #db2777; }
+  .caja.amarillo { border-color: #fde68a; } .caja.amarillo b { color: #b45309; }
+  .caja.noche { background: var(--noche); border-color: var(--noche); color: #cbd5e1; } .caja.noche b { color: #fff; }
+  .flecha { display: grid; place-items: center; width: 20px; color: var(--violeta); font-weight: 700; font-size: 15px; }
+
+  .tabla-bd { border: 1.5px solid #a7f3d0; border-radius: 12px; overflow: hidden; background: #fff; font-size: 11px; }
+  .tabla-bd .cab { background: var(--menta); color: #fff; font-family: Poppins; font-weight: 600; padding: 6px 12px; font-size: 12px; }
+  .tabla-bd div.f { padding: 3px 12px; border-top: 1px solid #ecfdf5; display: flex; justify-content: space-between; gap: 8px; }
+  .tabla-bd div.f span:last-child { color: var(--suave); font-family: "JetBrains Mono", monospace; font-size: 10px; }
+  .tabla-bd .pk { font-weight: 700; } .tabla-bd .fk { color: #db2777; font-weight: 600; }
+  .relacion { display: grid; place-items: center; font-family: Poppins; font-size: 11px; color: var(--rosa); font-weight: 600; text-align: center; }
+
+  .metodo { display: inline-block; min-width: 48px; text-align: center; color: #fff; font-family: Poppins; font-weight: 600; font-size: 10px; padding: 2px 7px; border-radius: 6px; }
+  .get { background: var(--menta); } .post { background: var(--violeta); } .put { background: #f59e0b; } .delete { background: var(--rosa); }
+</style>
+</head>
+<body>
+
+<!-- 1 · Portada -->
+<section class="pagina portada">
+  <div class="luz" style="width:620px;height:620px;right:-230px;top:-200px;background:radial-gradient(circle, rgba(16,185,129,.6), rgba(16,185,129,.14) 45%, transparent 70%)"></div>
+  <div class="luz" style="width:440px;height:440px;left:-250px;top:520px;background:radial-gradient(circle, rgba(124,58,237,.55), rgba(124,58,237,.12) 45%, transparent 70%)"></div>
+  <div class="luz" style="width:230px;height:230px;right:70px;top:580px;background:radial-gradient(circle, rgba(250,204,21,.45), rgba(250,204,21,.1) 45%, transparent 70%)"></div>
+  <div style="position:relative">
+    <span class="chip-portada">DOCUMENTACIÓN DEL BACKEND · LARAVEL + MYSQL</span>
+    <div class="logo">Alcanza</div>
+    <h2>El backend, paso a paso</h2>
+    <p class="lema">Cómo se instaló, cómo está construido y cómo se prueba la API que guarda el perfil, las metas y los abonos en la base de datos <b style="color:#fff">data_alcanza</b>.</p>
+  </div>
+  <div class="datos">
+    <div><small>Autor</small><b>Harold Alexander Ceballos Henao</b></div>
+    <div><small>Módulo</small><b>Creación de páginas web 2</b></div>
+    <div><small>Fecha</small><b>7 de noviembre de 2026</b></div>
+  </div>
+</section>
+
+<!-- 2 · Qué es y tecnologías -->
+<section class="pagina">
+  <div class="seccion"><span class="num">1</span><h1>¿Qué es el backend de Alcanza?</h1></div>
+  <div class="destacado">Es una <b>API REST</b> hecha con <b>Laravel 13</b>. Recibe peticiones del frontend de React, valida los datos, aplica las reglas de negocio (por ejemplo, marcar una meta como cumplida) y guarda todo en una base de datos <b>MySQL</b>. Responde siempre en formato <b>JSON</b>.</div>
+  <p>Gracias al backend, el perfil, las metas y los abonos <b>quedan guardados de forma permanente</b> y no dependen del navegador. El código vive en una carpeta aparte del frontend, <code>~/alcanza-api</code>, dentro de Ubuntu (WSL), y tiene su propio repositorio de Git.</p>
+
+  <h3>Tecnologías</h3>
+  <table>
+    <tr><th style="width:26%">Herramienta</th><th>Para qué se usa</th></tr>
+    <tr><td>Laravel 13 (PHP 8.5)</td><td>Framework que crea la API: rutas, controladores, validación y acceso a la base de datos con Eloquent.</td></tr>
+    <tr><td>MySQL 8.4</td><td>Base de datos <code>data_alcanza</code> con las tablas <code>perfiles</code>, <code>metas</code> y <code>abonos</code>.</td></tr>
+    <tr><td>Laravel Sail</td><td>Corre Laravel y MySQL en <b>contenedores de Docker</b>. No hace falta instalar PHP, Composer ni MySQL en Windows.</td></tr>
+    <tr><td>Docker (en Ubuntu)</td><td>Motor de contenedores instalado dentro de Ubuntu en WSL 2.</td></tr>
+    <tr><td>WSL 2 + Ubuntu 24.04</td><td>Linux dentro de Windows. Laravel recomienda trabajar ahí porque Sail es mucho más rápido.</td></tr>
+    <tr><td>Laravel Sanctum</td><td>Viene con las rutas de API. Queda listo por si más adelante se agrega inicio de sesión.</td></tr>
+    <tr><td>Postman + Newman</td><td>Probar cada ruta. Newman es la versión de consola de Postman y corre toda la colección con un comando.</td></tr>
+  </table>
+
+  <div class="bloque">
+    <div class="seccion"><span class="num">2</span><h1>Cómo viaja una petición</h1></div>
+    <div class="flujo">
+      <div class="caja rosa"><b>React</b>Axios envía JSON</div>
+      <div class="flecha">→</div>
+      <div class="caja"><b>Ruta</b>routes/api.php</div>
+      <div class="flecha">→</div>
+      <div class="caja amarillo"><b>Form Request</b>Valida los datos</div>
+      <div class="flecha">→</div>
+      <div class="caja"><b>Controlador</b>Recibe y responde</div>
+      <div class="flecha">→</div>
+      <div class="caja menta"><b>Servicio</b>Reglas de negocio</div>
+      <div class="flecha">→</div>
+      <div class="caja"><b>Repositorio</b>Consulta con Eloquent</div>
+      <div class="flecha">→</div>
+      <div class="caja noche"><b>MySQL</b>data_alcanza</div>
+    </div>
+    <p style="margin-top:10px">Es la <b>misma arquitectura vista en clase</b>: cada capa hace una sola cosa. Si los datos no pasan la validación, el Form Request responde <code>422</code> y la petición nunca llega al controlador. La respuesta recorre el camino de vuelta y llega a React como JSON.</p>
+  </div>
+  <div class="pie"><span>ALCANZA · Documentación del backend</span><span>2</span></div>
+</section>
+
+<!-- 3 · Encender el backend -->
+<section class="pagina">
+  <div class="seccion"><span class="num">3</span><h1>Paso a paso: encender el backend</h1></div>
+  <p style="margin-bottom:10px">Esto es lo que se hace cada vez que se va a trabajar o a mostrar la app.</p>
+  <ol class="pasos">
+    <li><b>Abrir una terminal de Ubuntu</b> (en Windows: menú Inicio → "Ubuntu", o en VS Code una terminal WSL).</li>
+    <li><b>Entrar a la carpeta del proyecto y levantar los contenedores:</b>
+<pre>cd ~/alcanza-api
+./vendor/bin/sail up</pre>
+      Se deja esa terminal abierta: ahí aparecen los mensajes de Laravel y MySQL.</li>
+    <li><b>Comprobar que Laravel responde:</b> abrir <code>http://localhost/up</code> en el navegador. Debe salir una página de "Application up".</li>
+    <li><b>Comprobar la API:</b> abrir <code>http://localhost/api/perfil</code>. Debe salir el perfil en JSON (o un <code>404</code> si todavía no se ha creado).</li>
+    <li><b>Encender el frontend</b> en otra terminal (en la carpeta de React): <code>npm run dev</code>, y abrir <code>http://localhost:5173</code>.</li>
+    <li><b>Para apagar:</b> <code>Ctrl + C</code> en la terminal de Sail, o desde otra terminal <code>./vendor/bin/sail stop</code>. Los datos de MySQL <b>no se borran</b> al apagar.</li>
+  </ol>
+
+  <div class="alerta"><b>¿Por qué <code>sail up</code> sin <code>-d</code>?</b> Docker está instalado <b>dentro de Ubuntu</b>. Cuando no hay ningún programa usando WSL, Windows lo "duerme" y los contenedores se apagan solos. Dejar <code>sail up</code> corriendo en una terminal mantiene WSL despierto. Con <code>sail up -d</code> (en segundo plano) funciona, pero puede apagarse al rato.</div>
+
+  <h3>Direcciones y puertos</h3>
+  <table>
+    <tr><th style="width:30%">Servicio</th><th style="width:30%">Dirección</th><th>Notas</th></tr>
+    <tr><td>API de Laravel</td><td><code>http://localhost/api</code></td><td>Puerto 80. Es lo que usa React (<code>VITE_API_URL</code>).</td></tr>
+    <tr><td>Chequeo de salud</td><td><code>http://localhost/up</code></td><td>Responde 200 si Laravel está arriba.</td></tr>
+    <tr><td>MySQL</td><td><code>localhost:3306</code></td><td>Usuario <code>sail</code>, base <code>data_alcanza</code>.</td></tr>
+    <tr><td>Frontend (React)</td><td><code>http://localhost:5173</code></td><td>El Vite de Laravel se movió al 5175 para no chocar.</td></tr>
+  </table>
+  <div class="pie"><span>ALCANZA · Documentación del backend</span><span>3</span></div>
+</section>
+
+<!-- 4 · Cómo se creó -->
+<section class="pagina">
+  <div class="seccion"><span class="num">4</span><h1>Paso a paso: cómo se creó el proyecto</h1></div>
+  <p style="margin-bottom:10px">Estos pasos ya están hechos; quedan documentados para poder repetirlos en otro computador.</p>
+  <ol class="pasos">
+    <li><b>Crear Laravel con Sail y MySQL.</b> Normalmente se usa <code>curl -s "https://laravel.build/alcanza-api?with=mysql" | bash</code>, pero ese script termina pidiendo la contraseña de <code>sudo</code>. Se hizo lo mismo con un contenedor que trabaja con el usuario de Ubuntu, así no hace falta <code>sudo</code>:
+<pre>docker run --rm -u "$(id -u):$(id -g)" -e HOME=/tmp -e COMPOSER_HOME=/tmp/composer \
+  -v "$HOME":/opt -w /opt laravelsail/php84-composer:latest \
+  bash -c "laravel new alcanza-api --no-interaction &amp;&amp; cd alcanza-api \
+  &amp;&amp; php ./artisan sail:install --with=mysql"</pre></li>
+    <li><b>Configurar el <code>.env</code></b> (el archivo de configuración, que no se sube a Git):
+<pre><span class="p">APP_NAME</span>=Alcanza
+<span class="p">DB_DATABASE</span>=data_alcanza
+<span class="p">VITE_PORT</span>=5175                <span class="c"># libera el 5173 para React</span>
+<span class="p">FRONTEND_URLS</span>=http://localhost:5173,http://localhost:5180</pre></li>
+    <li><b>Levantar los contenedores:</b> <code>./vendor/bin/sail up -d</code>. Solo hay dos: <code>laravel.test</code> (PHP) y <code>mysql</code>.</li>
+    <li><b>Activar las rutas de API</b> (igual que en el proyecto de clase): <code>./vendor/bin/sail artisan install:api</code>. Crea <code>routes/api.php</code> e instala Sanctum. Se agregó el trait <code>HasApiTokens</code> al modelo <code>User</code>.</li>
+    <li><b>Configurar CORS</b> para que el navegador deje a React hablar con la API: <code>./vendor/bin/sail artisan config:publish cors</code> y, en <code>config/cors.php</code>, permitir solo las direcciones de <code>FRONTEND_URLS</code>.</li>
+    <li><b>Crear las migraciones, modelos, repositorios, servicios, Form Requests, controladores y rutas</b> (secciones 7 a 10) y ejecutar <code>./vendor/bin/sail artisan migrate</code>.</li>
+    <li><b>Crear la colección de Postman</b> en la carpeta <code>postman/</code> y probarla con Newman (sección 13).</li>
+    <li><b>Iniciar Git</b> en <code>~/alcanza-api</code> y guardar cada avance con un commit.</li>
+  </ol>
+  <div class="nota"><b>Errores en JSON:</b> en <code>bootstrap/app.php</code>, Laravel 13 ya trae configurado que las rutas <code>api/*</code> respondan los errores (404, 422, 500) en JSON y no como página HTML.</div>
+  <div class="pie"><span>ALCANZA · Documentación del backend</span><span>4</span></div>
+</section>
+
+<!-- 5 · Carpetas y base de datos -->
+<section class="pagina">
+  <div class="seccion"><span class="num">5</span><h1>Dónde está cada cosa</h1></div>
+<div class="arbol"><span class="d">~/alcanza-api/</span>
+├─ <span class="d">app/Http/Controllers/</span>   <span class="x">PerfilController, MetasController, AbonosController</span>
+├─ <span class="d">app/Http/Requests/</span>      <span class="x">PerfilRequest, MetaStoreRequest, MetaUpdateRequest, AbonoStoreRequest</span>
+├─ <span class="d">app/Models/</span>             <span class="x">Perfil, Meta, Abono (y User, de Laravel)</span>
+├─ <span class="d">app/Repositories/</span>       <span class="x">PerfilRepository, MetaRepository, AbonoRepository</span>
+│  └─ <span class="d">Contracts/</span>           <span class="x">Las tres interfaces de los repositorios</span>
+├─ <span class="d">app/Services/</span>           <span class="x">PerfilService, MetaService, AbonoService</span>
+├─ <span class="d">app/Providers/</span>          <span class="x">AppServiceProvider: une cada interfaz con su repositorio</span>
+├─ <span class="d">database/migrations/</span>    <span class="x">Creación de las tablas perfiles, metas y abonos</span>
+├─ <span class="d">routes/api.php</span>          <span class="x">Las rutas de la API</span>
+├─ <span class="d">config/cors.php</span>         <span class="x">Qué direcciones pueden usar la API desde el navegador</span>
+├─ <span class="d">postman/</span>                <span class="x">Colección y entorno de Postman</span>
+├─ compose.yaml            <span class="x">Los contenedores de Sail (laravel.test y mysql)</span>
+└─ .env                    <span class="x">Configuración local (no se sube a Git)</span></div>
+
+  <div class="bloque">
+    <div class="seccion"><span class="num">6</span><h1>La base de datos <code style="font-size:18px">data_alcanza</code></h1></div>
+    <div style="display:grid; grid-template-columns: 1fr 70px 1.25fr 70px 1fr; align-items:center; gap:0">
+      <div class="tabla-bd"><div class="cab">perfiles</div>
+        <div class="f pk"><span>id</span><span>bigint</span></div>
+        <div class="f"><span>nombre</span><span>varchar(40)</span></div>
+        <div class="f"><span>ahorro_mensual</span><span>decimal</span></div>
+        <div class="f"><span>timestamps</span><span>fechas</span></div></div>
+      <div class="relacion">1 ──&lt; N<br>tiene metas</div>
+      <div class="tabla-bd"><div class="cab">metas</div>
+        <div class="f pk"><span>id</span><span>bigint</span></div>
+        <div class="f fk"><span>perfil_id → perfiles</span><span>bigint</span></div>
+        <div class="f"><span>producto_id</span><span>varchar(40)</span></div>
+        <div class="f"><span>nombre_producto</span><span>varchar</span></div>
+        <div class="f"><span>imagen</span><span>varchar · null</span></div>
+        <div class="f"><span>precio</span><span>decimal(14,2)</span></div>
+        <div class="f"><span>moneda</span><span>char(3) · COP</span></div>
+        <div class="f"><span>descuento</span><span>tinyint · 0</span></div>
+        <div class="f"><span>fecha_estimada</span><span>date · null</span></div>
+        <div class="f"><span>estado</span><span>enum</span></div>
+        <div class="f"><span>timestamps</span><span>fechas</span></div></div>
+      <div class="relacion">1 ──&lt; N<br>tiene abonos</div>
+      <div class="tabla-bd"><div class="cab">abonos</div>
+        <div class="f pk"><span>id</span><span>bigint</span></div>
+        <div class="f fk"><span>meta_id → metas</span><span>bigint</span></div>
+        <div class="f"><span>monto</span><span>decimal(14,2)</span></div>
+        <div class="f"><span>fecha</span><span>date</span></div>
+        <div class="f"><span>timestamps</span><span>fechas</span></div></div>
+    </div>
+    <ul class="lista" style="margin-top:12px">
+      <li><b>Llaves foráneas en cascada:</b> si se borra una meta, se borran sus abonos; si se borra un perfil, se borran sus metas.</li>
+      <li><b>Montos en pesos:</b> el ahorro se guarda en COP y las metas también; los abonos van en la moneda de su meta. El frontend convierte a USD o EUR solo para mostrar.</li>
+      <li><b><code>estado</code></b> solo acepta <code>en_progreso</code> o <code>cumplida</code>, y lo calcula el servidor, no el usuario.</li>
+      <li><b>Un solo perfil:</b> la app no tiene registro, así que trabaja con el primer perfil de la tabla.</li>
+    </ul>
+  </div>
+  <div class="pie"><span>ALCANZA · Documentación del backend</span><span>5</span></div>
+</section>
+
+<!-- 6 · Migración y modelo -->
+<section class="pagina">
+  <div class="seccion"><span class="num">7</span><h1>Migraciones y modelos</h1></div>
+  <p>Una <b>migración</b> describe cómo crear una tabla con código PHP. Así la base de datos se puede reconstruir en cualquier computador con <code>sail artisan migrate</code>. Las tres migraciones tienen fechas fijas en el nombre (<code>2026_11_04_000001</code>, <code>…02</code>, <code>…03</code>) para que se ejecuten en orden: primero <code>perfiles</code>, luego <code>metas</code> y al final <code>abonos</code>, porque cada una depende de la anterior.</p>
+<pre><span class="c">// database/migrations/2026_11_04_000002_create_metas_table.php</span>
+Schema::<span class="f">create</span>(<span class="s">'metas'</span>, <span class="k">function</span> (Blueprint $table) {
+    $table-&gt;<span class="f">id</span>();
+    $table-&gt;<span class="f">foreignId</span>(<span class="s">'perfil_id'</span>)-&gt;<span class="f">constrained</span>(<span class="s">'perfiles'</span>)-&gt;<span class="f">cascadeOnDelete</span>();
+    $table-&gt;<span class="f">string</span>(<span class="s">'producto_id'</span>, 40);           <span class="c">// "78" o "ent-2" (catálogo del frontend)</span>
+    $table-&gt;<span class="f">decimal</span>(<span class="s">'precio'</span>, 14, 2);
+    $table-&gt;<span class="f">unsignedTinyInteger</span>(<span class="s">'descuento'</span>)-&gt;<span class="f">default</span>(0);
+    $table-&gt;<span class="f">enum</span>(<span class="s">'estado'</span>, [<span class="s">'en_progreso'</span>, <span class="s">'cumplida'</span>])-&gt;<span class="f">default</span>(<span class="s">'en_progreso'</span>);
+    <span class="c">// … nombre_producto, imagen, moneda, fecha_estimada y timestamps</span>
+});</pre>
+
+  <h3>El modelo <code>Meta</code>: columnas, relaciones y valores calculados</h3>
+  <p>El <b>modelo</b> representa una fila de la tabla. Además de sus columnas, <code>Meta</code> entrega tres valores que no se guardan: se calculan cada vez con <b>accessors</b> y se agregan al JSON con <code>$appends</code>.</p>
+<pre><span class="k">class</span> Meta <span class="k">extends</span> Model
+{
+    <span class="k">protected</span> $table = <span class="s">'metas'</span>;
+    <span class="k">protected</span> $fillable = [<span class="s">'perfil_id'</span>, <span class="s">'producto_id'</span>, <span class="s">'precio'</span>, <span class="s">'descuento'</span>, <span class="s">'estado'</span>, <span class="c">/* … */</span>];
+    <span class="k">protected</span> $appends = [<span class="s">'precio_final'</span>, <span class="s">'ahorrado'</span>, <span class="s">'progreso'</span>];
+
+    <span class="k">public function</span> <span class="f">abonos</span>(): HasMany { <span class="k">return</span> $this-&gt;<span class="f">hasMany</span>(Abono::<span class="k">class</span>); }
+
+    <span class="c">// precio_final = precio con el descuento aplicado</span>
+    <span class="k">protected function</span> <span class="f">precioFinal</span>(): Attribute
+    {
+        <span class="k">return</span> Attribute::<span class="f">get</span>(<span class="k">fn</span> () =&gt; <span class="f">round</span>($this-&gt;precio * (1 - $this-&gt;descuento / 100), 2));
+    }
+    <span class="c">// ahorrado = suma de los abonos · progreso = ahorrado / precio_final × 100 (máximo 100)</span>
+}</pre>
+  <ul class="lista" style="margin-top:8px">
+    <li><b><code>$table</code> en <code>Perfil</code>:</b> Laravel adivinaría la tabla "perfils"; por eso se indica <code>perfiles</code>.</li>
+    <li><b><code>casts</code>:</b> convierte <code>precio</code> y <code>monto</code> a número, para que la API no los entregue como texto (<code>"6500000.00"</code>).</li>
+    <li><b><code>$hidden</code>:</b> oculta el campo interno <code>abonos_sum_monto</code>, que ya se entrega como <code>ahorrado</code>.</li>
+  </ul>
+  <div class="pie"><span>ALCANZA · Documentación del backend</span><span>6</span></div>
+</section>
+
+<!-- 7 · Repositorios y servicios -->
+<section class="pagina">
+  <div class="seccion"><span class="num">8</span><h1>Repositorios y servicios</h1></div>
+  <div class="rejilla2">
+    <div class="tarjeta"><b class="t" style="color:var(--violeta)">Repositorio</b>Es la <b>única capa que habla con la base de datos</b>. Usa Eloquent (<code>Meta::create</code>, <code>-&gt;update</code>, <code>-&gt;delete</code>). Cada uno tiene una <b>interfaz</b> en <code>Contracts/</code> que dice qué métodos debe tener.</div>
+    <div class="tarjeta"><b class="t" style="color:var(--menta)">Servicio</b>Tiene las <b>reglas de negocio</b>: qué pasa cuando se crea una meta o llega un abono. No sabe de HTTP ni de SQL: recibe datos ya validados y usa el repositorio.</div>
+  </div>
+
+  <h3>Paso clave: unir la interfaz con el repositorio</h3>
+  <p>Los servicios piden la <b>interfaz</b> en su constructor, no la clase. En <code>AppServiceProvider</code> se le dice a Laravel qué clase entregar. Si mañana cambiara la forma de guardar los datos, solo se cambia esta línea:</p>
+<pre><span class="c">// app/Providers/AppServiceProvider.php</span>
+<span class="k">public function</span> <span class="f">register</span>(): <span class="k">void</span>
+{
+    $this-&gt;app-&gt;<span class="f">bind</span>(PerfilRepositoryInterface::<span class="k">class</span>, PerfilRepository::<span class="k">class</span>);
+    $this-&gt;app-&gt;<span class="f">bind</span>(MetaRepositoryInterface::<span class="k">class</span>, MetaRepository::<span class="k">class</span>);
+    $this-&gt;app-&gt;<span class="f">bind</span>(AbonoRepositoryInterface::<span class="k">class</span>, AbonoRepository::<span class="k">class</span>);
+}</pre>
+
+  <h3>La regla más importante: ¿la meta ya se cumplió?</h3>
+<pre><span class="c">// app/Services/MetaService.php</span>
+<span class="k">public function</span> <span class="f">revisarEstado</span>(Meta $meta): Meta
+{
+    $meta-&gt;<span class="f">loadSum</span>(<span class="s">'abonos'</span>, <span class="s">'monto'</span>);   <span class="c">// suma los abonos en una sola consulta</span>
+    $estado = $meta-&gt;ahorrado &gt;= $meta-&gt;precio_final ? Meta::CUMPLIDA : Meta::EN_PROGRESO;
+
+    <span class="k">if</span> ($meta-&gt;estado !== $estado) {
+        $meta = $this-&gt;metaRepository-&gt;<span class="f">update</span>($meta, [<span class="s">'estado'</span> =&gt; $estado]);
+    }
+    <span class="k">return</span> $meta;
+}</pre>
+
+  <h3>Qué hace cada servicio</h3>
+  <table>
+    <tr><th style="width:22%">Servicio</th><th>Métodos y reglas</th></tr>
+    <tr><td>PerfilService</td><td><code>obtener()</code> y <code>guardar()</code>: la primera vez <b>crea</b> el perfil y después lo <b>actualiza</b>. Devuelve si fue creado, para responder 201 o 200.</td></tr>
+    <tr><td>MetaService</td><td><code>listar()</code>, <code>mostrar()</code>, <code>crear()</code> (toda meta empieza <code>en_progreso</code>), <code>actualizar()</code> (vuelve a revisar el estado si cambia el precio o el descuento), <code>eliminar()</code> y <code>revisarEstado()</code>.</td></tr>
+    <tr><td>AbonoService</td><td><code>registrar()</code>: si no llega fecha usa la de hoy, guarda el abono, revisa el estado de la meta y devuelve el abono y la meta actualizada.</td></tr>
+  </table>
+  <div class="pie"><span>ALCANZA · Documentación del backend</span><span>7</span></div>
+</section>
+
+<!-- 8 · Validación y rutas -->
+<section class="pagina">
+  <div class="seccion"><span class="num">9</span><h1>Validación con Form Requests</h1></div>
+  <p style="margin-bottom:8px">Cada Form Request tiene <code>rules()</code> con las reglas y <code>messages()</code> con los mensajes en español. Si algo no cumple, Laravel responde <code>422</code> automáticamente y el controlador nunca se ejecuta.</p>
+  <table>
+    <tr><th style="width:22%">Form Request</th><th>Reglas principales</th></tr>
+    <tr><td>PerfilRequest</td><td><code>nombre</code>: obligatorio, de 2 a 40 letras · <code>ahorro_mensual</code>: número mayor que 0 y hasta 100 millones. Son las mismas reglas que valida React.</td></tr>
+    <tr><td>MetaStoreRequest</td><td><code>perfil_id</code> debe existir en <code>perfiles</code> · <code>precio</code> &gt; 0 · <code>moneda</code> en COP, USD o EUR · <code>descuento</code> de 0 a 100 · <code>imagen</code> debe ser una URL · <code>fecha_estimada</code> no puede ser pasada.</td></tr>
+    <tr><td>MetaUpdateRequest</td><td>Igual, pero con <code>sometimes</code>: se envía solo lo que cambia. No permite cambiar el perfil, el producto ni el estado.</td></tr>
+    <tr><td>AbonoStoreRequest</td><td><code>monto</code> &gt; 0 · <code>fecha</code> opcional y no futura.</td></tr>
+  </table>
+<pre style="margin-top:8px"><span class="c">// Respuesta real de POST /api/perfil con datos vacíos → 422</span>
+{ <span class="s">"message"</span>: <span class="s">"Escribe tu nombre. (and 1 more error)"</span>,
+  <span class="s">"errors"</span>: { <span class="s">"nombre"</span>: [<span class="s">"Escribe tu nombre."</span>],
+              <span class="s">"ahorro_mensual"</span>: [<span class="s">"El ahorro debe ser mayor que cero."</span>] } }</pre>
+
+  <div class="bloque">
+    <div class="seccion"><span class="num">10</span><h1>Rutas de la API</h1></div>
+<pre><span class="c">// routes/api.php</span>
+Route::<span class="f">get</span>(<span class="s">'perfil'</span>, [PerfilController::<span class="k">class</span>, <span class="s">'show'</span>]);
+Route::<span class="f">post</span>(<span class="s">'perfil'</span>, [PerfilController::<span class="k">class</span>, <span class="s">'store'</span>]);
+Route::<span class="f">apiResource</span>(<span class="s">'metas'</span>, MetasController::<span class="k">class</span>);   <span class="c">// las 5 rutas del CRUD</span>
+Route::<span class="f">post</span>(<span class="s">'metas/{meta}/abonos'</span>, [AbonosController::<span class="k">class</span>, <span class="s">'store'</span>]);</pre>
+    <table style="margin-top:8px">
+      <tr><th style="width:12%">Método</th><th style="width:28%">Ruta</th><th>Qué hace</th><th style="width:22%">Respuestas</th></tr>
+      <tr><td><span class="metodo get">GET</span></td><td><code>/api/perfil</code></td><td>Consulta el perfil</td><td>200 · 404 si no hay</td></tr>
+      <tr><td><span class="metodo post">POST</span></td><td><code>/api/perfil</code></td><td>Crea o actualiza el perfil</td><td>201 · 200 · 422</td></tr>
+      <tr><td><span class="metodo get">GET</span></td><td><code>/api/metas</code></td><td>Lista las metas con su progreso</td><td>200</td></tr>
+      <tr><td><span class="metodo post">POST</span></td><td><code>/api/metas</code></td><td>Convierte un antojo en meta</td><td>201 · 422</td></tr>
+      <tr><td><span class="metodo get">GET</span></td><td><code>/api/metas/{id}</code></td><td>Una meta con sus abonos</td><td>200 · 404</td></tr>
+      <tr><td><span class="metodo put">PUT</span></td><td><code>/api/metas/{id}</code></td><td>Cambia precio, descuento, etc.</td><td>200 · 404 · 422</td></tr>
+      <tr><td><span class="metodo delete">DELETE</span></td><td><code>/api/metas/{id}</code></td><td>Elimina la meta y sus abonos</td><td>204 · 404</td></tr>
+      <tr><td><span class="metodo post">POST</span></td><td><code>/api/metas/{id}/abonos</code></td><td>Registra un abono</td><td>201 · 404 · 422</td></tr>
+    </table>
+    <p style="margin-top:8px"><code>apiResource</code> crea solo las rutas de una API, sin los formularios <code>create</code> y <code>edit</code> del modelo vista controlador. El <code>404</code> de una meta que no existe lo da Laravel solo, gracias al <b>route model binding</b> (<code>show(Meta $meta)</code>).</p>
+  </div>
+  <div class="pie"><span>ALCANZA · Documentación del backend</span><span>8</span></div>
+</section>
+
+<!-- 9 · Ejemplos y conexión con React -->
+<section class="pagina">
+  <div class="seccion"><span class="num">11</span><h1>Ejemplo real: una meta en JSON</h1></div>
+  <p style="margin-bottom:8px">Respuesta real de <code>GET /api/metas</code> con la meta de prueba del MacBook (sin las fechas de creación):</p>
+<pre>[{
+  <span class="s">"id"</span>: 4,  <span class="s">"perfil_id"</span>: 2,  <span class="s">"producto_id"</span>: <span class="s">"78"</span>,
+  <span class="s">"nombre_producto"</span>: <span class="s">"Apple MacBook Pro 14 Inch Space Grey"</span>,
+  <span class="s">"imagen"</span>: <span class="s">"https://cdn.dummyjson.com/product-images/laptops/…/thumbnail.webp"</span>,
+  <span class="s">"precio"</span>: 6442590,  <span class="s">"moneda"</span>: <span class="s">"COP"</span>,  <span class="s">"descuento"</span>: 5,
+  <span class="s">"fecha_estimada"</span>: <span class="s">"2028-05-01"</span>,  <span class="s">"estado"</span>: <span class="s">"cumplida"</span>,
+  <span class="s">"precio_final"</span>: 6120460.5,   <span class="c">// calculado: 6.442.590 × (1 − 0,05)</span>
+  <span class="s">"ahorrado"</span>: 6500000,         <span class="c">// calculado: suma de los dos abonos</span>
+  <span class="s">"progreso"</span>: 100               <span class="c">// calculado: no pasa de 100</span>
+}]</pre>
+
+  <div class="bloque">
+    <div class="seccion"><span class="num">12</span><h1>Conexión con el frontend</h1></div>
+    <ol class="pasos">
+      <li><b>CORS:</b> el navegador bloquea por defecto las peticiones de <code>localhost:5173</code> a <code>localhost</code>, porque son "orígenes" distintos. <code>config/cors.php</code> le dice al navegador que la API acepta esas direcciones.</li>
+      <li><b>Dirección de la API:</b> React la lee de <code>VITE_API_URL</code> en su <code>.env</code> (<code>http://localhost/api</code>).</li>
+      <li><b>Cliente Axios</b> (<code>src/services/api.js</code>): envía siempre <code>Accept: application/json</code> para que Laravel responda los errores en JSON.</li>
+      <li><b>Traducción de nombres:</b> la API usa "snake_case" (<code>ahorro_mensual</code>, <code>precio_final</code>) y React "camelCase" (<code>ahorroMensual</code>, <code>precioFinal</code>). Los servicios <code>perfilService.js</code> y <code>metasService.js</code> traducen en los dos sentidos.</li>
+      <li><b>Errores:</b> un <code>422</code> se muestra junto al campo del formulario; si el backend está apagado, la app muestra "No pudimos conectar con el servidor" con el botón Reintentar.</li>
+    </ol>
+<pre style="margin-top:6px"><span class="c">// src/services/metasService.js (frontend) → POST /api/metas/{id}/abonos</span>
+<span class="k">const</span> { data } = <span class="k">await</span> api.<span class="f">post</span>(<span class="s">`/metas/${metaId}/abonos`</span>, { monto })
+<span class="c">// data.meta.estado === 'cumplida'  →  la página lanza el confeti</span></pre>
+  </div>
+  <div class="pie"><span>ALCANZA · Documentación del backend</span><span>9</span></div>
+</section>
+
+<!-- 10 · Pruebas -->
+<section class="pagina">
+  <div class="seccion"><span class="num">13</span><h1>Paso a paso: probar la API</h1></div>
+  <h3 style="margin-top:0">Opción A · Con Postman (visual)</h3>
+  <ol class="pasos">
+    <li>Abrir Postman → <b>Import</b> → elegir los dos archivos de <code>~/alcanza-api/postman/</code> (desde Windows: <code>\\wsl.localhost\Ubuntu-24.04\home\alex\alcanza-api\postman</code>).</li>
+    <li>Arriba a la derecha, elegir el entorno <b>"alcanza-api local"</b>.</li>
+    <li>Clic derecho en la colección → <b>Run collection</b> → <b>Run</b>. Las peticiones van en orden y cada una revisa su resultado.</li>
+  </ol>
+
+  <h3>Opción B · Con Newman (un solo comando)</h3>
+<pre>cd ~/alcanza-api
+docker run --rm --network alcanza-api_sail -v "$PWD/postman":/etc/newman postman/newman:alpine \
+  run alcanza-api.postman_collection.json -e alcanza-api-local.postman_environment.json \
+  --env-var host=http://laravel.test</pre>
+  <p style="margin-top:6px">Newman corre dentro de la red de Sail y llama a Laravel por su nombre de servicio (<code>laravel.test</code>).</p>
+
+  <h3>Qué prueba la colección (en orden)</h3>
+  <table>
+    <tr><th style="width:18%">Grupo</th><th>Peticiones y comprobaciones</th></tr>
+    <tr><td>0. Salud</td><td><code>/up</code> responde 200 · <code>/api/user</code> sin token responde 401 en JSON.</td></tr>
+    <tr><td>1. Perfil</td><td>Perfil vacío → 422 con los dos errores · guardar → 201 o 200 · consultar → 200.</td></tr>
+    <tr><td>2. Metas</td><td>Meta vacía → 422 · crear con 10 % de descuento → <code>precio_final</code> 900.000 · listar · ver · subir el descuento a 20 % → 800.000 · id inexistente → 404.</td></tr>
+    <tr><td>3. Abonos</td><td>Monto 0 → 422 · abonar 300.000 → 37,5 % y en progreso · abonar 500.000 → 100 % y <b>cumplida</b>.</td></tr>
+    <tr><td>4. Limpieza</td><td>Eliminar → 204 · volver a consultarla → 404.</td></tr>
+  </table>
+  <div class="destacado" style="margin-top:10px"><b>Resultado actual:</b> 16 peticiones y <b>34 comprobaciones aprobadas, 0 fallidas</b>.</div>
+  <div class="alerta"><b>Ojo:</b> la colección guarda el perfil "Harold" con $ 350.000 (prueba el <code>POST /api/perfil</code>), así que <b>reemplaza el perfil real</b>. Las metas que crea sí las borra al final.</div>
+  <div class="pie"><span>ALCANZA · Documentación del backend</span><span>10</span></div>
+</section>
+
+<!-- 11 · Problemas y comandos -->
+<section class="pagina">
+  <div class="seccion"><span class="num">14</span><h1>Problemas comunes y soluciones</h1></div>
+  <table>
+    <tr><th style="width:32%">Síntoma</th><th>Causa y solución</th></tr>
+    <tr><td>"Sail is not running"</td><td>Los contenedores están apagados (WSL se durmió). Ejecutar <code>./vendor/bin/sail up</code> en <code>~/alcanza-api</code>.</td></tr>
+    <tr><td>La app dice "No pudimos conectar con el servidor"</td><td>El backend está apagado. Encenderlo y tocar <b>Reintentar</b>.</td></tr>
+    <tr><td>El puerto 5173 está ocupado</td><td>El Vite de Laravel lo usaba. Se resolvió con <code>VITE_PORT=5175</code> en el <code>.env</code> del backend.</td></tr>
+    <tr><td>Newman: "connect ETIMEDOUT"</td><td>Usar <code>--network alcanza-api_sail</code> y <code>host=http://laravel.test</code>, no <code>host.docker.internal</code> (lo bloquea el firewall de Windows).</td></tr>
+    <tr><td>Error de CORS en la consola del navegador</td><td>La dirección del frontend no está en <code>FRONTEND_URLS</code>. Agregarla en el <code>.env</code> y ejecutar <code>sail artisan config:clear</code>.</td></tr>
+    <tr><td>Los errores salen en inglés</td><td>Agregar el mensaje en <code>messages()</code> del Form Request.</td></tr>
+    <tr><td>Error 500 al crear una meta</td><td>Revisar los registros con <code>./vendor/bin/sail artisan pail</code> o en <code>storage/logs/laravel.log</code>.</td></tr>
+  </table>
+
+  <div class="bloque">
+    <div class="seccion"><span class="num">15</span><h1>Comandos útiles</h1></div>
+    <table>
+      <tr><th style="width:48%">Comando (dentro de <code style="background:none;color:#fff">~/alcanza-api</code>)</th><th>Para qué</th></tr>
+      <tr><td><code>./vendor/bin/sail up</code></td><td>Encender Laravel y MySQL</td></tr>
+      <tr><td><code>./vendor/bin/sail stop</code></td><td>Apagarlos (los datos se conservan)</td></tr>
+      <tr><td><code>./vendor/bin/sail ps</code></td><td>Ver qué contenedores están encendidos</td></tr>
+      <tr><td><code>./vendor/bin/sail artisan migrate</code></td><td>Crear las tablas que falten</td></tr>
+      <tr><td><code>./vendor/bin/sail artisan migrate:status</code></td><td>Ver qué migraciones ya se ejecutaron</td></tr>
+      <tr><td><code>./vendor/bin/sail artisan route:list --path=api</code></td><td>Ver todas las rutas de la API</td></tr>
+      <tr><td><code>./vendor/bin/sail artisan db:show</code></td><td>Ver la base de datos y sus tablas</td></tr>
+      <tr><td><code>./vendor/bin/sail artisan tinker</code></td><td>Consola para probar código (por ejemplo, <code>App\Models\Meta::count()</code>)</td></tr>
+      <tr><td><code>./vendor/bin/sail mysql</code></td><td>Entrar a MySQL y escribir consultas SQL</td></tr>
+      <tr><td><code>code ~/alcanza-api</code></td><td>Abrir el backend en VS Code</td></tr>
+    </table>
+  </div>
+  <div class="pie"><span>ALCANZA · Documentación del backend</span><span>11</span></div>
+</section>
+
+</body>
+</html>
