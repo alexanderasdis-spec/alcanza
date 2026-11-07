@@ -1,8 +1,10 @@
 import { useState } from 'react'
-import { Link, NavLink } from 'react-router-dom'
-import { Menu, X } from 'lucide-react'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { LogOut, Menu, X } from 'lucide-react'
 import BotonTema from './BotonTema'
+import MenuUsuario from './MenuUsuario'
 import SelectorMoneda from './SelectorMoneda'
+import { useAuth } from '../hooks/useAuth'
 
 /**
  * Enlaces del menú principal.
@@ -33,16 +35,26 @@ function clasesEnlace({ isActive }) {
 }
 
 /**
- * Menú superior que comparten todas las páginas: logo, navegación, selector de moneda y botón de modo oscuro.
- * En celular los enlaces se esconden detrás de un botón de menú (hamburguesa).
+ * Menú superior que comparten todas las páginas: logo, navegación, selector de moneda,
+ * botón de modo oscuro y menú del usuario (con "Cerrar sesión").
+ * En celular los enlaces y la sesión se esconden detrás de un botón de menú (hamburguesa).
  *
  * @returns {JSX.Element}
  */
 function Navbar() {
   // Controla si el menú desplegable del celular está abierto.
   const [menuAbierto, setMenuAbierto] = useState(false)
+  const { usuario, cerrarSesion } = useAuth()
+  const navigate = useNavigate()
 
   const cerrarMenu = () => setMenuAbierto(false)
+
+  /** Cierra la sesión desde el menú del celular. */
+  const alSalir = async () => {
+    cerrarMenu()
+    await cerrarSesion()
+    navigate('/ingresar', { replace: true })
+  }
 
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200 bg-fondo/80 backdrop-blur dark:border-slate-800 dark:bg-fondo-oscuro/80">
@@ -69,6 +81,10 @@ function Navbar() {
         <div className="flex items-center gap-1">
           <SelectorMoneda />
           <BotonTema />
+          {/* En computador, el menú del usuario va aquí; en celular, dentro del menú desplegable */}
+          <div className="ml-1 hidden md:block">
+            <MenuUsuario />
+          </div>
           <button
             type="button"
             onClick={() => setMenuAbierto((abierto) => !abierto)}
@@ -91,6 +107,22 @@ function Navbar() {
               </NavLink>
             </li>
           ))}
+          {usuario && (
+            <li className="mt-2 flex items-center justify-between gap-3 border-t border-slate-200 px-4 pt-3 dark:border-slate-800">
+              <span className="min-w-0">
+                <span className="block truncate font-semibold">{usuario.nombre}</span>
+                <span className="block truncate text-sm text-slate-500 dark:text-slate-400">{usuario.email}</span>
+              </span>
+              <button
+                type="button"
+                onClick={alSalir}
+                className="inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium text-rosa transition hover:bg-rosa/10"
+              >
+                <LogOut className="size-4" />
+                Salir
+              </button>
+            </li>
+          )}
         </ul>
       )}
     </header>

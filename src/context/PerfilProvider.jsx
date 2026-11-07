@@ -1,52 +1,44 @@
 import { useCallback, useEffect, useState } from 'react'
 import { PerfilContext } from './perfilContext'
+import { useAuth } from '../hooks/useAuth'
 import * as perfilService from '../services/perfilService'
 
 /**
- * Proveedor del perfil. Carga el perfil desde la API al abrir la app y lo comparte
- * con todos los componentes (por ejemplo, el saludo de Inicio).
+ * Proveedor del perfil del usuario que inició sesión. Lo consulta a la API cuando hay sesión
+ * y lo comparte con todos los componentes (por ejemplo, el saludo de Inicio).
  *
- * No habla directamente con la API: todo pasa por `perfilService`.
- * Si el backend no responde, guarda el error para que `RequierePerfil` muestre
- * un mensaje con el botón "Reintentar" en vez de dejar la pantalla en blanco.
+ * Cada respuesta guarda para qué usuario e intento se pidió: si el usuario cambia
+ * (cerró sesión o entró otro), la respuesta vieja deja de valer y se consulta de nuevo.
+ * Si el backend no responde, guarda el error para que `RequierePerfil` muestre "Reintentar".
  *
  * @param {Object} props
  * @param {import('react').ReactNode} props.children - Componentes que tendrán acceso al perfil.
  * @returns {JSX.Element}
  */
 export function PerfilProvider({ children }) {
-  const [perfil, setPerfil] = useState(null)
-  // Empieza en true: hasta no consultar el servicio no sabemos si hay perfil o no.
-  const [cargando, setCargando] = useState(true)
-  const [error, setError] = useState(null)
+  const { usuario } = useAuth()
+  const usuarioId = usuario?.id ?? null
   // Cambiar este número vuelve a ejecutar la consulta (botón "Reintentar").
   const [intento, setIntento] = useState(0)
+  const [respuesta, setRespuesta] = useState({ usuarioId: null, intento: -1, perfil: null, error: null })
 
   useEffect(() => {
+    if (usuarioId === null) return
     let activo = true
     perfilService
       .obtenerPerfil()
-      .then((guardado) => {
-        // Si el componente se desmontó mientras esperaba, no se actualiza el estado.
-        if (activo) setPerfil(guardado)
-      })
-      .catch((problema) => {
-        if (activo) setError(problema)
-      })
-      .finally(() => {
-        if (activo) setCargando(false)
-      })
+      .then((perfil) => activo && setRespuesta({ usuarioId, intento, perfil, error: null }))
+      .catch((error) => activo && setRespuesta({ usuarioId, intento, perfil: null, error }))
     return () => {
       activo = false
     }
-  }, [intento])
+  }, [usuarioId, intento])
+
+  const vigente = usuarioId !== null && respuesta.usuarioId === usuarioId && respuesta.intento === intento
+  const cargando = usuarioId !== null && !vigente
 
   /** Vuelve a consultar el perfil (por ejemplo, después de encender el backend). */
-  const reintentar = useCallback(() => {
-    setCargando(true)
-    setError(null)
-    setIntento((n) => n + 1)
-  }, [])
+  const reintentar = useCallback(() => setIntento((n) => n + 1), [])
 
   /**
    * Guarda el perfil en la API y actualiza el estado de la app.
@@ -57,12 +49,16 @@ export function PerfilProvider({ children }) {
    */
   const guardarPerfil = async (nuevoPerfil) => {
     const guardado = await perfilService.guardarPerfil(nuevoPerfil)
-    setPerfil(guardado)
+    setRespuesta({ usuarioId, intento, perfil: guardado, error: null })
   }
 
-  return (
-    <PerfilContext.Provider value={{ perfil, cargando, error, reintentar, guardarPerfil }}>
-      {children}
-    </PerfilContext.Provider>
-  )
+  const valor = {
+    perfil: vigente ? respuesta.perfil : null,
+    cargando,
+    error: vigente ? respuesta.error : null,
+    reintentar,
+    guardarPerfil,
+  }
+
+  return <PerfilContext.Provider value={valor}>{children}</PerfilContext.Provider>
 }

@@ -11,8 +11,8 @@ import * as metasService from '../services/metasService'
  * @property {boolean} cargando - `true` mientras se consultan las metas.
  * @property {Error | null} error - Error si la API no respondió.
  * @property {() => void} reintentar - Vuelve a consultar las metas.
- * @property {(antojo: Omit<Parameters<typeof metasService.crearMeta>[0], 'perfilId'>) => Promise<import('../services/metasService').Meta>} crear
- *   Convierte un antojo en meta (el perfil se agrega solo).
+ * @property {(antojo: Parameters<typeof metasService.crearMeta>[0]) => Promise<import('../services/metasService').Meta>} crear
+ *   Convierte un antojo en meta (la API la guarda en el perfil del usuario).
  * @property {(id: number, monto: number) => Promise<{ meta: import('../services/metasService').Meta, recienCumplida: boolean }>} abonar
  *   Registra un abono. `recienCumplida` es `true` si con ese abono la meta llegó al 100 %.
  * @property {(id: number) => Promise<void>} eliminar - Elimina una meta y sus abonos.
@@ -49,7 +49,9 @@ export function MetasProvider({ children }) {
     }
   }, [perfilId, intento])
 
-  const cargando = perfilId !== null && (respuesta.perfilId !== perfilId || respuesta.intento !== intento)
+  // La respuesta solo vale si es del perfil actual: al cerrar sesión (perfil null) no se muestran metas viejas.
+  const vigente = perfilId !== null && respuesta.perfilId === perfilId && respuesta.intento === intento
+  const cargando = perfilId !== null && !vigente
 
   const reintentar = useCallback(() => setIntento((n) => n + 1), [])
 
@@ -57,7 +59,7 @@ export function MetasProvider({ children }) {
   const cambiarMetas = (cambio) => setRespuesta((actual) => ({ ...actual, metas: cambio(actual.metas) }))
 
   const crear = async (antojo) => {
-    const meta = await metasService.crearMeta({ ...antojo, perfilId })
+    const meta = await metasService.crearMeta(antojo)
     cambiarMetas((metas) => [meta, ...metas])
     return meta
   }
@@ -75,9 +77,9 @@ export function MetasProvider({ children }) {
   }
 
   const valor = {
-    metas: cargando ? [] : respuesta.metas,
+    metas: vigente ? respuesta.metas : [],
     cargando,
-    error: cargando ? null : respuesta.error,
+    error: vigente ? respuesta.error : null,
     reintentar,
     crear,
     abonar,

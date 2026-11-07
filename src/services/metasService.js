@@ -85,15 +85,14 @@ export async function obtenerMeta(id) {
 }
 
 /**
- * Convierte un antojo en meta.
+ * Convierte un antojo en meta. La API la guarda en el perfil del usuario que inició sesión.
  *
- * @param {{ perfilId: number, productoId: string, nombreProducto: string, imagen?: string | null,
+ * @param {{ productoId: string, nombreProducto: string, imagen?: string | null,
  *   precio: number, moneda: 'COP' | 'USD' | 'EUR', descuento?: number, fechaEstimada?: string | null }} meta
  * @returns {Promise<Meta>} La meta creada.
  */
 export async function crearMeta(meta) {
   const { data } = await api.post('/metas', {
-    perfil_id: meta.perfilId,
     producto_id: meta.productoId,
     nombre_producto: meta.nombreProducto,
     imagen: meta.imagen ?? null,

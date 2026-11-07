@@ -45,10 +45,11 @@ function MensajeError({ id, mensaje }) {
  * @param {Object} props
  * @param {(perfil: { nombre: string, ahorroMensual: number }) => Promise<void>} props.onGuardar
  *   Se llama con los datos ya limpios y convertidos a número.
+ * @param {string} [props.nombreInicial=''] - Nombre ya escrito (el que el usuario dio al registrarse).
  * @returns {JSX.Element}
  */
-function FormularioPerfil({ onGuardar }) {
-  const [datos, setDatos] = useState(DATOS_INICIALES)
+function FormularioPerfil({ onGuardar, nombreInicial = '' }) {
+  const [datos, setDatos] = useState({ ...DATOS_INICIALES, nombre: nombreInicial })
   const [errores, setErrores] = useState({})
   const [intentoEnviar, setIntentoEnviar] = useState(false)
   const [enviando, setEnviando] = useState(false)

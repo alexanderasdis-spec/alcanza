@@ -4,20 +4,22 @@ import BotonTema from '../components/BotonTema'
 import SinConexion from '../components/SinConexion'
 import FormularioPerfil from '../components/bienvenida/FormularioPerfil'
 import RecorridoBienvenida from '../components/bienvenida/RecorridoBienvenida'
+import { useAuth } from '../hooks/useAuth'
 import { useLocalStorage } from '../hooks/useLocalStorage'
 import { usePerfil } from '../hooks/usePerfil'
 import { TRANSICION_ENTRADA } from '../utils/animaciones'
 
 /**
- * Página de bienvenida (ruta `/bienvenida`). Es lo primero que ve un usuario nuevo:
+ * Página de bienvenida (ruta `/bienvenida`). Es lo primero que ve un usuario recién registrado:
  * 1. El recorrido de tres pantallas (solo la primera vez; se recuerda en localStorage).
- * 2. El perfil rápido con su nombre y ahorro mensual.
+ * 2. El perfil rápido con su ahorro mensual (el nombre ya viene del registro).
  *
  * Si el usuario ya tiene perfil, lo manda directo a Inicio.
  *
  * @returns {JSX.Element | null}
  */
 function Bienvenida() {
+  const { usuario } = useAuth()
   const { perfil, cargando, error, reintentar, guardarPerfil } = usePerfil()
   const [recorridoVisto, setRecorridoVisto] = useLocalStorage('alcanza-recorrido-visto', false)
   const navigate = useNavigate()
@@ -54,7 +56,7 @@ function Bienvenida() {
             >
               {recorridoVisto ? (
                 <>
-                  <FormularioPerfil onGuardar={alGuardar} />
+                  <FormularioPerfil onGuardar={alGuardar} nombreInicial={usuario?.nombre} />
                   <button
                     type="button"
                     onClick={() => setRecorridoVisto(false)}
