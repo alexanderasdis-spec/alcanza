@@ -117,8 +117,8 @@
 <!-- 2 · Visión general y cómo ejecutar -->
 <section class="pagina">
   <div class="seccion"><span class="num">1</span><h1>Visión general</h1></div>
-  <div class="destacado">Alcanza es una <b>aplicación de una sola página</b> (SPA) hecha con <b>React 19</b> y <b>Vite</b>. El navegador descarga la app una vez y después React cambia de página sin recargar. Los productos vienen de <b>DummyJSON</b>, las tasas de cambio de <b>ExchangeRate-API</b> y, en la siguiente etapa, el perfil, las metas y los abonos se guardarán en una <b>API propia en Laravel</b> con MySQL.</div>
-  <p>El código está organizado en <b>capas</b>, y cada una tiene una sola responsabilidad. Las páginas nunca hablan directamente con una API ni con <code>localStorage</code>: siempre pasan por un hook y un servicio. Así, cambiar una fuente de datos (por ejemplo, DummyJSON por Mercado Libre, o <code>localStorage</code> por Laravel) solo toca un archivo.</p>
+  <div class="destacado">Alcanza es una <b>aplicación de una sola página</b> (SPA) hecha con <b>React 19</b> y <b>Vite</b>. El navegador descarga la app una vez y después React cambia de página sin recargar. Los productos vienen de <b>DummyJSON</b>, las tasas de cambio de <b>ExchangeRate-API</b>, y las cuentas, el perfil, las metas y los abonos se guardan en una <b>API propia en Laravel</b> con MySQL.</div>
+  <p>El código está organizado en <b>capas</b>, y cada una tiene una sola responsabilidad. Las páginas nunca hablan directamente con una API ni con <code>localStorage</code>: siempre pasan por un hook y un servicio. Así, cambiar una fuente de datos solo toca un archivo: por eso el perfil pasó de <code>localStorage</code> a Laravel cambiando solo <code>perfilService.js</code>.</p>
 
   <h3>Herramientas</h3>
   <table>
@@ -156,13 +156,16 @@
 ├─ <span class="d">components/</span>          <span class="x">Piezas reutilizables de la interfaz</span>
 │  ├─ <span class="d">animaciones/</span>       <span class="x">FondoAnimado, TarjetaInteractiva, Magnetico, Aparecer, ContadorAnimado…</span>
 │  ├─ <span class="d">antojos/</span>           <span class="x">TarjetaAntojo, ImagenAntojo, FiltroCategorias, Buscador</span>
+│  ├─ <span class="d">auth/</span>              <span class="x">MarcoAuth, BotonEnviar, AvisoFormulario (páginas de cuenta)</span>
 │  ├─ <span class="d">bienvenida/</span>        <span class="x">RecorridoBienvenida, FormularioPerfil</span>
-│  └─ Navbar, Footer, BotonTema, SelectorMoneda, RequierePerfil, EstadoMensaje
-├─ <span class="d">context/</span>             <span class="x">Estado global con Context API: tema, perfil y moneda</span>
+│  ├─ <span class="d">formulario/</span>        <span class="x">CampoTexto (etiqueta, error y mostrar contraseña)</span>
+│  ├─ <span class="d">metas/</span>             <span class="x">TarjetaMeta, FormularioAbono, BotonConvertirMeta</span>
+│  └─ Navbar, MenuUsuario, guardianes de rutas, SelectorMoneda, SinConexion…
+├─ <span class="d">context/</span>             <span class="x">Estado global con Context API: tema, sesión, perfil, metas y moneda</span>
 ├─ <span class="d">data/</span>                <span class="x">Datos fijos: categorías y productos propios de Entretenimiento</span>
 ├─ <span class="d">hooks/</span>               <span class="x">Hooks personalizados (useFetch, useMoneda, useAlcance…)</span>
 ├─ <span class="d">layouts/</span>             <span class="x">LayoutPrincipal: menú + página + pie, con transición entre páginas</span>
-├─ <span class="d">pages/</span>               <span class="x">Una página por ruta: Inicio, Antojos, DetalleAntojo, Bienvenida…</span>
+├─ <span class="d">pages/</span>               <span class="x">Una página por ruta: IniciarSesion, Registro, Inicio, Antojos, MisMetas…</span>
 ├─ <span class="d">services/</span>            <span class="x">Única capa que habla con APIs o con el almacenamiento</span>
 │  └─ <span class="d">fuentes/</span>           <span class="x">Adaptadores de cada API de productos (hoy: dummyjson.js)</span>
 ├─ <span class="d">utils/</span>               <span class="x">Funciones puras: cálculos, formatos, validaciones, ajustes de animación</span>
@@ -195,93 +198,111 @@ typedoc.json            <span class="x">Configuración del generador de document
   <p><code>main.jsx</code> monta el componente <code>App</code>. <code>App.jsx</code> envuelve toda la aplicación con los <b>proveedores de contexto</b> y define las rutas. El orden importa: un proveedor puede usar a los que están por fuera de él.</p>
 
   <div class="anidado" style="margin-top:10px"><small>&lt;TemaProvider&gt; · modo claro / oscuro</small>
-    <div class="anidado"><small>&lt;PerfilProvider&gt; · nombre y ahorro mensual</small>
-      <div class="anidado"><small>&lt;MonedaProvider&gt; · moneda elegida y tasas de cambio</small>
-        <div class="anidado"><small>&lt;MotionConfig reducedMotion="user"&gt; · respeta "reducir movimiento"</small>
-          <div class="rejilla2" style="grid-template-columns: 1fr 2fr">
-            <div class="tarjeta"><b class="t">&lt;FondoAnimado /&gt;</b>Fuera del router para que las luces no se reinicien al cambiar de página.</div>
-            <div class="anidado" style="margin:0"><small>&lt;BrowserRouter&gt; → &lt;Routes&gt;</small>
-              <div style="font-size:11px">Ruta pública <code>/bienvenida</code> y, dentro de <code>&lt;RequierePerfil&gt;</code> y <code>&lt;LayoutPrincipal&gt;</code>, todas las demás páginas.</div>
+    <div class="anidado"><small>&lt;AuthProvider&gt; · sesión: usuario, iniciar y cerrar sesión</small>
+      <div class="anidado"><small>&lt;PerfilProvider&gt; · perfil del usuario (nombre y ahorro mensual)</small>
+        <div class="anidado"><small>&lt;MetasProvider&gt; · metas y abonos del perfil</small>
+          <div class="anidado"><small>&lt;MonedaProvider&gt; · moneda elegida y tasas de cambio</small>
+            <div class="anidado"><small>&lt;MotionConfig reducedMotion="user"&gt; · respeta "reducir movimiento"</small>
+              <div class="rejilla2" style="grid-template-columns: 1fr 2fr">
+                <div class="tarjeta"><b class="t">&lt;FondoAnimado /&gt;</b>Fuera del router para que las luces no se reinicien al cambiar de página.</div>
+                <div class="anidado" style="margin:0"><small>&lt;BrowserRouter&gt; → &lt;Routes&gt;</small>
+                  <div style="font-size:11px">Las rutas, protegidas por los guardianes de abajo (ver la tabla de la sección 5).</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+  <p style="margin-top:8px">La sesión va por fuera del perfil, y el perfil por fuera de las metas, porque cada uno depende del anterior: al cerrar sesión, el perfil y las metas se vacían solos.</p>
 
-  <h3>Tabla de rutas</h3>
+  <h3>Guardianes de rutas</h3>
+  <p style="margin-bottom:6px">Son rutas "padre" sin dirección propia: deciden si pintan la ruta hija (<code>&lt;Outlet /&gt;</code>) o redirigen con <code>&lt;Navigate replace /&gt;</code>. Así ninguna página tiene que preguntar si hay sesión o perfil.</p>
   <table>
-    <tr><th style="width:22%">Ruta</th><th style="width:20%">Página</th><th>Qué hace</th><th style="width:12%">Estado</th></tr>
-    <tr><td><code>/bienvenida</code></td><td>Bienvenida</td><td>Recorrido de 3 pantallas y perfil rápido. Sin menú ni pie.</td><td><span class="estado ok">Lista</span></td></tr>
-    <tr><td><code>/</code></td><td>Inicio</td><td>Saludo con el nombre, resumen con contadores y antojos de ejemplo.</td><td><span class="estado wip">Parcial</span></td></tr>
-    <tr><td><code>/antojos</code></td><td>Antojos</td><td>Catálogo con buscador, filtro por categorías (en la URL) y precios convertidos.</td><td><span class="estado ok">Lista</span></td></tr>
-    <tr><td><code>/antojos/:id</code></td><td>DetalleAntojo</td><td>Fotos, precio, descuento y en qué mes se alcanza. Lee el <code>id</code> con <code>useParams</code>.</td><td><span class="estado wip">Parcial</span></td></tr>
-    <tr><td><code>/comparador</code></td><td>Comparador</td><td>Dos antojos lado a lado.</td><td><span class="estado pend">Pendiente</span></td></tr>
-    <tr><td><code>/metas</code></td><td>MisMetas</td><td>Metas, abonos y confeti al 100 %.</td><td><span class="estado pend">Pendiente</span></td></tr>
-    <tr><td><code>*</code></td><td>NoEncontrada</td><td>404 temática: "Saldo insuficiente".</td><td><span class="estado ok">Lista</span></td></tr>
+    <tr><th style="width:24%">Guardián</th><th>Qué revisa</th></tr>
+    <tr><td><code>RequiereSesion</code></td><td>Si no hay sesión, manda a <code>/ingresar</code> y guarda a qué página quería ir (<code>state.desde</code>) para volver allí después de entrar.</td></tr>
+    <tr><td><code>SoloInvitados</code></td><td>Si ya hay sesión, las páginas de ingresar, registrarse y olvidé mi contraseña mandan a Inicio.</td></tr>
+    <tr><td><code>RequierePerfil</code></td><td>Si el usuario todavía no tiene perfil, lo manda a <code>/bienvenida</code>.</td></tr>
   </table>
-
-  <h3>Guardián de rutas: <code>RequierePerfil</code></h3>
-  <p>Es una ruta "padre" sin dirección propia. Si el perfil todavía se está consultando no pinta nada; si no existe, redirige a <code>/bienvenida</code> con <code>&lt;Navigate replace /&gt;</code>; y si existe, pinta la ruta hija con <code>&lt;Outlet /&gt;</code>. Gracias a esto, ninguna página tiene que preguntar si hay perfil: lo garantiza el guardián.</p>
+  <p style="margin-top:6px">Mientras se consulta la API, los guardianes no pintan nada (para no redirigir antes de tiempo); si el servidor no responde, muestran <code>SinConexion</code> con el botón "Reintentar".</p>
 
   <h3>Transición entre páginas: <code>LayoutPrincipal</code></h3>
   <p>Usa <code>useOutlet()</code> para obtener la página actual y la envuelve en <code>AnimatePresence</code> con <code>key={location.pathname}</code>. Así la página que se va termina su animación de salida antes de que entre la nueva.</p>
   <div class="pie"><span>ALCANZA · Cómo funciona el código</span><span>4</span></div>
 </section>
 
+<!-- 5 · Rutas -->
+<section class="pagina">
+  <div class="seccion"><span class="num">5</span><h1>Tabla de rutas</h1></div>
+  <table>
+    <tr><th style="width:22%">Ruta</th><th style="width:21%">Página</th><th>Qué hace</th><th style="width:14%">Acceso</th></tr>
+    <tr><td><code>/ingresar</code></td><td>IniciarSesion</td><td>Correo y contraseña. Vuelve a la página que se quería abrir.</td><td>Sin sesión</td></tr>
+    <tr><td><code>/registro</code></td><td>Registro</td><td>Nombre, correo y contraseña; deja la sesión iniciada.</td><td>Sin sesión</td></tr>
+    <tr><td><code>/olvide-contrasena</code></td><td>OlvideContrasena</td><td>Pide el correo y envía el enlace para cambiar la contraseña.</td><td>Sin sesión</td></tr>
+    <tr><td><code>/restablecer</code></td><td>RestablecerContrasena</td><td>Se abre desde el correo (<code>?token=…&amp;email=…</code>) y guarda la contraseña nueva.</td><td>Pública</td></tr>
+    <tr><td><code>/bienvenida</code></td><td>Bienvenida</td><td>Recorrido de 3 pantallas y perfil rápido. Sin menú ni pie.</td><td>Con sesión</td></tr>
+    <tr><td><code>/</code></td><td>Inicio</td><td>Saludo, resumen con contadores y las metas más recientes.</td><td>Con perfil</td></tr>
+    <tr><td><code>/antojos</code></td><td>Antojos</td><td>Catálogo con buscador, filtro por categorías (en la URL) y precios convertidos.</td><td>Con perfil</td></tr>
+    <tr><td><code>/antojos/:id</code></td><td>DetalleAntojo</td><td>Fotos, precio, en qué mes se alcanza y "Convertir en meta". Lee el <code>id</code> con <code>useParams</code>.</td><td>Con perfil</td></tr>
+    <tr><td><code>/comparador</code></td><td>Comparador</td><td>Dos antojos lado a lado. <span class="estado pend">Pendiente</span></td><td>Con perfil</td></tr>
+    <tr><td><code>/metas</code></td><td>MisMetas</td><td>Metas con progreso, abonos, insignia de cumplida y confeti al 100 %.</td><td>Con perfil</td></tr>
+    <tr><td><code>*</code></td><td>NoEncontrada</td><td>404 temática: "Saldo insuficiente".</td><td>Con perfil</td></tr>
+  </table>
+  <div class="nota"><b>"Con perfil"</b> significa que la ruta está dentro de <code>RequiereSesion</code> y de <code>RequierePerfil</code>: primero hay que iniciar sesión y luego tener perfil. Las de cuenta usan <code>MarcoAuth</code> (tarjeta centrada, sin menú) y el resto, <code>LayoutPrincipal</code>.</div>
+  <div class="pie"><span>ALCANZA · Cómo funciona el código</span><span>5</span></div>
+</section>
+
 <!-- 5 · Estado global -->
 <section class="pagina">
-  <div class="seccion"><span class="num">5</span><h1>Estado global con Context API</h1></div>
+  <div class="seccion"><span class="num">6</span><h1>Estado global con Context API</h1></div>
   <p style="margin-bottom:10px">Cada contexto se divide en <b>tres archivos</b>: el contexto (<code>context/xContext.js</code>), el proveedor (<code>context/XProvider.jsx</code>) y el hook para leerlo (<code>hooks/useX.js</code>). Se separan porque oxlint pide que un archivo de componentes solo exporte componentes, para que la recarga en vivo funcione bien.</p>
   <div class="rejilla3">
-    <div class="tarjeta"><b class="t" style="color:var(--violeta)">Tema</b><code>useTema()</code> → <code>{ oscuro, alternarTema }</code><br>Pone o quita la clase <code>dark</code> en <code>&lt;html&gt;</code>. La primera vez sigue el tema del sistema operativo. Se guarda en <code>localStorage</code>.</div>
-    <div class="tarjeta"><b class="t" style="color:var(--menta)">Perfil</b><code>usePerfil()</code> → <code>{ perfil, cargando, guardarPerfil }</code><br>Carga el perfil al abrir la app con <code>perfilService</code>. <code>cargando</code> empieza en <code>true</code> para no redirigir antes de tiempo.</div>
-    <div class="tarjeta"><b class="t" style="color:var(--rosa)">Moneda</b><code>useMoneda()</code> → <code>{ moneda, cambiarMoneda, tasas, convertir, formatear }</code><br>Guarda la moneda elegida y consulta las tasas una vez. <code>formatear(valor, desde)</code> convierte y da formato.</div>
+    <div class="tarjeta"><b class="t" style="color:var(--violeta)">Tema</b><code>useTema()</code> → <code>{ oscuro, alternarTema }</code><br>Pone o quita la clase <code>dark</code> en <code>&lt;html&gt;</code>. Se guarda en <code>localStorage</code>.</div>
+    <div class="tarjeta"><b class="t" style="color:#0f172a">Sesión</b><code>useAuth()</code> → <code>{ usuario, iniciarSesion, registrarse, cerrarSesion }</code><br>Al abrir la app comprueba si el token guardado sigue sirviendo.</div>
+    <div class="tarjeta"><b class="t" style="color:var(--menta)">Perfil</b><code>usePerfil()</code> → <code>{ perfil, cargando, guardarPerfil }</code><br>Carga el perfil del usuario con sesión; si cambia el usuario, lo vuelve a pedir.</div>
+    <div class="tarjeta"><b class="t" style="color:var(--rosa)">Metas</b><code>useMetas()</code> → <code>{ metas, crear, abonar, eliminar }</code><br>Lista las metas del perfil y la actualiza con lo que responde la API.</div>
+    <div class="tarjeta" style="grid-column: span 2"><b class="t" style="color:#b45309">Moneda</b><code>useMoneda()</code> → <code>{ moneda, cambiarMoneda, tasas, convertir, formatear }</code><br>Guarda la moneda elegida y consulta las tasas una vez. <code>formatear</code> y <code>convertir</code> usan <code>useCallback</code> para no cambiar en cada render: así los contadores animados no reinician su conteo sin motivo.</div>
   </div>
 
-  <h3>¿Por qué <code>useCallback</code> y <code>useMemo</code> en <code>MonedaProvider</code>?</h3>
-  <p>Cada vez que un proveedor se vuelve a pintar, las funciones que crea son "nuevas" para React. Si <code>formatear</code> cambiara en cada render, los contadores animados que la reciben reiniciarían su conteo sin motivo. <code>useCallback</code> conserva la misma función mientras no cambien la moneda ni las tasas, y <code>useMemo</code> hace lo mismo con el objeto que comparte el contexto.</p>
-<pre><span class="k">const</span> formatear = <span class="f">useCallback</span>(
-  (valor, desde = <span class="s">'USD'</span>) =&gt; {
-    <span class="k">const</span> convertido = <span class="f">convertir</span>(valor, desde)
-    <span class="c">// Sin tasas, el valor se muestra en su moneda original</span>
-    <span class="k">return</span> convertido === <span class="k">null</span> ? <span class="f">formatearMoneda</span>(valor, desde) : <span class="f">formatearMoneda</span>(convertido, moneda)
-  },
-  [convertir, moneda],
-)</pre>
+  <h3>¿Cómo se evita mostrar datos de otro usuario?</h3>
+  <p>Perfil y metas guardan cada respuesta junto con <b>para quién se pidió</b>. Si cambia el usuario (cerró sesión o entró otro), la respuesta vieja deja de valer y se consulta de nuevo:</p>
+<pre><span class="c">// context/MetasProvider.jsx</span>
+<span class="k">const</span> vigente = perfilId !== <span class="k">null</span> &amp;&amp; respuesta.perfilId === perfilId &amp;&amp; respuesta.intento === intento
+<span class="k">const</span> valor = { metas: vigente ? respuesta.metas : [], <span class="c">/* … */</span> }</pre>
 
   <div class="bloque">
-    <div class="seccion"><span class="num">6</span><h1>Qué se guarda en el navegador</h1></div>
+    <div class="seccion"><span class="num">7</span><h1>Qué se guarda en el navegador</h1></div>
     <table>
-      <tr><th style="width:30%">Clave de localStorage</th><th>Contenido</th><th style="width:22%">Tipo</th></tr>
+      <tr><th style="width:30%">Clave de localStorage</th><th>Contenido</th><th style="width:20%">Tipo</th></tr>
+      <tr><td><code>alcanza-token</code></td><td>Token de la sesión (lo crea Laravel Sanctum)</td><td>Sesión</td></tr>
       <tr><td><code>alcanza-tema-oscuro</code></td><td><code>true</code> o <code>false</code></td><td>Preferencia</td></tr>
       <tr><td><code>alcanza-moneda</code></td><td><code>"COP"</code>, <code>"USD"</code> o <code>"EUR"</code></td><td>Preferencia</td></tr>
       <tr><td><code>alcanza-recorrido-visto</code></td><td>Si ya se vio el recorrido de bienvenida</td><td>Preferencia</td></tr>
-      <tr><td><code>alcanza-perfil</code></td><td><code>{ nombre, ahorroMensual }</code></td><td><b>Temporal</b>: pasará a Laravel</td></tr>
     </table>
-    <p style="margin-top:8px">Todo pasa por el hook <code>useLocalStorage</code> (que funciona como <code>useState</code> pero recuerda el valor) o por <code>perfilService</code>. Ambos usan <code>try/catch</code>: si el navegador bloquea el almacenamiento, la app sigue funcionando sin recordar.</p>
+    <p style="margin-top:8px">El perfil, las metas y los abonos <b>ya no se guardan en el navegador</b>: viven en la base de datos <code>data_alcanza</code>. El token se guarda para que la sesión siga abierta al recargar. Todo usa <code>try/catch</code>: si el navegador bloquea el almacenamiento, la app sigue funcionando.</p>
   </div>
-  <div class="pie"><span>ALCANZA · Cómo funciona el código</span><span>5</span></div>
+  <div class="pie"><span>ALCANZA · Cómo funciona el código</span><span>6</span></div>
 </section>
 
 <!-- 6 · Hooks -->
 <section class="pagina">
-  <div class="seccion"><span class="num">7</span><h1>Hooks personalizados</h1></div>
+  <div class="seccion"><span class="num">8</span><h1>Hooks personalizados</h1></div>
   <p style="margin-bottom:10px">Un hook personalizado es una función que empieza por <code>use</code> y usa otros hooks de React. Sirve para sacar lógica de los componentes y reutilizarla.</p>
   <table>
     <tr><th style="width:22%">Hook</th><th>Qué hace</th><th style="width:24%">Concepto de React</th></tr>
     <tr><td><code>useFetch</code></td><td>Consulta datos asíncronos y entrega <code>{ datos, cargando, error, reintentar }</code>. Ignora respuestas que llegan tarde.</td><td><code>useState</code>, <code>useEffect</code>, <code>useMemo</code></td></tr>
+    <tr><td><code>useFormulario</code></td><td>Lógica de los formularios de cuenta: valores, validación, envío y errores 422 de la API.</td><td><code>useState</code>, eventos</td></tr>
     <tr><td><code>useLocalStorage</code></td><td>Como <code>useState</code>, pero guarda el valor en <code>localStorage</code>.</td><td><code>useState</code> perezoso, <code>useEffect</code></td></tr>
-    <tr><td><code>useTema</code></td><td>Lee y cambia el modo oscuro.</td><td><code>useContext</code></td></tr>
-    <tr><td><code>usePerfil</code></td><td>Lee y guarda el perfil del usuario.</td><td><code>useContext</code></td></tr>
-    <tr><td><code>useMoneda</code></td><td>Moneda elegida, tasas, <code>convertir</code> y <code>formatear</code>.</td><td><code>useContext</code></td></tr>
+    <tr><td><code>useAuth</code> · <code>usePerfil</code> · <code>useMetas</code> · <code>useTema</code> · <code>useMoneda</code></td><td>Leen y cambian cada contexto global (sección 6).</td><td><code>useContext</code></td></tr>
+    <tr><td><code>useResumenMetas</code></td><td>Cuenta metas activas y cumplidas y suma lo ahorrado.</td><td><code>useMemo</code></td></tr>
     <tr><td><code>useAlcance</code></td><td>Responde "¿cuándo me lo compro?": meses y fecha para un precio.</td><td>Hook que combina hooks</td></tr>
     <tr><td><code>usePosicionMouse</code></td><td>Posición del mouse de -1 a 1, sin re-renderizar.</td><td><code>useEffect</code> + <code>MotionValue</code></td></tr>
     <tr><td><code>usePuedeAnimarMouse</code></td><td>Indica si hay mouse y si el usuario acepta animaciones.</td><td><code>matchMedia</code> + <code>useEffect</code></td></tr>
   </table>
 
   <h3>Cómo funciona <code>useFetch</code> por dentro</h3>
-  <p>Recibe una función que devuelve una promesa (por ejemplo <code>obtenerAntojos</code>). Cada consulta recibe un "ticket" nuevo; la respuesta se guarda junto con el ticket que la pidió. Si el ticket guardado no es el de la consulta actual, la consulta actual sigue cargando. Así no se llama <code>setState</code> de forma síncrona dentro del efecto y nunca se muestra una respuesta vieja.</p>
+  <p>Recibe una función que devuelve una promesa (por ejemplo <code>obtenerAntojos</code>). Cada consulta recibe un "ticket" nuevo y la respuesta se guarda junto con el ticket que la pidió: si no coinciden, la consulta actual sigue cargando. Así nunca se muestra una respuesta vieja.</p>
 <pre><span class="k">const</span> consulta = <span class="f">useMemo</span>(() =&gt; ({ cargar, intento }), [cargar, intento])
 
 <span class="f">useEffect</span>(() =&gt; {
@@ -294,17 +315,20 @@ typedoc.json            <span class="x">Configuración del generador de document
 
 <span class="k">const</span> cargando = respuesta.consulta !== consulta</pre>
   <div class="nota"><b>Regla de uso:</b> la función que se le pasa debe ser estable. Si depende de algo, se envuelve en <code>useCallback</code>: <code>const cargar = useCallback(() =&gt; obtenerAntojo(id), [id])</code>. Así solo se vuelve a consultar cuando cambia el <code>id</code>.</div>
-  <div class="pie"><span>ALCANZA · Cómo funciona el código</span><span>6</span></div>
+  <div class="pie"><span>ALCANZA · Cómo funciona el código</span><span>7</span></div>
 </section>
 
 <!-- 7 · Servicios y APIs -->
 <section class="pagina">
-  <div class="seccion"><span class="num">8</span><h1>Servicios y APIs</h1></div>
-  <p style="margin-bottom:10px">Los servicios son la única parte del código que sabe de dónde vienen los datos. Todas sus funciones devuelven <b>promesas</b>, aunque el dato esté en el navegador: así se pueden reemplazar por peticiones a Laravel sin cambiar nada más.</p>
+  <div class="seccion"><span class="num">9</span><h1>Servicios y APIs</h1></div>
+  <p style="margin-bottom:10px">Los servicios son la única parte del código que sabe de dónde vienen los datos. Todas sus funciones devuelven <b>promesas</b> y traducen los nombres de la API ("snake_case", como <code>ahorro_mensual</code>) a los del frontend ("camelCase", como <code>ahorroMensual</code>).</p>
   <div class="rejilla3">
-    <div class="tarjeta"><b class="t" style="color:var(--violeta)">ofertasService</b><code>obtenerAntojos()</code> · <code>obtenerAntojo(id)</code><br>Junta los productos de la API con los propios de Entretenimiento. Guarda la promesa en caché: la API se consulta una vez por visita.</div>
-    <div class="tarjeta"><b class="t" style="color:var(--menta)">monedaService</b><code>obtenerTasas()</code><br>Consulta <code>open.er-api.com/v6/latest/USD</code> y devuelve <code>{ USD, COP, EUR, actualizado }</code>. También con caché.</div>
-    <div class="tarjeta"><b class="t" style="color:var(--rosa)">perfilService</b><code>obtenerPerfil()</code> · <code>guardarPerfil(p)</code><br><b>Temporal:</b> usa <code>localStorage</code>. Cuando exista la API, por dentro usará Axios contra <code>/api/perfil</code>.</div>
+    <div class="tarjeta"><b class="t" style="color:var(--violeta)">ofertasService</b>Productos de DummyJSON más los propios de Entretenimiento, con caché por visita.</div>
+    <div class="tarjeta"><b class="t" style="color:var(--menta)">monedaService</b>Tasas de <code>open.er-api.com</code>: <code>{ USD, COP, EUR, actualizado }</code>, con caché.</div>
+    <div class="tarjeta"><b class="t" style="color:#0f172a">api.js</b>Cliente Axios de Laravel: agrega el token a cada petición y cierra la sesión si llega un 401.</div>
+    <div class="tarjeta"><b class="t" style="color:var(--rosa)">authService</b>Registro, inicio y cierre de sesión, usuario actual y recuperar la contraseña.</div>
+    <div class="tarjeta"><b class="t" style="color:#b45309">perfilService</b><code>GET</code> y <code>POST /api/perfil</code>: consultar y guardar el perfil.</div>
+    <div class="tarjeta"><b class="t" style="color:#059669">metasService</b>Listar, ver, crear y eliminar metas, y registrar abonos.</div>
   </div>
 
   <h3>El adaptador de DummyJSON (<code>services/fuentes/dummyjson.js</code>)</h3>
@@ -321,24 +345,52 @@ typedoc.json            <span class="x">Configuración del generador de document
   }
 }</pre>
 
-  <h3>El formato propio: <code>Antojo</code></h3>
-  <table>
-    <tr><th style="width:20%">Campo</th><th>Significado</th></tr>
-    <tr><td><code>id</code></td><td>Texto único. Los productos propios empiezan por <code>ent-</code> para no chocar con los de la API.</td></tr>
-    <tr><td><code>categoria</code></td><td>Id de una categoría de Alcanza: tecnologia, moda, hogar, belleza, deporte o entretenimiento.</td></tr>
-    <tr><td><code>precio</code> / <code>descuento</code></td><td>Precio en dólares antes del descuento y porcentaje redondeado.</td></tr>
-    <tr><td><code>imagen</code> / <code>imagenes</code></td><td>Foto principal (o <code>null</code>) y galería. Sin foto se muestra el ícono de la categoría.</td></tr>
-  </table>
-  <div class="nota"><b>Cambiar de fuente de productos:</b> se crea, por ejemplo, <code>services/fuentes/mercadolibre.js</code> con las funciones <code>listarProductos</code> y <code>obtenerProducto</code>, y se cambia una sola línea en <code>ofertasService.js</code>: <code>import * as fuente from './fuentes/mercadolibre'</code>.</div>
-  <div class="pie"><span>ALCANZA · Cómo funciona el código</span><span>7</span></div>
+  <div class="nota"><b>Cambiar de fuente de productos:</b> se crea, por ejemplo, <code>services/fuentes/mercadolibre.js</code> con las funciones <code>listarProductos</code> y <code>obtenerProducto</code>, y se cambia una sola línea en <code>ofertasService.js</code>: <code>import * as fuente from './fuentes/mercadolibre'</code>. El formato propio de cada producto (<code>Antojo</code>) no cambia.</div>
+  <div class="pie"><span>ALCANZA · Cómo funciona el código</span><span>8</span></div>
+</section>
+
+<!-- NUEVA · Sesión de usuario -->
+<section class="pagina">
+  <div class="seccion"><span class="num">10</span><h1>Sesión de usuario</h1></div>
+  <p style="margin-bottom:10px">Así funciona el inicio de sesión, paso a paso:</p>
+  <ol class="pasos">
+    <li>En <b>IniciarSesion</b>, el hook <code>useFormulario</code> valida el correo y la contraseña con <code>validarIngreso</code> antes de enviar.</li>
+    <li><code>iniciarSesion()</code> de <b>useAuth</b> llama a <code>authService</code>, que hace <code>POST /api/login</code>.</li>
+    <li>Laravel responde <code>{ usuario, token }</code>. El servicio guarda el token en <code>localStorage</code> y el contexto guarda el usuario.</li>
+    <li>Al cambiar el usuario, <b>PerfilProvider</b> pide <code>GET /api/perfil</code> y <b>MetasProvider</b>, <code>GET /api/metas</code>.</li>
+    <li>La página vuelve a donde el usuario quería ir (<code>state.desde</code>), o a Inicio.</li>
+    <li>Al recargar, <b>AuthProvider</b> lee el token guardado y llama a <code>GET /api/usuario</code>: si sigue sirviendo, la sesión continúa.</li>
+  </ol>
+
+  <h3>El cliente Axios agrega el token solo (<code>services/api.js</code>)</h3>
+<pre><span class="c">// Antes de cada petición: "Authorization: Bearer &lt;token&gt;"</span>
+api.interceptors.request.<span class="f">use</span>((config) =&gt; {
+  <span class="k">const</span> token = <span class="f">obtenerToken</span>()
+  <span class="k">if</span> (token) config.headers.Authorization = <span class="s">`Bearer ${token}`</span>
+  <span class="k">return</span> config
+})
+
+<span class="c">// Si la API rechaza el token (401), se borra y se avisa a AuthProvider para cerrar la sesión</span>
+api.interceptors.response.<span class="f">use</span>((respuesta) =&gt; respuesta, (error) =&gt; {
+  <span class="k">if</span> (error.response?.status === 401 &amp;&amp; <span class="f">obtenerToken</span>()) {
+    <span class="f">guardarToken</span>(<span class="k">null</span>)
+    window.<span class="f">dispatchEvent</span>(<span class="k">new</span> <span class="f">Event</span>(EVENTO_SESION_VENCIDA))
+  }
+  <span class="k">return</span> Promise.<span class="f">reject</span>(error)
+})</pre>
+
+  <h3>Recuperar la contraseña</h3>
+  <p><b>OlvideContrasena</b> envía el correo a <code>POST /api/olvide-contrasena</code>. Laravel manda un correo (en desarrollo llega a <b>Mailpit</b>, <code>http://localhost:8025</code>) con un enlace a <code>/restablecer?token=…&amp;email=…</code>. <b>RestablecerContrasena</b> lee esos datos con <code>useSearchParams</code>, pide la contraseña nueva y la envía a <code>POST /api/restablecer-contrasena</code>. Si el enlace venció, muestra el mensaje de la API y ofrece pedir uno nuevo.</p>
+  <div class="nota"><b>Las mismas reglas en los dos lados:</b> <code>utils/validaciones.js</code> repite las reglas de los Form Requests de Laravel (8 caracteres, letras y números). Así el usuario ve el error antes de enviar, y la API sigue protegida si alguien se salta el formulario.</div>
+  <div class="pie"><span>ALCANZA · Cómo funciona el código</span><span>9</span></div>
 </section>
 
 <!-- 8 · Recorrido de datos -->
 <section class="pagina">
-  <div class="seccion"><span class="num">9</span><h1>Ejemplo completo: del catálogo a "¿cuándo me lo compro?"</h1></div>
+  <div class="seccion"><span class="num">11</span><h1>Ejemplo completo: del catálogo a "¿cuándo me lo compro?"</h1></div>
   <p style="margin-bottom:10px">Esto es lo que pasa, paso a paso, cuando el usuario entra a <code>/antojos?categoria=tecnologia</code>:</p>
   <ol class="pasos">
-    <li><b>React Router</b> encuentra la ruta y pinta <code>&lt;Antojos /&gt;</code> dentro de <code>RequierePerfil</code> y <code>LayoutPrincipal</code>.</li>
+    <li><b>React Router</b> encuentra la ruta y pinta <code>&lt;Antojos /&gt;</code> dentro de <code>RequiereSesion</code>, <code>RequierePerfil</code> y <code>LayoutPrincipal</code>.</li>
     <li><b>Antojos</b> llama <code>useFetch(obtenerAntojos)</code>. Mientras <code>cargando</code> es <code>true</code>, muestra 8 tarjetas "fantasma" que laten.</li>
     <li><b>ofertasService</b> revisa su caché; si está vacía, le pide los productos al adaptador de DummyJSON (Axios → <code>GET /products?limit=0</code>).</li>
     <li>El <b>adaptador</b> convierte cada producto al formato <code>Antojo</code>; el servicio le suma los 5 propios de Entretenimiento.</li>
@@ -363,14 +415,14 @@ typedoc.json            <span class="x">Configuración del generador de document
     <tr><td><code>convertirMoneda</code></td><td>Pasa el valor a dólares y luego a la moneda destino: <code>valor / tasas[desde] × tasas[hacia]</code>.</td></tr>
     <tr><td><code>fechaEstimada</code></td><td>Suma los meses a hoy, fijando el día 1 para evitar saltos (31 de enero + 1 mes).</td></tr>
     <tr><td><code>formatearMoneda</code> / <code>formatearMes</code></td><td>Usan <code>Intl</code> en español de Colombia: <code>$ 350.000</code>, <code>US$ 19,99</code>, <code>€ 19,99</code>, "mayo de 2028".</td></tr>
-    <tr><td><code>validarPerfil</code></td><td>Devuelve un objeto con un mensaje por cada campo con error; vacío si todo está bien.</td></tr>
+    <tr><td><code>validarPerfil</code>, <code>validarRegistro</code>…</td><td>Devuelven un objeto con un mensaje por cada campo con error; vacío si todo está bien.</td></tr>
   </table>
-  <div class="pie"><span>ALCANZA · Cómo funciona el código</span><span>8</span></div>
+  <div class="pie"><span>ALCANZA · Cómo funciona el código</span><span>10</span></div>
 </section>
 
 <!-- 9 · Componentes, formularios y animaciones -->
 <section class="pagina">
-  <div class="seccion"><span class="num">10</span><h1>Formularios: el perfil rápido</h1></div>
+  <div class="seccion"><span class="num">12</span><h1>Formularios controlados</h1></div>
   <p><code>FormularioPerfil</code> es un <b>formulario controlado</b>: el valor de cada input vive en el estado <code>datos</code>, no en el DOM. Un solo manejador actualiza cualquier campo usando el atributo <code>name</code>:</p>
 <pre><span class="k">const</span> <span class="f">alCambiar</span> = (evento) =&gt; {
   <span class="k">const</span> { name, value } = evento.target
@@ -379,10 +431,10 @@ typedoc.json            <span class="x">Configuración del generador de document
   <span class="c">// Después del primer intento de enviar, los errores se actualizan en vivo</span>
   <span class="k">if</span> (intentoEnviar) <span class="f">setErrores</span>(<span class="f">validarPerfil</span>(nuevosDatos))
 }</pre>
-  <p style="margin-top:8px">Al enviar, <code>evento.preventDefault()</code> evita que el navegador recargue la página, se valida con <code>validarPerfil</code> y, si no hay errores, se llama <code>guardarPerfil</code> del contexto y se navega a Inicio con <code>useNavigate</code>. Los inputs usan <code>aria-invalid</code> y <code>aria-describedby</code> para que los lectores de pantalla anuncien el error.</p>
+  <p style="margin-top:8px">Al enviar, <code>evento.preventDefault()</code> evita que el navegador recargue la página, se valida y, si no hay errores, se llama a la API. Si la API responde <code>422</code>, sus mensajes se muestran junto a cada campo. Los formularios de cuenta comparten esta lógica en el hook <b><code>useFormulario</code></b> y usan <b><code>CampoTexto</code></b>, que conecta la etiqueta con el input y el error (<code>aria-invalid</code>, <code>aria-describedby</code>) y trae el botón para mostrar u ocultar la contraseña.</p>
 
   <div class="bloque">
-    <div class="seccion"><span class="num">11</span><h1>Sistema de animaciones</h1></div>
+    <div class="seccion"><span class="num">13</span><h1>Sistema de animaciones</h1></div>
     <p style="margin-bottom:8px">Todas las animaciones comparten los ajustes de <code>utils/animaciones.js</code> (<code>RESORTE_SUAVE</code>, <code>RESORTE_RAPIDO</code>, <code>CURVA_SALIDA</code>, <code>PASO_CASCADA</code>), por eso se sienten como una sola familia.</p>
     <table>
       <tr><th style="width:24%">Componente</th><th>Cómo funciona</th></tr>
@@ -400,12 +452,12 @@ typedoc.json            <span class="x">Configuración del generador de document
       <li>Las fotos del catálogo cargan con <code>loading="lazy"</code>, y el catálogo y las tasas se consultan una sola vez por visita.</li>
     </ul>
   </div>
-  <div class="pie"><span>ALCANZA · Cómo funciona el código</span><span>9</span></div>
+  <div class="pie"><span>ALCANZA · Cómo funciona el código</span><span>11</span></div>
 </section>
 
 <!-- 10 · Documentación, backend y estado -->
 <section class="pagina">
-  <div class="seccion"><span class="num">12</span><h1>Documentación automática del código</h1></div>
+  <div class="seccion"><span class="num">14</span><h1>Documentación automática del código</h1></div>
   <p>Cada componente, hook, servicio y utilidad tiene un comentario <b>JSDoc</b> con su descripción, parámetros (<code>@param</code>), lo que devuelve (<code>@returns</code>) y un ejemplo (<code>@example</code>). <b>TypeDoc</b> lee esos comentarios y genera un sitio web navegable y con buscador, en español.</p>
 <pre><span class="c">/**
  * Calcula cuántos meses de ahorro hacen falta para reunir un precio.
@@ -417,46 +469,42 @@ typedoc.json            <span class="x">Configuración del generador de document
   <p style="margin-top:8px">Se genera con <code>npm run docs</code> y queda en <code>docs/codigo/index.html</code>. La configuración está en <code>typedoc.json</code> (incluye la traducción al español de la interfaz) y <code>tsconfig.docs.json</code>, que solo sirve para que TypeDoc lea el JavaScript. <b>¿Por qué TypeDoc y no el generador JSDoc clásico?</b> Porque el clásico no entiende tipos modernos como <code>import('react').ReactNode</code> o <code>(valor: number) =&gt; string</code>: dio 132 errores. TypeDoc lee los mismos comentarios sin problema.</p>
 
   <div class="bloque">
-    <div class="seccion"><span class="num">13</span><h1>Backend (en construcción)</h1></div>
-    <div class="rejilla2">
-      <div class="tarjeta"><b class="t" style="color:var(--violeta)">Entorno</b>Laravel 13 con <b>Sail</b> (Docker) dentro de Ubuntu en WSL 2, en <code>~/alcanza-api</code>. Base de datos <b>MySQL 8.4</b> llamada <code>data_alcanza</code>.</div>
-      <div class="tarjeta"><b class="t" style="color:var(--menta)">Arquitectura (la vista en clase)</b>Ruta → Controlador → Servicio → Repositorio con interfaz → Modelo. Validación con Form Requests de creación y de actualización.</div>
-    </div>
-    <p style="margin-top:8px">Tablas: <code>perfiles</code>, <code>metas</code> y <code>abonos</code>. Rutas: <code>/api/perfil</code>, <code>/api/metas</code> y <code>/api/metas/{id}/abonos</code>, probadas con Postman. React se conectará con Axios usando <code>VITE_API_URL</code>, y el único archivo del frontend que cambia para el perfil es <code>perfilService.js</code>.</p>
+    <div class="seccion"><span class="num">15</span><h1>Backend</h1></div>
+    <p>Laravel 13 con Sail (Docker) en Ubuntu (WSL 2), en <code>~/alcanza-api</code>, con la base <b>MySQL</b> <code>data_alcanza</code>, cuentas con <b>Sanctum</b> y correos en <b>Mailpit</b>. Sigue la arquitectura vista en clase (controlador → servicio → repositorio con interfaz → modelo, con Form Requests). Todo está explicado paso a paso en el documento aparte <b>"El backend, paso a paso"</b>.</p>
   </div>
 
   <div class="bloque">
-    <div class="seccion"><span class="num">14</span><h1>Estado actual</h1></div>
+    <div class="seccion"><span class="num">16</span><h1>Estado actual</h1></div>
     <div class="rejilla2">
       <div class="tarjeta"><b class="t" style="color:#047857">Listo</b>
         <ul class="lista">
-          <li>Rutas, layout, menú, pie, 404 y modo oscuro.</li>
-          <li>Sistema de animaciones interactivas.</li>
-          <li>Bienvenida: recorrido y perfil rápido con validaciones.</li>
-          <li>Catálogo con DummyJSON: buscador, filtros y detalle.</li>
-          <li>Cambio de moneda con ExchangeRate-API y meses para alcanzar.</li>
-          <li>Documentación automática con TypeDoc.</li>
-          <li>Agentes y skills de Claude Code (sección 15).</li>
+          <li>Rutas, layout, menú, 404, modo oscuro y animaciones.</li>
+          <li>Cuentas: registro, sesión y recuperar contraseña.</li>
+          <li>Bienvenida y perfil guardado en la base de datos.</li>
+          <li>Catálogo con DummyJSON y cambio de moneda.</li>
+          <li>Mis metas: abonos, progreso y confeti.</li>
+          <li>Backend con 31 pruebas de Postman.</li>
+          <li>TypeDoc, 3 PDF, agentes y skills (sección 17).</li>
         </ul>
       </div>
       <div class="tarjeta"><b class="t" style="color:#854d0e">Pendiente</b>
         <ul class="lista">
-          <li>Backend: migraciones, modelos, servicios, repositorios y rutas.</li>
-          <li>Metas, abonos, simulador "¿y si...?" y confeti.</li>
+          <li>Simulador "¿y si...?".</li>
           <li>Comparador y línea de tiempo.</li>
           <li>Compartir la meta como imagen.</li>
-          <li>Ofertas destacadas reales en Inicio.</li>
+          <li>Ofertas destacadas en Inicio.</li>
+          <li>Editar el perfil desde el menú.</li>
           <li>README completo y despliegue.</li>
         </ul>
       </div>
     </div>
   </div>
-  <div class="pie"><span>ALCANZA · Cómo funciona el código</span><span>10</span></div>
+  <div class="pie"><span>ALCANZA · Cómo funciona el código</span><span>12</span></div>
 </section>
 
 <!-- 11 · Agentes y skills -->
 <section class="pagina">
-  <div class="seccion"><span class="num">15</span><h1>Agentes y skills de Claude Code</h1></div>
+  <div class="seccion"><span class="num">17</span><h1>Agentes y skills de Claude Code</h1></div>
   <div class="destacado">El proyecto se desarrolla con ayuda de <b>Claude Code</b>. Para que siempre siga las mismas reglas, el repositorio incluye <b>skills</b> y <b>agentes</b>: archivos de texto que viajan con el código.</div>
   <div class="rejilla2">
     <div class="tarjeta"><b class="t" style="color:var(--violeta)">Skill</b>Un instructivo guardado en <code>.claude/skills/&lt;nombre&gt;/SKILL.md</code> que enseña a hacer una tarea repetible siempre de la misma forma: pasos, carpetas, reglas y cómo verificar.</div>
@@ -468,7 +516,7 @@ typedoc.json            <span class="x">Configuración del generador de document
     <tr><th style="width:27%">Skill</th><th>Qué asegura</th></tr>
     <tr><td><code>crear-componente</code></td><td>Piezas del frontend con JSDoc, paleta, modo oscuro, animaciones, accesibilidad y capas.</td></tr>
     <tr><td><code>crear-recurso-laravel</code></td><td>Backend como en clase: migración, modelo, repositorio, servicio, Form Requests, controlador y Postman.</td></tr>
-    <tr><td><code>actualizar-documentacion</code></td><td>Regenerar TypeDoc y actualizar los dos PDF y el README.</td></tr>
+    <tr><td><code>actualizar-documentacion</code></td><td>Regenerar TypeDoc y actualizar los tres PDF y el README.</td></tr>
     <tr><td><code>verificar-proyecto</code></td><td>Lint, compilación, documentación, navegador y, con backend, Postman con Newman.</td></tr>
   </table>
 
@@ -493,7 +541,7 @@ typedoc.json            <span class="x">Configuración del generador de document
     <div class="caja noche"><b>verificar + documentar</b>Lint, build, PDF y commit</div>
   </div>
   <div class="nota"><b>Separación de responsabilidades:</b> quien prueba no cambia el código que prueba, y el revisor no edita lo que revisa. Así los errores se reportan en vez de "arreglarse" en silencio, como en un equipo real.</div>
-  <div class="pie"><span>ALCANZA · Cómo funciona el código</span><span>11</span></div>
+  <div class="pie"><span>ALCANZA · Cómo funciona el código</span><span>13</span></div>
 </section>
 
 </body>

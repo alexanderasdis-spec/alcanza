@@ -110,7 +110,7 @@
     <span class="chip-portada">DOCUMENTACIÓN DEL BACKEND · LARAVEL + MYSQL</span>
     <div class="logo">Alcanza</div>
     <h2>El backend, paso a paso</h2>
-    <p class="lema">Cómo se instaló, cómo está construido y cómo se prueba la API que guarda el perfil, las metas y los abonos en la base de datos <b style="color:#fff">data_alcanza</b>.</p>
+    <p class="lema">Cómo se instaló, cómo está construido y cómo se prueba la API que guarda las cuentas, el perfil, las metas y los abonos en la base de datos <b style="color:#fff">data_alcanza</b>.</p>
   </div>
   <div class="datos">
     <div><small>Autor</small><b>Harold Alexander Ceballos Henao</b></div>
@@ -123,17 +123,18 @@
 <section class="pagina">
   <div class="seccion"><span class="num">1</span><h1>¿Qué es el backend de Alcanza?</h1></div>
   <div class="destacado">Es una <b>API REST</b> hecha con <b>Laravel 13</b>. Recibe peticiones del frontend de React, valida los datos, aplica las reglas de negocio (por ejemplo, marcar una meta como cumplida) y guarda todo en una base de datos <b>MySQL</b>. Responde siempre en formato <b>JSON</b>.</div>
-  <p>Gracias al backend, el perfil, las metas y los abonos <b>quedan guardados de forma permanente</b> y no dependen del navegador. El código vive en una carpeta aparte del frontend, <code>~/alcanza-api</code>, dentro de Ubuntu (WSL), y tiene su propio repositorio de Git.</p>
+  <p>Gracias al backend, las cuentas de usuario, el perfil, las metas y los abonos <b>quedan guardados de forma permanente</b> y no dependen del navegador. El código vive en una carpeta aparte del frontend, <code>~/alcanza-api</code>, dentro de Ubuntu (WSL), y tiene su propio repositorio de Git.</p>
 
   <h3>Tecnologías</h3>
   <table>
     <tr><th style="width:26%">Herramienta</th><th>Para qué se usa</th></tr>
     <tr><td>Laravel 13 (PHP 8.5)</td><td>Framework que crea la API: rutas, controladores, validación y acceso a la base de datos con Eloquent.</td></tr>
-    <tr><td>MySQL 8.4</td><td>Base de datos <code>data_alcanza</code> con las tablas <code>perfiles</code>, <code>metas</code> y <code>abonos</code>.</td></tr>
-    <tr><td>Laravel Sail</td><td>Corre Laravel y MySQL en <b>contenedores de Docker</b>. No hace falta instalar PHP, Composer ni MySQL en Windows.</td></tr>
+    <tr><td>MySQL 8.4</td><td>Base de datos <code>data_alcanza</code> con las tablas <code>users</code>, <code>perfiles</code>, <code>metas</code> y <code>abonos</code>.</td></tr>
+    <tr><td>Laravel Sail</td><td>Corre Laravel, MySQL y Mailpit en <b>contenedores de Docker</b>. No hace falta instalar PHP, Composer ni MySQL en Windows.</td></tr>
     <tr><td>Docker (en Ubuntu)</td><td>Motor de contenedores instalado dentro de Ubuntu en WSL 2.</td></tr>
     <tr><td>WSL 2 + Ubuntu 24.04</td><td>Linux dentro de Windows. Laravel recomienda trabajar ahí porque Sail es mucho más rápido.</td></tr>
-    <tr><td>Laravel Sanctum</td><td>Viene con las rutas de API. Queda listo por si más adelante se agrega inicio de sesión.</td></tr>
+    <tr><td>Laravel Sanctum</td><td>Crea los <b>tokens de sesión</b>: React envía el token en cada petición para demostrar quién es el usuario.</td></tr>
+    <tr><td>Mailpit</td><td>Buzón de correo de prueba: atrapa los correos de "Olvidé mi contraseña" y los muestra en <code>http://localhost:8025</code>.</td></tr>
     <tr><td>Postman + Newman</td><td>Probar cada ruta. Newman es la versión de consola de Postman y corre toda la colección con un comando.</td></tr>
   </table>
 
@@ -183,6 +184,7 @@
     <tr><td>API de Laravel</td><td><code>http://localhost/api</code></td><td>Puerto 80. Es lo que usa React (<code>VITE_API_URL</code>).</td></tr>
     <tr><td>Chequeo de salud</td><td><code>http://localhost/up</code></td><td>Responde 200 si Laravel está arriba.</td></tr>
     <tr><td>MySQL</td><td><code>localhost:3306</code></td><td>Usuario <code>sail</code>, base <code>data_alcanza</code>.</td></tr>
+    <tr><td>Mailpit (correos)</td><td><code>http://localhost:8025</code></td><td>Aquí llegan los correos de recuperación.</td></tr>
     <tr><td>Frontend (React)</td><td><code>http://localhost:5173</code></td><td>El Vite de Laravel se movió al 5175 para no chocar.</td></tr>
   </table>
   <div class="pie"><span>ALCANZA · Documentación del backend</span><span>3</span></div>
@@ -206,9 +208,9 @@
     <li><b>Levantar los contenedores:</b> <code>./vendor/bin/sail up -d</code>. Solo hay dos: <code>laravel.test</code> (PHP) y <code>mysql</code>.</li>
     <li><b>Activar las rutas de API</b> (igual que en el proyecto de clase): <code>./vendor/bin/sail artisan install:api</code>. Crea <code>routes/api.php</code> e instala Sanctum. Se agregó el trait <code>HasApiTokens</code> al modelo <code>User</code>.</li>
     <li><b>Configurar CORS</b> para que el navegador deje a React hablar con la API: <code>./vendor/bin/sail artisan config:publish cors</code> y, en <code>config/cors.php</code>, permitir solo las direcciones de <code>FRONTEND_URLS</code>.</li>
-    <li><b>Crear las migraciones, modelos, repositorios, servicios, Form Requests, controladores y rutas</b> (secciones 7 a 10) y ejecutar <code>./vendor/bin/sail artisan migrate</code>.</li>
-    <li><b>Crear la colección de Postman</b> en la carpeta <code>postman/</code> y probarla con Newman (sección 13).</li>
-    <li><b>Iniciar Git</b> en <code>~/alcanza-api</code> y guardar cada avance con un commit.</li>
+    <li><b>Crear las migraciones, modelos, repositorios, servicios, Form Requests, controladores y rutas</b> (secciones 7 a 11) y ejecutar <code>./vendor/bin/sail artisan migrate</code>.</li>
+    <li><b>Agregar Mailpit y el correo:</b> servicio <code>mailpit</code> en <code>compose.yaml</code>, y en el <code>.env</code> <code>MAIL_MAILER=smtp</code>, <code>MAIL_HOST=mailpit</code>, <code>MAIL_PORT=1025</code>, <code>APP_LOCALE=es</code> y <code>FRONTEND_URL</code> (sección 11).</li>
+    <li><b>Crear la colección de Postman</b> en la carpeta <code>postman/</code> y probarla con Newman (sección 14). Guardar cada avance con un commit de <b>Git</b>.</li>
   </ol>
   <div class="nota"><b>Errores en JSON:</b> en <code>bootstrap/app.php</code>, Laravel 13 ya trae configurado que las rutas <code>api/*</code> respondan los errores (404, 422, 500) en JSON y no como página HTML.</div>
   <div class="pie"><span>ALCANZA · Documentación del backend</span><span>4</span></div>
@@ -218,28 +220,38 @@
 <section class="pagina">
   <div class="seccion"><span class="num">5</span><h1>Dónde está cada cosa</h1></div>
 <div class="arbol"><span class="d">~/alcanza-api/</span>
-├─ <span class="d">app/Http/Controllers/</span>   <span class="x">PerfilController, MetasController, AbonosController</span>
-├─ <span class="d">app/Http/Requests/</span>      <span class="x">PerfilRequest, MetaStoreRequest, MetaUpdateRequest, AbonoStoreRequest</span>
-├─ <span class="d">app/Models/</span>             <span class="x">Perfil, Meta, Abono (y User, de Laravel)</span>
-├─ <span class="d">app/Repositories/</span>       <span class="x">PerfilRepository, MetaRepository, AbonoRepository</span>
-│  └─ <span class="d">Contracts/</span>           <span class="x">Las tres interfaces de los repositorios</span>
-├─ <span class="d">app/Services/</span>           <span class="x">PerfilService, MetaService, AbonoService</span>
-├─ <span class="d">app/Providers/</span>          <span class="x">AppServiceProvider: une cada interfaz con su repositorio</span>
-├─ <span class="d">database/migrations/</span>    <span class="x">Creación de las tablas perfiles, metas y abonos</span>
-├─ <span class="d">routes/api.php</span>          <span class="x">Las rutas de la API</span>
+├─ <span class="d">app/Http/Controllers/</span>   <span class="x">AuthController, PerfilController, MetasController, AbonosController</span>
+├─ <span class="d">app/Http/Requests/</span>      <span class="x">Registro, Login, OlvideContrasena, RestablecerContrasena, Perfil, Meta…</span>
+├─ <span class="d">app/Models/</span>             <span class="x">User, Perfil, Meta, Abono</span>
+├─ <span class="d">app/Policies/</span>           <span class="x">MetaPolicy: solo el dueño puede tocar su meta</span>
+├─ <span class="d">app/Repositories/</span>       <span class="x">Usuario, Perfil, Meta y Abono Repository</span>
+│  └─ <span class="d">Contracts/</span>           <span class="x">Las cuatro interfaces de los repositorios</span>
+├─ <span class="d">app/Services/</span>           <span class="x">AuthService, PerfilService, MetaService, AbonoService</span>
+├─ <span class="d">app/Providers/</span>          <span class="x">AppServiceProvider: interfaces, límite de intentos y correo</span>
+├─ <span class="d">database/migrations/</span>    <span class="x">Tablas perfiles, metas, abonos y el user_id de perfiles</span>
+├─ <span class="d">lang/es.json</span>            <span class="x">Traducción de la plantilla de correo de Laravel</span>
+├─ <span class="d">routes/api.php</span>          <span class="x">Las rutas de la API (públicas y protegidas)</span>
 ├─ <span class="d">config/cors.php</span>         <span class="x">Qué direcciones pueden usar la API desde el navegador</span>
 ├─ <span class="d">postman/</span>                <span class="x">Colección y entorno de Postman</span>
-├─ compose.yaml            <span class="x">Los contenedores de Sail (laravel.test y mysql)</span>
+├─ compose.yaml            <span class="x">Los contenedores de Sail (laravel.test, mysql y mailpit)</span>
 └─ .env                    <span class="x">Configuración local (no se sube a Git)</span></div>
 
   <div class="bloque">
     <div class="seccion"><span class="num">6</span><h1>La base de datos <code style="font-size:18px">data_alcanza</code></h1></div>
     <div style="display:grid; grid-template-columns: 1fr 70px 1.25fr 70px 1fr; align-items:center; gap:0">
+      <div style="display:grid; gap:10px">
+      <div class="tabla-bd" style="border-color:#cbd5e1"><div class="cab" style="background:var(--noche)">users</div>
+        <div class="f pk"><span>id</span><span>bigint</span></div>
+        <div class="f"><span>name · email</span><span>varchar</span></div>
+        <div class="f"><span>password</span><span>cifrada</span></div></div>
+      <div class="relacion" style="display:block">1 ── 1 · tiene un perfil</div>
       <div class="tabla-bd"><div class="cab">perfiles</div>
         <div class="f pk"><span>id</span><span>bigint</span></div>
+        <div class="f fk"><span>user_id → users</span><span>único</span></div>
         <div class="f"><span>nombre</span><span>varchar(40)</span></div>
         <div class="f"><span>ahorro_mensual</span><span>decimal</span></div>
         <div class="f"><span>timestamps</span><span>fechas</span></div></div>
+      </div>
       <div class="relacion">1 ──&lt; N<br>tiene metas</div>
       <div class="tabla-bd"><div class="cab">metas</div>
         <div class="f pk"><span>id</span><span>bigint</span></div>
@@ -262,10 +274,10 @@
         <div class="f"><span>timestamps</span><span>fechas</span></div></div>
     </div>
     <ul class="lista" style="margin-top:12px">
-      <li><b>Llaves foráneas en cascada:</b> si se borra una meta, se borran sus abonos; si se borra un perfil, se borran sus metas.</li>
+      <li><b>Llaves foráneas en cascada:</b> si se borra un usuario se borra su perfil, con el perfil sus metas y con cada meta sus abonos.</li>
       <li><b>Montos en pesos:</b> el ahorro se guarda en COP y las metas también; los abonos van en la moneda de su meta. El frontend convierte a USD o EUR solo para mostrar.</li>
       <li><b><code>estado</code></b> solo acepta <code>en_progreso</code> o <code>cumplida</code>, y lo calcula el servidor, no el usuario.</li>
-      <li><b>Un solo perfil:</b> la app no tiene registro, así que trabaja con el primer perfil de la tabla.</li>
+      <li><b>Un perfil por usuario:</b> <code>user_id</code> es único. <code>users</code> y <code>personal_access_tokens</code> (los tokens de Sanctum) son tablas de Laravel.</li>
     </ul>
   </div>
   <div class="pie"><span>ALCANZA · Documentación del backend</span><span>5</span></div>
@@ -345,8 +357,9 @@ Schema::<span class="f">create</span>(<span class="s">'metas'</span>, <span clas
   <h3>Qué hace cada servicio</h3>
   <table>
     <tr><th style="width:22%">Servicio</th><th>Métodos y reglas</th></tr>
-    <tr><td>PerfilService</td><td><code>obtener()</code> y <code>guardar()</code>: la primera vez <b>crea</b> el perfil y después lo <b>actualiza</b>. Devuelve si fue creado, para responder 201 o 200.</td></tr>
-    <tr><td>MetaService</td><td><code>listar()</code>, <code>mostrar()</code>, <code>crear()</code> (toda meta empieza <code>en_progreso</code>), <code>actualizar()</code> (vuelve a revisar el estado si cambia el precio o el descuento), <code>eliminar()</code> y <code>revisarEstado()</code>.</td></tr>
+    <tr><td>AuthService</td><td><code>registrar()</code>, <code>iniciarSesion()</code>, <code>cerrarSesion()</code>, <code>enviarEnlace()</code> y <code>restablecer()</code>: cuentas y tokens (sección 11).</td></tr>
+    <tr><td>PerfilService</td><td><code>obtener(usuario)</code> y <code>guardar(usuario, datos)</code>: la primera vez <b>crea</b> el perfil del usuario y después lo <b>actualiza</b>. Devuelve si fue creado, para responder 201 o 200.</td></tr>
+    <tr><td>MetaService</td><td><code>listar(usuario)</code> (solo las metas de su perfil), <code>mostrar()</code>, <code>crear(usuario, datos)</code> (empieza <code>en_progreso</code>; sin perfil responde 422), <code>actualizar()</code>, <code>eliminar()</code> y <code>revisarEstado()</code>.</td></tr>
     <tr><td>AbonoService</td><td><code>registrar()</code>: si no llega fecha usa la de hoy, guarda el abono, revisa el estado de la meta y devuelve el abono y la meta actualizada.</td></tr>
   </table>
   <div class="pie"><span>ALCANZA · Documentación del backend</span><span>7</span></div>
@@ -359,7 +372,7 @@ Schema::<span class="f">create</span>(<span class="s">'metas'</span>, <span clas
   <table>
     <tr><th style="width:22%">Form Request</th><th>Reglas principales</th></tr>
     <tr><td>PerfilRequest</td><td><code>nombre</code>: obligatorio, de 2 a 40 letras · <code>ahorro_mensual</code>: número mayor que 0 y hasta 100 millones. Son las mismas reglas que valida React.</td></tr>
-    <tr><td>MetaStoreRequest</td><td><code>perfil_id</code> debe existir en <code>perfiles</code> · <code>precio</code> &gt; 0 · <code>moneda</code> en COP, USD o EUR · <code>descuento</code> de 0 a 100 · <code>imagen</code> debe ser una URL · <code>fecha_estimada</code> no puede ser pasada.</td></tr>
+    <tr><td>MetaStoreRequest</td><td><code>precio</code> &gt; 0 · <code>moneda</code> en COP, USD o EUR · <code>descuento</code> de 0 a 100 · <code>imagen</code> debe ser una URL · <code>fecha_estimada</code> no puede ser pasada. El perfil no se envía: lo pone el servicio.</td></tr>
     <tr><td>MetaUpdateRequest</td><td>Igual, pero con <code>sometimes</code>: se envía solo lo que cambia. No permite cambiar el perfil, el producto ni el estado.</td></tr>
     <tr><td>AbonoStoreRequest</td><td><code>monto</code> &gt; 0 · <code>fecha</code> opcional y no futura.</td></tr>
   </table>
@@ -370,31 +383,69 @@ Schema::<span class="f">create</span>(<span class="s">'metas'</span>, <span clas
 
   <div class="bloque">
     <div class="seccion"><span class="num">10</span><h1>Rutas de la API</h1></div>
-<pre><span class="c">// routes/api.php</span>
-Route::<span class="f">get</span>(<span class="s">'perfil'</span>, [PerfilController::<span class="k">class</span>, <span class="s">'show'</span>]);
-Route::<span class="f">post</span>(<span class="s">'perfil'</span>, [PerfilController::<span class="k">class</span>, <span class="s">'store'</span>]);
-Route::<span class="f">apiResource</span>(<span class="s">'metas'</span>, MetasController::<span class="k">class</span>);   <span class="c">// las 5 rutas del CRUD</span>
-Route::<span class="f">post</span>(<span class="s">'metas/{meta}/abonos'</span>, [AbonosController::<span class="k">class</span>, <span class="s">'store'</span>]);</pre>
+<pre><span class="c">// routes/api.php (las de cuentas están en la sección 11)</span>
+Route::<span class="f">middleware</span>(<span class="s">'auth:sanctum'</span>)-&gt;<span class="f">group</span>(<span class="k">function</span> () {   <span class="c">// sin token → 401</span>
+    Route::<span class="f">get</span>(<span class="s">'perfil'</span>, [PerfilController::<span class="k">class</span>, <span class="s">'show'</span>]);
+    Route::<span class="f">post</span>(<span class="s">'perfil'</span>, [PerfilController::<span class="k">class</span>, <span class="s">'store'</span>]);
+    Route::<span class="f">apiResource</span>(<span class="s">'metas'</span>, MetasController::<span class="k">class</span>);       <span class="c">// las 5 rutas del CRUD</span>
+    Route::<span class="f">post</span>(<span class="s">'metas/{meta}/abonos'</span>, [AbonosController::<span class="k">class</span>, <span class="s">'store'</span>]);
+});</pre>
     <table style="margin-top:8px">
       <tr><th style="width:12%">Método</th><th style="width:28%">Ruta</th><th>Qué hace</th><th style="width:22%">Respuestas</th></tr>
       <tr><td><span class="metodo get">GET</span></td><td><code>/api/perfil</code></td><td>Consulta el perfil</td><td>200 · 404 si no hay</td></tr>
       <tr><td><span class="metodo post">POST</span></td><td><code>/api/perfil</code></td><td>Crea o actualiza el perfil</td><td>201 · 200 · 422</td></tr>
       <tr><td><span class="metodo get">GET</span></td><td><code>/api/metas</code></td><td>Lista las metas con su progreso</td><td>200</td></tr>
       <tr><td><span class="metodo post">POST</span></td><td><code>/api/metas</code></td><td>Convierte un antojo en meta</td><td>201 · 422</td></tr>
-      <tr><td><span class="metodo get">GET</span></td><td><code>/api/metas/{id}</code></td><td>Una meta con sus abonos</td><td>200 · 404</td></tr>
-      <tr><td><span class="metodo put">PUT</span></td><td><code>/api/metas/{id}</code></td><td>Cambia precio, descuento, etc.</td><td>200 · 404 · 422</td></tr>
-      <tr><td><span class="metodo delete">DELETE</span></td><td><code>/api/metas/{id}</code></td><td>Elimina la meta y sus abonos</td><td>204 · 404</td></tr>
-      <tr><td><span class="metodo post">POST</span></td><td><code>/api/metas/{id}/abonos</code></td><td>Registra un abono</td><td>201 · 404 · 422</td></tr>
+      <tr><td><span class="metodo get">GET</span></td><td><code>/api/metas/{id}</code></td><td>Una meta con sus abonos</td><td>200 · 403 · 404</td></tr>
+      <tr><td><span class="metodo put">PUT</span></td><td><code>/api/metas/{id}</code></td><td>Cambia precio, descuento, etc.</td><td>200 · 403 · 404 · 422</td></tr>
+      <tr><td><span class="metodo delete">DELETE</span></td><td><code>/api/metas/{id}</code></td><td>Elimina la meta y sus abonos</td><td>204 · 403 · 404</td></tr>
+      <tr><td><span class="metodo post">POST</span></td><td><code>/api/metas/{id}/abonos</code></td><td>Registra un abono</td><td>201 · 403 · 404 · 422</td></tr>
     </table>
-    <p style="margin-top:8px"><code>apiResource</code> crea solo las rutas de una API, sin los formularios <code>create</code> y <code>edit</code> del modelo vista controlador. El <code>404</code> de una meta que no existe lo da Laravel solo, gracias al <b>route model binding</b> (<code>show(Meta $meta)</code>).</p>
+    <p style="margin-top:8px"><code>apiResource</code> crea solo las rutas de una API, sin los formularios del modelo vista controlador. El <code>404</code> lo da Laravel solo (<b>route model binding</b>) y el <code>403</code>, <code>MetaPolicy</code> cuando la meta es de otro usuario.</p>
   </div>
   <div class="pie"><span>ALCANZA · Documentación del backend</span><span>8</span></div>
 </section>
 
+<!-- NUEVA · Cuentas de usuario -->
+<section class="pagina">
+  <div class="seccion"><span class="num">11</span><h1>Cuentas de usuario y seguridad</h1></div>
+  <div class="destacado">Cada persona tiene su <b>cuenta</b>: se registra con nombre, correo y contraseña, inicia sesión y recibe un <b>token de Sanctum</b>. React envía ese token en cada petición (<code>Authorization: Bearer &lt;token&gt;</code>); sin él, las rutas protegidas responden <code>401</code>.</div>
+  <table>
+    <tr><th style="width:12%">Método</th><th style="width:30%">Ruta</th><th>Qué hace</th><th style="width:17%">Respuestas</th></tr>
+    <tr><td><span class="metodo post">POST</span></td><td><code>/api/registro</code></td><td>Crea la cuenta y devuelve <code>{ usuario, token }</code></td><td>201 · 422</td></tr>
+    <tr><td><span class="metodo post">POST</span></td><td><code>/api/login</code></td><td>Revisa correo y contraseña y crea un token</td><td>200 · 422 · 429</td></tr>
+    <tr><td><span class="metodo get">GET</span></td><td><code>/api/usuario</code></td><td>Usuario dueño del token</td><td>200 · 401</td></tr>
+    <tr><td><span class="metodo post">POST</span></td><td><code>/api/logout</code></td><td>Borra el token actual</td><td>204 · 401</td></tr>
+    <tr><td><span class="metodo post">POST</span></td><td><code>/api/olvide-contrasena</code></td><td>Envía el correo con el enlace</td><td>200 · 422</td></tr>
+    <tr><td><span class="metodo post">POST</span></td><td><code>/api/restablecer-contrasena</code></td><td>Guarda la contraseña nueva con el token del correo</td><td>200 · 422</td></tr>
+  </table>
+  <p style="margin-top:8px">Siguen la misma arquitectura: <code>AuthController</code> → <code>AuthService</code> → <code>UsuarioRepository</code>, con los Form Requests <code>RegistroRequest</code>, <code>LoginRequest</code>, <code>OlvideContrasenaRequest</code> y <code>RestablecerContrasenaRequest</code>.</p>
+
+  <h3>Solo el dueño toca su meta: <code>MetaPolicy</code></h3>
+<pre><span class="c">// app/Policies/MetaPolicy.php — Laravel la encuentra sola por el nombre (Meta → MetaPolicy)</span>
+<span class="k">private function</span> <span class="f">esDueno</span>(User $usuario, Meta $meta): <span class="k">bool</span>
+{
+    <span class="k">return</span> $meta-&gt;<span class="f">perfil</span>()-&gt;<span class="f">value</span>(<span class="s">'user_id'</span>) === $usuario-&gt;id;
+}
+<span class="c">// En el controlador: Gate::authorize('view', $meta);  → si no es el dueño, 403</span></pre>
+
+  <h3>Medidas de seguridad</h3>
+  <ul class="lista">
+    <li><b>Contraseñas:</b> se guardan cifradas (cast <code>hashed</code>), nunca salen en el JSON y deben tener 8 caracteres, letras y números.</li>
+    <li><b>Sin pistas:</b> login y "Olvidé mi contraseña" responden igual exista o no el correo.</li>
+    <li><b>Límite de intentos:</b> <code>RateLimiter::for('cuentas')</code> permite 10 por minuto en cada ruta de cuenta (luego <code>429</code>).</li>
+    <li><b>Recuperación:</b> el enlace vence en 60 minutos y, al cambiar la contraseña, se borran todos los tokens del usuario.</li>
+  </ul>
+
+  <h3>El correo de "Olvidé mi contraseña"</h3>
+  <p>En <code>AppServiceProvider</code>, <code>ResetPassword::createUrlUsing</code> hace que el enlace lleve a la página de React (<code>FRONTEND_URL/restablecer?token=…&amp;email=…</code>) y <code>ResetPassword::toMailUsing</code> escribe el correo en español con el nombre del usuario. En desarrollo el correo no sale a internet: llega a <b>Mailpit</b> (<code>http://localhost:8025</code>).</p>
+  <div class="pie"><span>ALCANZA · Documentación del backend</span><span>9</span></div>
+</section>
+
 <!-- 9 · Ejemplos y conexión con React -->
 <section class="pagina">
-  <div class="seccion"><span class="num">11</span><h1>Ejemplo real: una meta en JSON</h1></div>
-  <p style="margin-bottom:8px">Respuesta real de <code>GET /api/metas</code> con la meta de prueba del MacBook (sin las fechas de creación):</p>
+  <div class="seccion"><span class="num">12</span><h1>Ejemplo real: una meta en JSON</h1></div>
+  <p style="margin-bottom:8px">Respuesta real de <code>GET /api/metas</code> con una meta de prueba del MacBook ya cumplida (sin las fechas de creación):</p>
 <pre>[{
   <span class="s">"id"</span>: 4,  <span class="s">"perfil_id"</span>: 2,  <span class="s">"producto_id"</span>: <span class="s">"78"</span>,
   <span class="s">"nombre_producto"</span>: <span class="s">"Apple MacBook Pro 14 Inch Space Grey"</span>,
@@ -407,11 +458,11 @@ Route::<span class="f">post</span>(<span class="s">'metas/{meta}/abonos'</span>,
 }]</pre>
 
   <div class="bloque">
-    <div class="seccion"><span class="num">12</span><h1>Conexión con el frontend</h1></div>
+    <div class="seccion"><span class="num">13</span><h1>Conexión con el frontend</h1></div>
     <ol class="pasos">
       <li><b>CORS:</b> el navegador bloquea por defecto las peticiones de <code>localhost:5173</code> a <code>localhost</code>, porque son "orígenes" distintos. <code>config/cors.php</code> le dice al navegador que la API acepta esas direcciones.</li>
       <li><b>Dirección de la API:</b> React la lee de <code>VITE_API_URL</code> en su <code>.env</code> (<code>http://localhost/api</code>).</li>
-      <li><b>Cliente Axios</b> (<code>src/services/api.js</code>): envía siempre <code>Accept: application/json</code> para que Laravel responda los errores en JSON.</li>
+      <li><b>Cliente Axios</b> (<code>src/services/api.js</code>): envía siempre <code>Accept: application/json</code> y, con un interceptor, el token de la sesión. Si la API responde <code>401</code>, borra el token y la app vuelve a "Iniciar sesión".</li>
       <li><b>Traducción de nombres:</b> la API usa "snake_case" (<code>ahorro_mensual</code>, <code>precio_final</code>) y React "camelCase" (<code>ahorroMensual</code>, <code>precioFinal</code>). Los servicios <code>perfilService.js</code> y <code>metasService.js</code> traducen en los dos sentidos.</li>
       <li><b>Errores:</b> un <code>422</code> se muestra junto al campo del formulario; si el backend está apagado, la app muestra "No pudimos conectar con el servidor" con el botón Reintentar.</li>
     </ol>
@@ -419,17 +470,17 @@ Route::<span class="f">post</span>(<span class="s">'metas/{meta}/abonos'</span>,
 <span class="k">const</span> { data } = <span class="k">await</span> api.<span class="f">post</span>(<span class="s">`/metas/${metaId}/abonos`</span>, { monto })
 <span class="c">// data.meta.estado === 'cumplida'  →  la página lanza el confeti</span></pre>
   </div>
-  <div class="pie"><span>ALCANZA · Documentación del backend</span><span>9</span></div>
+  <div class="pie"><span>ALCANZA · Documentación del backend</span><span>10</span></div>
 </section>
 
 <!-- 10 · Pruebas -->
 <section class="pagina">
-  <div class="seccion"><span class="num">13</span><h1>Paso a paso: probar la API</h1></div>
+  <div class="seccion"><span class="num">14</span><h1>Paso a paso: probar la API</h1></div>
   <h3 style="margin-top:0">Opción A · Con Postman (visual)</h3>
   <ol class="pasos">
     <li>Abrir Postman → <b>Import</b> → elegir los dos archivos de <code>~/alcanza-api/postman/</code> (desde Windows: <code>\\wsl.localhost\Ubuntu-24.04\home\alex\alcanza-api\postman</code>).</li>
     <li>Arriba a la derecha, elegir el entorno <b>"alcanza-api local"</b>.</li>
-    <li>Clic derecho en la colección → <b>Run collection</b> → <b>Run</b>. Las peticiones van en orden y cada una revisa su resultado.</li>
+    <li>Clic derecho en la colección → <b>Run collection</b> → <b>Run</b>. Las peticiones van en orden y cada una revisa su resultado. El token del login se guarda solo y se usa en las siguientes.</li>
   </ol>
 
   <h3>Opción B · Con Newman (un solo comando)</h3>
@@ -442,20 +493,22 @@ docker run --rm --network alcanza-api_sail -v "$PWD/postman":/etc/newman postman
   <h3>Qué prueba la colección (en orden)</h3>
   <table>
     <tr><th style="width:18%">Grupo</th><th>Peticiones y comprobaciones</th></tr>
-    <tr><td>0. Salud</td><td><code>/up</code> responde 200 · <code>/api/user</code> sin token responde 401 en JSON.</td></tr>
-    <tr><td>1. Perfil</td><td>Perfil vacío → 422 con los dos errores · guardar → 201 o 200 · consultar → 200.</td></tr>
-    <tr><td>2. Metas</td><td>Meta vacía → 422 · crear con 10 % de descuento → <code>precio_final</code> 900.000 · listar · ver · subir el descuento a 20 % → 800.000 · id inexistente → 404.</td></tr>
-    <tr><td>3. Abonos</td><td>Monto 0 → 422 · abonar 300.000 → 37,5 % y en progreso · abonar 500.000 → 100 % y <b>cumplida</b>.</td></tr>
-    <tr><td>4. Limpieza</td><td>Eliminar → 204 · volver a consultarla → 404.</td></tr>
+    <tr><td>0. Salud</td><td><code>/up</code> responde 200 · perfil sin token → 401.</td></tr>
+    <tr><td>1. Cuenta</td><td>Registro inválido → 422 · registro → 201 · correo repetido → 422 · login malo → 422 · login → token · usuario actual · olvidé → 200 · enlace inventado → 422.</td></tr>
+    <tr><td>2. Perfil</td><td>Sin perfil → 404 · inválido → 422 · crear → 201 · actualizar → 200.</td></tr>
+    <tr><td>3. Metas</td><td>Inválida → 422 · crear con 10 % → <code>precio_final</code> 900.000 · listar (solo las suyas) · ver · descuento 20 % → 800.000 · id inexistente → 404.</td></tr>
+    <tr><td>4. Otro usuario</td><td>Ver o abonar la meta ajena → <b>403</b> · crear meta sin perfil → 422.</td></tr>
+    <tr><td>5. Abonos</td><td>Monto 0 → 422 · abonar 300.000 → 37,5 % · abonar 500.000 → 100 % y <b>cumplida</b>.</td></tr>
+    <tr><td>6. Limpieza</td><td>Eliminar → 204 · consultarla → 404 · cerrar sesión → 204 · token viejo → 401.</td></tr>
   </table>
-  <div class="destacado" style="margin-top:10px"><b>Resultado actual:</b> 16 peticiones y <b>34 comprobaciones aprobadas, 0 fallidas</b>.</div>
-  <div class="alerta"><b>Ojo:</b> la colección guarda el perfil "Harold" con $ 350.000 (prueba el <code>POST /api/perfil</code>), así que <b>reemplaza el perfil real</b>. Las metas que crea sí las borra al final.</div>
-  <div class="pie"><span>ALCANZA · Documentación del backend</span><span>10</span></div>
+  <div class="destacado" style="margin-top:10px"><b>Resultado actual:</b> 31 peticiones y <b>60 comprobaciones aprobadas, 0 fallidas</b>.</div>
+  <div class="alerta"><b>Ojo:</b> cada ejecución crea dos usuarios de prueba con correos <code>…@alcanza.test</code>. Se borran con: <code>sail artisan tinker --execute='App\Models\User::where("email","like","%@alcanza.test")-&gt;delete();'</code></div>
+  <div class="pie"><span>ALCANZA · Documentación del backend</span><span>11</span></div>
 </section>
 
 <!-- 11 · Problemas y comandos -->
 <section class="pagina">
-  <div class="seccion"><span class="num">14</span><h1>Problemas comunes y soluciones</h1></div>
+  <div class="seccion"><span class="num">15</span><h1>Problemas comunes y soluciones</h1></div>
   <table>
     <tr><th style="width:32%">Síntoma</th><th>Causa y solución</th></tr>
     <tr><td>"Sail is not running"</td><td>Los contenedores están apagados (WSL se durmió). Ejecutar <code>./vendor/bin/sail up</code> en <code>~/alcanza-api</code>.</td></tr>
@@ -463,15 +516,18 @@ docker run --rm --network alcanza-api_sail -v "$PWD/postman":/etc/newman postman
     <tr><td>El puerto 5173 está ocupado</td><td>El Vite de Laravel lo usaba. Se resolvió con <code>VITE_PORT=5175</code> en el <code>.env</code> del backend.</td></tr>
     <tr><td>Newman: "connect ETIMEDOUT"</td><td>Usar <code>--network alcanza-api_sail</code> y <code>host=http://laravel.test</code>, no <code>host.docker.internal</code> (lo bloquea el firewall de Windows).</td></tr>
     <tr><td>Error de CORS en la consola del navegador</td><td>La dirección del frontend no está en <code>FRONTEND_URLS</code>. Agregarla en el <code>.env</code> y ejecutar <code>sail artisan config:clear</code>.</td></tr>
-    <tr><td>Los errores salen en inglés</td><td>Agregar el mensaje en <code>messages()</code> del Form Request.</td></tr>
+    <tr><td>Los errores salen en inglés</td><td>Agregar el mensaje en <code>messages()</code> del Form Request (o en <code>lang/es.json</code> si es de una plantilla de Laravel).</td></tr>
+    <tr><td><code>401</code> "Unauthenticated."</td><td>Falta el token o ya no sirve (cerró sesión o cambió la contraseña). Volver a iniciar sesión.</td></tr>
+    <tr><td><code>429</code> "Too Many Attempts"</td><td>Se superaron 10 intentos por minuto en una ruta de cuenta. Esperar un minuto.</td></tr>
+    <tr><td>No llega el correo de recuperación</td><td>Revisar que el contenedor <code>mailpit</code> esté encendido (<code>sail ps</code>) y abrir <code>http://localhost:8025</code>.</td></tr>
     <tr><td>Error 500 al crear una meta</td><td>Revisar los registros con <code>./vendor/bin/sail artisan pail</code> o en <code>storage/logs/laravel.log</code>.</td></tr>
   </table>
 
   <div class="bloque">
-    <div class="seccion"><span class="num">15</span><h1>Comandos útiles</h1></div>
+    <div class="seccion"><span class="num">16</span><h1>Comandos útiles</h1></div>
     <table>
       <tr><th style="width:48%">Comando (dentro de <code style="background:none;color:#fff">~/alcanza-api</code>)</th><th>Para qué</th></tr>
-      <tr><td><code>./vendor/bin/sail up</code></td><td>Encender Laravel y MySQL</td></tr>
+      <tr><td><code>./vendor/bin/sail up</code></td><td>Encender Laravel, MySQL y Mailpit</td></tr>
       <tr><td><code>./vendor/bin/sail stop</code></td><td>Apagarlos (los datos se conservan)</td></tr>
       <tr><td><code>./vendor/bin/sail ps</code></td><td>Ver qué contenedores están encendidos</td></tr>
       <tr><td><code>./vendor/bin/sail artisan migrate</code></td><td>Crear las tablas que falten</td></tr>
@@ -483,7 +539,7 @@ docker run --rm --network alcanza-api_sail -v "$PWD/postman":/etc/newman postman
       <tr><td><code>code ~/alcanza-api</code></td><td>Abrir el backend en VS Code</td></tr>
     </table>
   </div>
-  <div class="pie"><span>ALCANZA · Documentación del backend</span><span>11</span></div>
+  <div class="pie"><span>ALCANZA · Documentación del backend</span><span>12</span></div>
 </section>
 
 </body>
