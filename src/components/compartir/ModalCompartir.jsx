@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Download, Sparkles, X } from 'lucide-react'
-import { toPng } from 'html-to-image'
 import Logo from '../Logo'
 import { formatearMes } from '../../utils/formato'
 
@@ -66,6 +65,8 @@ function ModalCompartir({ abierto, onCerrar, nombre, imagen, fecha, progreso, cu
     setGenerando(true)
     setError('')
     try {
+      // La librería se descarga solo cuando alguien pide la imagen.
+      const { toPng } = await import('html-to-image')
       const datos = await toPng(tarjeta.current, { pixelRatio: 2, cacheBust: true, imagePlaceholder: PIXEL_VACIO })
       const enlace = document.createElement('a')
       enlace.href = datos

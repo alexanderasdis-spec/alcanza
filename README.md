@@ -59,6 +59,8 @@ docker run --rm -u "$(id -u):$(id -g)" -v "$(pwd):/var/www/html" -w /var/www/htm
 
 La API queda en `http://localhost/api` y los correos de prueba se ven en Mailpit: `http://localhost:8025`.
 
+> La primera vez, MySQL tarda unos segundos en quedar listo. Si `migrate` falla, espera medio minuto y vuelve a ejecutarlo.
+>
 > Si Ubuntu se apaga, los contenedores se detienen. Para trabajar sin cortes, deja `./vendor/bin/sail up` corriendo en una terminal.
 
 ### 2. Frontend (React)

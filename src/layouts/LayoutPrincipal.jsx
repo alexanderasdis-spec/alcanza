@@ -1,5 +1,7 @@
+import { Suspense } from 'react'
 import { useLocation, useOutlet } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
+import CargandoPagina from '../components/CargandoPagina'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import { TRANSICION_ENTRADA } from '../utils/animaciones'
@@ -31,7 +33,8 @@ function LayoutPrincipal() {
             exit={{ opacity: 0, y: -16 }}
             transition={{ ...TRANSICION_ENTRADA, duration: 0.35 }}
           >
-            {pagina}
+            {/* Aquí adentro, el menú y el pie siguen visibles mientras se descarga la página */}
+            <Suspense fallback={<CargandoPagina />}>{pagina}</Suspense>
           </motion.div>
         </AnimatePresence>
       </main>

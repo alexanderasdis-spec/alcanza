@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { MotionConfig } from 'framer-motion'
 import { TemaProvider } from './context/TemaProvider'
@@ -10,18 +11,21 @@ import RequierePerfil from './components/RequierePerfil'
 import RequiereSesion from './components/RequiereSesion'
 import SoloInvitados from './components/SoloInvitados'
 import LayoutPrincipal from './layouts/LayoutPrincipal'
-import Bienvenida from './pages/Bienvenida'
-import IniciarSesion from './pages/IniciarSesion'
-import Registro from './pages/Registro'
-import OlvideContrasena from './pages/OlvideContrasena'
-import RestablecerContrasena from './pages/RestablecerContrasena'
-import Inicio from './pages/Inicio'
-import Antojos from './pages/Antojos'
-import DetalleAntojo from './pages/DetalleAntojo'
-import Comparador from './pages/Comparador'
-import MisMetas from './pages/MisMetas'
-import MiPerfil from './pages/MiPerfil'
-import NoEncontrada from './pages/NoEncontrada'
+import CargandoPagina from './components/CargandoPagina'
+
+// Cada página se descarga cuando se abre, no todas al entrar: así la primera carga pesa menos.
+const Bienvenida = lazy(() => import('./pages/Bienvenida'))
+const IniciarSesion = lazy(() => import('./pages/IniciarSesion'))
+const Registro = lazy(() => import('./pages/Registro'))
+const OlvideContrasena = lazy(() => import('./pages/OlvideContrasena'))
+const RestablecerContrasena = lazy(() => import('./pages/RestablecerContrasena'))
+const Inicio = lazy(() => import('./pages/Inicio'))
+const Antojos = lazy(() => import('./pages/Antojos'))
+const DetalleAntojo = lazy(() => import('./pages/DetalleAntojo'))
+const Comparador = lazy(() => import('./pages/Comparador'))
+const MisMetas = lazy(() => import('./pages/MisMetas'))
+const MiPerfil = lazy(() => import('./pages/MiPerfil'))
+const NoEncontrada = lazy(() => import('./pages/NoEncontrada'))
 
 /**
  * Componente raíz de Alcanza.
@@ -54,7 +58,8 @@ function App() {
               <MotionConfig reducedMotion="user">
                 <FondoAnimado />
                 <BrowserRouter>
-                  <Routes>
+                  <Suspense fallback={<CargandoPagina />}>
+                    <Routes>
                     <Route element={<SoloInvitados />}>
                       <Route path="/ingresar" element={<IniciarSesion />} />
                       <Route path="/registro" element={<Registro />} />
@@ -78,6 +83,7 @@ function App() {
                       </Route>
                     </Route>
                   </Routes>
+                  </Suspense>
                 </BrowserRouter>
               </MotionConfig>
             </MonedaProvider>
