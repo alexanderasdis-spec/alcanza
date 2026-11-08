@@ -5,7 +5,9 @@ import BotonTema from './BotonTema'
 import Logo from './Logo'
 import MenuUsuario from './MenuUsuario'
 import SelectorMoneda from './SelectorMoneda'
+import Avatar from './perfil/Avatar'
 import { useAuth } from '../hooks/useAuth'
+import { usePerfil } from '../hooks/usePerfil'
 
 /**
  * Enlaces del menú principal.
@@ -46,6 +48,7 @@ function Navbar() {
   // Controla si el menú desplegable del celular está abierto.
   const [menuAbierto, setMenuAbierto] = useState(false)
   const { usuario, cerrarSesion } = useAuth()
+  const { perfil } = usePerfil()
   const navigate = useNavigate()
 
   const cerrarMenu = () => setMenuAbierto(false)
@@ -106,10 +109,13 @@ function Navbar() {
           ))}
           {usuario && (
             <li className="mt-2 flex items-center justify-between gap-3 border-t border-slate-200 px-4 pt-3 dark:border-slate-800">
-              <Link to="/perfil" onClick={cerrarMenu} className="min-w-0 rounded-xl">
-                <span className="block truncate font-semibold">{usuario.nombre}</span>
-                <span className="block truncate text-sm text-slate-500 dark:text-slate-400">{usuario.email}</span>
-                <span className="block text-xs font-semibold text-violeta dark:text-violet-300">Ver mi perfil</span>
+              <Link to="/perfil" onClick={cerrarMenu} className="flex min-w-0 items-center gap-3 rounded-xl">
+                <Avatar foto={perfil?.foto} nombre={usuario.nombre} />
+                <span className="min-w-0">
+                  <span className="block truncate font-semibold">{usuario.nombre}</span>
+                  <span className="block truncate text-sm text-slate-500 dark:text-slate-400">{usuario.email}</span>
+                  <span className="block text-xs font-semibold text-violeta dark:text-violet-300">Ver mi perfil</span>
+                </span>
               </Link>
               <button
                 type="button"

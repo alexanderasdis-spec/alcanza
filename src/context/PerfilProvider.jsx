@@ -52,12 +52,35 @@ export function PerfilProvider({ children }) {
     setRespuesta({ usuarioId, intento, perfil: guardado, error: null })
   }
 
+  /**
+   * Sube una foto nueva y la muestra en toda la app.
+   *
+   * @param {Blob} imagen
+   * @returns {Promise<void>}
+   */
+  const cambiarFoto = async (imagen) => {
+    const guardado = await perfilService.subirFoto(imagen)
+    setRespuesta({ usuarioId, intento, perfil: guardado, error: null })
+  }
+
+  /**
+   * Quita la foto; la app vuelve a mostrar la inicial del nombre.
+   *
+   * @returns {Promise<void>}
+   */
+  const quitarFoto = async () => {
+    const guardado = await perfilService.eliminarFoto()
+    setRespuesta({ usuarioId, intento, perfil: guardado, error: null })
+  }
+
   const valor = {
     perfil: vigente ? respuesta.perfil : null,
     cargando,
     error: vigente ? respuesta.error : null,
     reintentar,
     guardarPerfil,
+    cambiarFoto,
+    quitarFoto,
   }
 
   return <PerfilContext.Provider value={valor}>{children}</PerfilContext.Provider>

@@ -6,6 +6,7 @@ import TarjetaInteractiva from '../components/animaciones/TarjetaInteractiva'
 import AvisoFormulario from '../components/auth/AvisoFormulario'
 import BotonEnviar from '../components/auth/BotonEnviar'
 import CampoTexto from '../components/formulario/CampoTexto'
+import SelectorFoto from '../components/perfil/SelectorFoto'
 import { useAuth } from '../hooks/useAuth'
 import { useFormulario } from '../hooks/useFormulario'
 import { usePerfil } from '../hooks/usePerfil'
@@ -135,7 +136,7 @@ function FormularioContrasena({ onCambiada }) {
 
 /**
  * Página "Mi perfil" (ruta `/perfil`).
- * Muestra la cuenta (nombre y correo), permite editar el nombre y el ahorro mensual del perfil
+ * Muestra la cuenta y permite cambiar la foto, editar el nombre y el ahorro mensual del perfil
  * y cambiar la contraseña. Al cambiarla, la API cierra la sesión en los otros dispositivos.
  *
  * @returns {JSX.Element}
@@ -162,6 +163,12 @@ function MiPerfil() {
           <Mail className="size-4" />
           {usuario?.email}
         </p>
+      </Aparecer>
+
+      <Aparecer>
+        <TarjetaInteractiva className="p-6" inclinacion={2}>
+          <SelectorFoto />
+        </TarjetaInteractiva>
       </Aparecer>
 
       <div className="grid gap-6 md:grid-cols-2">

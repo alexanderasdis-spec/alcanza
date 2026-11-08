@@ -247,7 +247,7 @@ typedoc.json            <span class="x">Configuración del generador de document
     <tr><td><code>/antojos/:id</code></td><td>DetalleAntojo</td><td>Fotos, precio, fecha, simulador "¿y si...?", compartir y "Convertir en meta". Lee el <code>id</code> con <code>useParams</code>.</td><td>Con perfil</td></tr>
     <tr><td><code>/comparador</code></td><td>Comparador</td><td>Dos antojos lado a lado; los elegidos van en la URL (<code>?a=78&amp;b=100</code>).</td><td>Con perfil</td></tr>
     <tr><td><code>/metas</code></td><td>MisMetas</td><td>Metas con progreso, abonos, gráfico de ahorro y confeti al 100 %.</td><td>Con perfil</td></tr>
-    <tr><td><code>/perfil</code></td><td>MiPerfil</td><td>Editar nombre y ahorro mensual, y cambiar la contraseña.</td><td>Con perfil</td></tr>
+    <tr><td><code>/perfil</code></td><td>MiPerfil</td><td>Foto de perfil, nombre, ahorro mensual y cambio de contraseña.</td><td>Con perfil</td></tr>
     <tr><td><code>*</code></td><td>NoEncontrada</td><td>404 temática: "Saldo insuficiente".</td><td>Con perfil</td></tr>
   </table>
   <div class="nota"><b>"Con perfil"</b> significa que la ruta está dentro de <code>RequiereSesion</code> y de <code>RequierePerfil</code>: primero hay que iniciar sesión y luego tener perfil. Las de cuenta usan <code>MarcoAuth</code> (tarjeta centrada, sin menú) y el resto, <code>LayoutPrincipal</code>.</div>
@@ -328,7 +328,7 @@ typedoc.json            <span class="x">Configuración del generador de document
     <div class="tarjeta"><b class="t" style="color:var(--menta)">monedaService</b>Tasas de <code>open.er-api.com</code>: <code>{ USD, COP, EUR, actualizado }</code>, con caché.</div>
     <div class="tarjeta"><b class="t" style="color:#0f172a">api.js</b>Cliente Axios de Laravel: agrega el token a cada petición y cierra la sesión si llega un 401.</div>
     <div class="tarjeta"><b class="t" style="color:var(--rosa)">authService</b>Registro, inicio y cierre de sesión, usuario actual y recuperar la contraseña.</div>
-    <div class="tarjeta"><b class="t" style="color:#b45309">perfilService</b><code>GET</code> y <code>POST /api/perfil</code>: consultar y guardar el perfil.</div>
+    <div class="tarjeta"><b class="t" style="color:#b45309">perfilService</b><code>GET</code> y <code>POST /api/perfil</code>: consultar y guardar el perfil, y subir o quitar la foto.</div>
     <div class="tarjeta"><b class="t" style="color:#059669">metasService</b>Listar, ver, crear y eliminar metas, y registrar abonos.</div>
   </div>
 
@@ -486,7 +486,7 @@ api.interceptors.response.<span class="f">use</span>((respuesta) =&gt; respuesta
           <li>Mis metas: abonos, progreso, gráfico y confeti.</li>
           <li>Simulador, comparador y compartir como imagen.</li>
           <li>Línea de tiempo y ofertas en Inicio; Mi perfil (sección 18).</li>
-          <li>Backend con 34 peticiones de Postman.</li>
+          <li>Backend con 37 peticiones de Postman.</li>
           <li>TypeDoc, 3 PDF, agentes y skills (sección 17).</li>
         </ul>
       </div>
@@ -546,7 +546,7 @@ api.interceptors.response.<span class="f">use</span>((respuesta) =&gt; respuesta
 
 <!-- 14 · Funciones agregadas al final -->
 <section class="pagina">
-  <div class="seccion"><span class="num">18</span><h1>Simulador, comparador, gráfico y perfil</h1></div>
+  <div class="seccion"><span class="num">18</span><h1>Simulador, comparador, gráfico, perfil y marca</h1></div>
   <div class="destacado">Estas funciones reutilizan las capas que ya existían: los cálculos son <b>funciones puras</b> en <code>utils/calculos.js</code>, los datos llegan por los <b>hooks</b> y las pantallas solo los muestran. Las dos librerías que se estrenan aquí son <b>Recharts</b> (gráfico) y <b>html-to-image</b> (tarjeta en PNG).</div>
   <table>
     <tr><th style="width:27%">Función</th><th style="width:30%">Archivos</th><th>Cómo funciona</th></tr>
@@ -557,14 +557,9 @@ api.interceptors.response.<span class="f">use</span>((respuesta) =&gt; respuesta
     <tr><td>Ofertas destacadas</td><td><code>inicio/OfertasDestacadas</code></td><td>Los 4 antojos con mayor descuento, con la misma <code>TarjetaAntojo</code> del catálogo.</td></tr>
     <tr><td>Gráfico de ahorro</td><td><code>metas/GraficoAhorro</code></td><td><code>ahorroPorMes</code> agrupa los abonos de todas las metas: barras para lo abonado en el mes y área para el acumulado.</td></tr>
     <tr><td>Mi perfil</td><td><code>pages/MiPerfil</code></td><td>Reutiliza <code>useFormulario</code>. Cambiar la <code>key</code> del formulario de contraseña lo vacía después de un cambio exitoso.</td></tr>
+    <tr><td>Foto de perfil</td><td><code>SelectorFoto</code>, <code>Avatar</code>, <code>utils/imagen</code></td><td><code>recortarCuadrada</code> usa un <code>canvas</code> para dejarla en 320 × 320 antes de subirla. <code>PerfilProvider</code> actualiza el perfil y el menú la muestra de una vez; sin foto, <code>Avatar</code> muestra la inicial.</td></tr>
+    <tr><td>Logo y pie de página</td><td><code>Logo</code>, <code>Footer</code>, <code>data/redesSociales</code></td><td>El logo es un SVG en React: signo de pesos con rama de olivo y moneda dorada. Las redes del pie se cambian en un solo archivo.</td></tr>
   </table>
-
-  <h3>La cuenta de la línea de tiempo</h3>
-<pre><span class="k">let</span> acumulado = <span class="n">0</span>
-pasos.<span class="f">map</span>((paso) =&gt; {
-  acumulado += paso.faltante
-  <span class="k">return</span> { ...paso, fecha: <span class="f">fechaEstimada</span>(<span class="f">mesesParaAlcanzar</span>(acumulado, ahorroMensual)) }
-})</pre>
 
   <div class="nota"><b>Detalle de la imagen:</b> el enlace de Google Fonts en <code>index.html</code> lleva <code>crossorigin="anonymous"</code>. Sin eso, <code>html-to-image</code> no puede leer la hoja de estilos y el PNG saldría sin las fuentes Poppins e Inter.</div>
   <div class="pie"><span>ALCANZA · Cómo funciona el código</span><span>14</span></div>

@@ -17,7 +17,7 @@ Proyecto final del módulo **Creación de páginas web 2** · Harold Alexander C
 - **Convertir un antojo en meta**, registrar abonos y celebrar con confeti al llegar al 100 %.
 - **Ver tu ahorro mes a mes** en un gráfico y tus metas en una línea de tiempo.
 - **Descargar una tarjeta** de tu antojo como imagen para compartirla.
-- **Editar tu perfil**, cambiar la contraseña y usar modo oscuro.
+- **Editar tu perfil**, poner tu foto, cambiar la contraseña y usar modo oscuro.
 
 ## Capturas
 
@@ -54,6 +54,7 @@ docker run --rm -u "$(id -u):$(id -g)" -v "$(pwd):/var/www/html" -w /var/www/htm
 ./vendor/bin/sail up -d
 ./vendor/bin/sail artisan key:generate
 ./vendor/bin/sail artisan migrate
+./vendor/bin/sail artisan storage:link
 ```
 
 La API queda en `http://localhost/api` y los correos de prueba se ven en Mailpit: `http://localhost:8025`.

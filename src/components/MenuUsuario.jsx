@@ -2,7 +2,9 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { LogOut, UserRound } from 'lucide-react'
+import Avatar from './perfil/Avatar'
 import { useAuth } from '../hooks/useAuth'
+import { usePerfil } from '../hooks/usePerfil'
 import { RESORTE_RAPIDO } from '../utils/animaciones'
 
 /**
@@ -13,6 +15,7 @@ import { RESORTE_RAPIDO } from '../utils/animaciones'
  */
 function MenuUsuario() {
   const { usuario, cerrarSesion } = useAuth()
+  const { perfil } = usePerfil()
   const [abierto, setAbierto] = useState(false)
   const contenedor = useRef(null)
   const navigate = useNavigate()
@@ -47,9 +50,9 @@ function MenuUsuario() {
         onClick={() => setAbierto((valor) => !valor)}
         aria-label={`Menú de ${usuario.nombre}`}
         aria-expanded={abierto}
-        className="grid size-10 place-items-center rounded-full bg-gradient-to-br from-violeta to-rosa font-titulo font-bold text-white shadow-md shadow-violeta/30 transition hover:scale-105"
+        className="rounded-full transition hover:scale-105"
       >
-        {usuario.nombre.charAt(0).toUpperCase()}
+        <Avatar foto={perfil?.foto} nombre={usuario.nombre} />
       </button>
 
       <AnimatePresence>

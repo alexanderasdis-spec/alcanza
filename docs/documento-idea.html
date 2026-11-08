@@ -269,7 +269,7 @@
     <div class="tarjeta"><h3 style="margin:0">5 · Detalle del antojo</h3>Foto, precio, descuento, fecha en que se logra, simulador "¿y si...?" y botón de compartir.</div>
     <div class="tarjeta"><h3 style="margin:0">6 · Comparador</h3>Dos antojos lado a lado.</div>
     <div class="tarjeta"><h3 style="margin:0">7 · Mis metas</h3>Todas las metas con su progreso, registro de abonos, gráfico de ahorro y celebración al 100%.</div>
-    <div class="tarjeta"><h3 style="margin:0">8 · Mi perfil <span class="nuevo" style="margin-left:4px">NUEVO</span></h3>Editar el nombre y el ahorro mensual, y cambiar la contraseña.</div>
+    <div class="tarjeta"><h3 style="margin:0">8 · Mi perfil <span class="nuevo" style="margin-left:4px">NUEVO</span></h3>Foto de perfil, nombre, ahorro mensual y cambio de contraseña.</div>
     <div class="tarjeta"><h3 style="margin:0">9 · Página 404</h3>"Saldo insuficiente: esta página no existe", con botón para volver al inicio.</div>
   </div>
 
@@ -323,7 +323,7 @@
   <h3>10.2 Tablas principales</h3>
   <div class="rejilla2">
     <div class="tarjeta"><b style="color:#0f172a;font-family:Poppins">users</b> · Nombre, correo y contraseña cifrada de cada cuenta.</div>
-    <div class="tarjeta"><b style="color:var(--violeta);font-family:Poppins">perfiles</b> · Usuario dueño, nombre y ahorro mensual.</div>
+    <div class="tarjeta"><b style="color:var(--violeta);font-family:Poppins">perfiles</b> · Usuario dueño, nombre, ahorro mensual y foto.</div>
     <div class="tarjeta"><b style="color:var(--menta);font-family:Poppins">metas</b> · Producto, precio, moneda, descuento, fecha estimada y estado.</div>
     <div class="tarjeta"><b style="color:var(--rosa);font-family:Poppins">abonos</b> · Monto, fecha y meta a la que pertenece.</div>
   </div>
@@ -336,6 +336,7 @@
     <div class="ruta"><span class="metodo delete">DELETE</span><code>/api/metas/{id}</code> Elimina una meta.</div>
     <div class="ruta"><span class="metodo post">POST</span><code>/api/metas/{id}/abonos</code> Registra un abono en una meta.</div>
     <div class="ruta"><span class="metodo get">GET</span><span class="metodo post">POST</span><code>/api/perfil</code> Consulta y guarda el perfil del usuario.</div>
+    <div class="ruta"><span class="metodo post">POST</span><span class="metodo post">DELETE</span><code>/api/perfil/foto</code> Sube o quita la foto de perfil.</div>
   </div>
   <div class="pie"><span>ALCANZA · Documento de idea</span><span>8</span></div>
 </section>
