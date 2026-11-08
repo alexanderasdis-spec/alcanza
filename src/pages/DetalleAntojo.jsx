@@ -1,12 +1,14 @@
 import { useCallback, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ArrowLeft, CalendarHeart, PackageSearch, RefreshCw, Star, WifiOff } from 'lucide-react'
+import { ArrowLeft, CalendarHeart, PackageSearch, RefreshCw, Scale, Star, WifiOff } from 'lucide-react'
 import Aparecer from '../components/animaciones/Aparecer'
 import EtiquetaDescuento from '../components/animaciones/EtiquetaDescuento'
 import TarjetaInteractiva from '../components/animaciones/TarjetaInteractiva'
 import ImagenAntojo from '../components/antojos/ImagenAntojo'
+import BotonCompartir from '../components/compartir/BotonCompartir'
 import BotonConvertirMeta from '../components/metas/BotonConvertirMeta'
+import SimuladorYSi from '../components/simulador/SimuladorYSi'
 import EstadoMensaje from '../components/EstadoMensaje'
 import { buscarCategoria } from '../data/categorias'
 import { useAlcance } from '../hooks/useAlcance'
@@ -107,9 +109,8 @@ function CuandoLoAlcanzo({ precioUSD }) {
 /**
  * Página de detalle de un antojo (ruta con parámetro `/antojos/:id`).
  * Muestra fotos, precio con descuento en la moneda elegida, marca, calificación,
- * descripción, en qué mes lo alcanza el usuario y el botón para convertirlo en meta.
- *
- * Pendiente para las siguientes etapas: simulador "¿y si...?" y botón de compartir.
+ * descripción, en qué mes lo alcanza el usuario, los botones de convertir en meta,
+ * compartir y comparar, y el simulador "¿y si...?".
  *
  * @returns {JSX.Element}
  */
@@ -225,11 +226,39 @@ function DetalleAntojo() {
             <CuandoLoAlcanzo precioUSD={precioFinal} />
           </TarjetaInteractiva>
 
-          <div className="mt-6">
-            <BotonConvertirMeta antojo={antojo} />
-          </div>
+          <AccionesAntojo antojo={antojo} precioFinal={precioFinal} />
         </Aparecer>
       </div>
+
+      <Aparecer className="mt-10">
+        <SimuladorYSi antojo={antojo} />
+      </Aparecer>
+    </div>
+  )
+}
+
+/**
+ * Botones de acción del detalle: convertir en meta, compartir la tarjeta y comparar con otro antojo.
+ *
+ * @param {Object} props
+ * @param {import('../services/ofertasService').Antojo} props.antojo
+ * @param {number} props.precioFinal - Precio con descuento, en dólares.
+ * @returns {JSX.Element}
+ */
+function AccionesAntojo({ antojo, precioFinal }) {
+  const alcance = useAlcance(precioFinal)
+
+  return (
+    <div className="mt-6 flex flex-wrap items-center gap-3">
+      <BotonConvertirMeta antojo={antojo} />
+      <BotonCompartir nombre={antojo.nombre} imagen={antojo.imagen} fecha={alcance?.fecha ?? null} />
+      <Link
+        to={`/comparador?a=${antojo.id}`}
+        className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white/80 px-4 py-2 text-sm font-semibold text-violeta transition hover:border-violeta/40 dark:border-slate-700 dark:bg-slate-900/60 dark:text-violet-300"
+      >
+        <Scale className="size-4" />
+        Comparar
+      </Link>
     </div>
   )
 }

@@ -35,7 +35,7 @@ import { api } from './api'
  * @property {number} precioFinal - Calculado por la API: precio con descuento.
  * @property {number} ahorrado - Calculado por la API: suma de los abonos.
  * @property {number} progreso - Calculado por la API: avance de 0 a 100.
- * @property {Abono[]} [abonos] - Solo viene al consultar una meta o al registrar un abono.
+ * @property {Abono[]} [abonos] - Abonos de la meta (vienen en la lista de metas y al consultar una).
  */
 
 /**

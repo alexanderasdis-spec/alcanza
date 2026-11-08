@@ -143,3 +143,20 @@ export function validarCorreo({ email }) {
 export function validarContrasenaNueva({ password, confirmacion }) {
   return soloConError(erroresContrasenaNueva(password, confirmacion))
 }
+
+/**
+ * Valida el formulario de "Cambiar contraseña" de Mi perfil.
+ * Además de las reglas de la contraseña nueva, pide la actual y que la nueva sea distinta.
+ *
+ * @param {{ actual: string, password: string, confirmacion: string }} datos
+ * @returns {{ actual?: string, password?: string, confirmacion?: string }}
+ *
+ * @example
+ * validarCambioContrasena({ actual: 'clave1234', password: 'clave1234', confirmacion: 'clave1234' })
+ * // { password: 'La contraseña nueva debe ser distinta de la actual.' }
+ */
+export function validarCambioContrasena({ actual, password, confirmacion }) {
+  const errores = erroresContrasenaNueva(password, confirmacion)
+  if (!errores.password && password === actual) errores.password = 'La contraseña nueva debe ser distinta de la actual.'
+  return soloConError({ actual: actual ? undefined : 'Escribe tu contraseña actual.', ...errores })
+}

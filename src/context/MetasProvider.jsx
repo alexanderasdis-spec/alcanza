@@ -66,7 +66,9 @@ export function MetasProvider({ children }) {
 
   const abonar = async (id, monto) => {
     const anterior = respuesta.metas.find((meta) => meta.id === id)
-    const { meta } = await metasService.registrarAbono(id, { monto })
+    const { abono, meta: respuestaMeta } = await metasService.registrarAbono(id, { monto })
+    // La API no devuelve la lista de abonos al abonar: se suma el nuevo a los que ya había (para el gráfico).
+    const meta = { ...respuestaMeta, abonos: respuestaMeta.abonos ?? [...(anterior?.abonos ?? []), abono] }
     cambiarMetas((metas) => metas.map((actual) => (actual.id === id ? meta : actual)))
     return { meta, recienCumplida: anterior?.estado !== 'cumplida' && meta.estado === 'cumplida' }
   }

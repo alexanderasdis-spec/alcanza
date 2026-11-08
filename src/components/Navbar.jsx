@@ -109,10 +109,11 @@ function Navbar() {
           ))}
           {usuario && (
             <li className="mt-2 flex items-center justify-between gap-3 border-t border-slate-200 px-4 pt-3 dark:border-slate-800">
-              <span className="min-w-0">
+              <Link to="/perfil" onClick={cerrarMenu} className="min-w-0 rounded-xl">
                 <span className="block truncate font-semibold">{usuario.nombre}</span>
                 <span className="block truncate text-sm text-slate-500 dark:text-slate-400">{usuario.email}</span>
-              </span>
+                <span className="block text-xs font-semibold text-violeta dark:text-violet-300">Ver mi perfil</span>
+              </Link>
               <button
                 type="button"
                 onClick={alSalir}

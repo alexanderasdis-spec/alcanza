@@ -68,3 +68,69 @@ export function fechaEstimada(meses, desde = new Date()) {
   fecha.setMonth(fecha.getMonth() + meses)
   return fecha
 }
+
+/**
+ * Calcula el escenario del simulador "¿y si...?": cuánto cuesta el antojo en pesos
+ * y en cuántos meses se alcanza con un ahorro mensual y un ingreso extra dados.
+ *
+ * @param {Object} escenario
+ * @param {number} escenario.precioUSD - Precio del antojo en dólares, antes del descuento.
+ * @param {number} escenario.descuento - Porcentaje de descuento del producto.
+ * @param {boolean} escenario.aplicarDescuento - Si se compra con el descuento o a precio completo.
+ * @param {number} escenario.ahorroMensual - Ahorro mensual en pesos.
+ * @param {number} [escenario.ingresoExtra=0] - Dinero extra que se suma cada mes, en pesos.
+ * @param {import('../services/monedaService').Tasas} escenario.tasas - Tasas del día.
+ * @returns {{ precioCOP: number, aporteMensual: number, meses: number, fecha: Date | null }}
+ *   `meses` es `Infinity` y `fecha` es `null` si no se aporta nada al mes.
+ *
+ * @example
+ * simularAlcance({ precioUSD: 100, descuento: 10, aplicarDescuento: true,
+ *   ahorroMensual: 100000, ingresoExtra: 50000, tasas: { USD: 1, COP: 4000, EUR: 0.9 } })
+ * // { precioCOP: 360000, aporteMensual: 150000, meses: 3, fecha: … }
+ */
+export function simularAlcance({ precioUSD, descuento, aplicarDescuento, ahorroMensual, ingresoExtra = 0, tasas }) {
+  const precioFinal = aplicarDescuento ? precioConDescuento(precioUSD, descuento) : precioUSD
+  const precioCOP = convertirMoneda(precioFinal, 'USD', 'COP', tasas)
+  const aporteMensual = ahorroMensual + ingresoExtra
+  const meses = mesesParaAlcanzar(precioCOP, aporteMensual)
+  return { precioCOP, aporteMensual, meses, fecha: Number.isFinite(meses) ? fechaEstimada(meses) : null }
+}
+
+/**
+ * Agrupa abonos por mes y devuelve el total ahorrado acumulado al final de cada mes,
+ * desde el mes del primer abono hasta el mes actual. Sirve para el gráfico de ahorro.
+ *
+ * @param {{ monto: number, fecha: string }[]} abonos - Abonos con fecha `AAAA-MM-DD`.
+ * @param {Date} [hasta=new Date()] - Último mes que se muestra.
+ * @returns {{ mes: string, ahorradoMes: number, acumulado: number }[]} `mes` en formato `AAAA-MM`.
+ *
+ * @example
+ * ahorroPorMes([{ monto: 100, fecha: '2026-10-05' }, { monto: 50, fecha: '2026-11-02' }], new Date(2026, 10, 7))
+ * // [{ mes: '2026-10', ahorradoMes: 100, acumulado: 100 }, { mes: '2026-11', ahorradoMes: 50, acumulado: 150 }]
+ */
+export function ahorroPorMes(abonos, hasta = new Date()) {
+  if (abonos.length === 0) return []
+
+  const porMes = {}
+  abonos.forEach(({ monto, fecha }) => {
+    const mes = fecha.slice(0, 7)
+    porMes[mes] = (porMes[mes] ?? 0) + monto
+  })
+
+  // Recorre todos los meses entre el primer abono y "hasta", aunque en alguno no haya abonos.
+  const primero = Object.keys(porMes).sort()[0]
+  const [anio, mes] = primero.split('-').map(Number)
+  const cursor = new Date(anio, mes - 1, 1)
+  const fin = new Date(hasta.getFullYear(), hasta.getMonth(), 1)
+  const resultado = []
+  let acumulado = 0
+
+  while (cursor <= fin) {
+    const clave = `${cursor.getFullYear()}-${String(cursor.getMonth() + 1).padStart(2, '0')}`
+    const ahorradoMes = porMes[clave] ?? 0
+    acumulado += ahorradoMes
+    resultado.push({ mes: clave, ahorradoMes, acumulado })
+    cursor.setMonth(cursor.getMonth() + 1)
+  }
+  return resultado
+}

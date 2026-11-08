@@ -5,6 +5,7 @@ import { CalendarHeart, Trash2, Trophy } from 'lucide-react'
 import BarraProgreso from '../animaciones/BarraProgreso'
 import TarjetaInteractiva from '../animaciones/TarjetaInteractiva'
 import FormularioAbono from './FormularioAbono'
+import BotonCompartir from '../compartir/BotonCompartir'
 import { useMoneda } from '../../hooks/useMoneda'
 import { usePerfil } from '../../hooks/usePerfil'
 import { fechaEstimada, mesesParaAlcanzar } from '../../utils/calculos'
@@ -109,7 +110,15 @@ function TarjetaMeta({ meta, onAbonar, onEliminar }) {
         </>
       )}
 
-      <div className="mt-auto flex justify-end pt-4">
+      <div className="mt-auto flex items-center justify-between gap-2 pt-4">
+        <BotonCompartir
+          estilo="suave"
+          nombre={meta.nombreProducto}
+          imagen={meta.imagen}
+          fecha={cumplida ? null : fechaEstimada(meses)}
+          progreso={meta.progreso}
+          cumplida={cumplida}
+        />
         <AnimatePresence mode="wait" initial={false}>
           {confirmando ? (
             <motion.div

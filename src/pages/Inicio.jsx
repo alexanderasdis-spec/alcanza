@@ -1,13 +1,15 @@
 import { useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowRight, CalendarHeart, PiggyBank, Sparkles, Target, Trophy } from 'lucide-react'
+import { ArrowRight, CalendarHeart, CalendarRange, Flame, PiggyBank, Sparkles, Target, Trophy } from 'lucide-react'
 import Aparecer from '../components/animaciones/Aparecer'
 import BarraProgreso from '../components/animaciones/BarraProgreso'
 import ContadorAnimado from '../components/animaciones/ContadorAnimado'
 import EtiquetaDescuento from '../components/animaciones/EtiquetaDescuento'
 import Magnetico from '../components/animaciones/Magnetico'
 import TarjetaInteractiva from '../components/animaciones/TarjetaInteractiva'
+import LineaDeTiempo from '../components/inicio/LineaDeTiempo'
+import OfertasDestacadas from '../components/inicio/OfertasDestacadas'
 import { useMetas, useResumenMetas } from '../hooks/useMetas'
 import { useMoneda } from '../hooks/useMoneda'
 import { usePerfil } from '../hooks/usePerfil'
@@ -36,8 +38,8 @@ const armarResumen = (ahorroMensual, resumen, aMonedaElegida, formatoMoneda) => 
 
 /**
  * Página de inicio (ruta `/`).
- * Saludo con el nombre del perfil, resumen de las metas (activas y total ahorrado)
- * y las metas más recientes con su progreso.
+ * Saludo con el nombre del perfil, resumen de las metas (activas y total ahorrado),
+ * las metas más recientes con su progreso, la línea de tiempo y las ofertas destacadas.
  *
  * @returns {JSX.Element}
  */
@@ -203,6 +205,47 @@ function Inicio() {
             })}
           </div>
         )}
+      </section>
+
+      {/* Línea de tiempo: cuándo llega cada meta en progreso */}
+      {resumen.activas > 0 && (
+        <section>
+          <Aparecer>
+            <h2 className="flex items-center gap-2 font-titulo text-2xl font-bold">
+              <CalendarRange className="size-6 text-violeta dark:text-violet-300" />
+              Tu línea de tiempo
+            </h2>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+              Si ahorras para una meta a la vez, empezando por la que menos te falta, así irían llegando.
+            </p>
+          </Aparecer>
+          <div className="mt-6">
+            <LineaDeTiempo metas={metas} ahorroMensual={perfil.ahorroMensual} />
+          </div>
+        </section>
+      )}
+
+      {/* Ofertas con mayor descuento del catálogo */}
+      <section>
+        <Aparecer className="flex items-end justify-between gap-4">
+          <div>
+            <h2 className="flex items-center gap-2 font-titulo text-2xl font-bold">
+              <Flame className="size-6 text-rosa" />
+              Ofertas destacadas
+            </h2>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Los antojos con mayor descuento ahora mismo.</p>
+          </div>
+          <Link
+            to="/antojos"
+            className="inline-flex shrink-0 items-center gap-1 text-sm font-semibold text-violeta hover:underline dark:text-violet-300"
+          >
+            Ver catálogo
+            <ArrowRight className="size-4" />
+          </Link>
+        </Aparecer>
+        <div className="mt-6">
+          <OfertasDestacadas />
+        </div>
       </section>
     </div>
   )

@@ -6,6 +6,7 @@ import Aparecer from '../components/animaciones/Aparecer'
 import ContadorAnimado from '../components/animaciones/ContadorAnimado'
 import TarjetaInteractiva from '../components/animaciones/TarjetaInteractiva'
 import EstadoMensaje from '../components/EstadoMensaje'
+import GraficoAhorro from '../components/metas/GraficoAhorro'
 import TarjetaMeta from '../components/metas/TarjetaMeta'
 import { useMetas, useResumenMetas } from '../hooks/useMetas'
 import { useMoneda } from '../hooks/useMoneda'
@@ -18,7 +19,7 @@ const CLASES_BOTON =
 
 /**
  * Página de metas (ruta `/metas`).
- * Muestra el resumen (metas activas, cumplidas y total ahorrado) y una tarjeta por meta,
+ * Muestra el resumen (metas activas, cumplidas y total ahorrado), el gráfico del ahorro mes a mes y una tarjeta por meta,
  * con su progreso y el formulario de abonos. Cuando un abono completa la meta,
  * lanza confeti y la tarjeta muestra la insignia de "cumplida".
  *
@@ -104,6 +105,10 @@ function MisMetas() {
               </Aparecer>
             ))}
           </section>
+
+          <Aparecer>
+            <GraficoAhorro metas={metas} />
+          </Aparecer>
 
           <motion.section layout className="grid gap-6 md:grid-cols-2">
             <AnimatePresence mode="popLayout">

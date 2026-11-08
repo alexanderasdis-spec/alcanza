@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { LogOut } from 'lucide-react'
+import { LogOut, UserRound } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { RESORTE_RAPIDO } from '../utils/animaciones'
 
 /**
- * Botón con la inicial del usuario que abre un menú con su nombre, su correo
- * y el botón "Cerrar sesión". Se cierra al hacer clic fuera o con la tecla Escape.
+ * Botón con la inicial del usuario que abre un menú con su nombre, su correo,
+ * el enlace a "Mi perfil" y el botón "Cerrar sesión". Se cierra al hacer clic fuera o con la tecla Escape.
  *
  * @returns {JSX.Element | null}
  */
@@ -65,6 +65,14 @@ function MenuUsuario() {
               <p className="font-titulo font-semibold">{usuario.nombre}</p>
               <p className="truncate text-sm text-slate-500 dark:text-slate-400">{usuario.email}</p>
             </div>
+            <Link
+              to="/perfil"
+              onClick={() => setAbierto(false)}
+              className="flex w-full items-center gap-2 rounded-xl px-3 py-2 font-medium transition hover:bg-violeta/10 hover:text-violeta"
+            >
+              <UserRound className="size-4" />
+              Mi perfil
+            </Link>
             <button
               type="button"
               onClick={alSalir}

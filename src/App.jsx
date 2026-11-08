@@ -20,6 +20,7 @@ import Antojos from './pages/Antojos'
 import DetalleAntojo from './pages/DetalleAntojo'
 import Comparador from './pages/Comparador'
 import MisMetas from './pages/MisMetas'
+import MiPerfil from './pages/MiPerfil'
 import NoEncontrada from './pages/NoEncontrada'
 
 /**
@@ -71,6 +72,7 @@ function App() {
                           <Route path="/antojos/:id" element={<DetalleAntojo />} />
                           <Route path="/comparador" element={<Comparador />} />
                           <Route path="/metas" element={<MisMetas />} />
+                          <Route path="/perfil" element={<MiPerfil />} />
                           <Route path="*" element={<NoEncontrada />} />
                         </Route>
                       </Route>

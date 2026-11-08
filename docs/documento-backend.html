@@ -115,7 +115,7 @@
   <div class="datos">
     <div><small>Autor</small><b>Harold Alexander Ceballos Henao</b></div>
     <div><small>Módulo</small><b>Creación de páginas web 2</b></div>
-    <div><small>Fecha</small><b>7 de noviembre de 2026</b></div>
+    <div><small>Fecha</small><b>8 de noviembre de 2026</b></div>
   </div>
 </section>
 
@@ -394,7 +394,7 @@ Route::<span class="f">middleware</span>(<span class="s">'auth:sanctum'</span>)-
       <tr><th style="width:12%">Método</th><th style="width:28%">Ruta</th><th>Qué hace</th><th style="width:22%">Respuestas</th></tr>
       <tr><td><span class="metodo get">GET</span></td><td><code>/api/perfil</code></td><td>Consulta el perfil</td><td>200 · 404 si no hay</td></tr>
       <tr><td><span class="metodo post">POST</span></td><td><code>/api/perfil</code></td><td>Crea o actualiza el perfil</td><td>201 · 200 · 422</td></tr>
-      <tr><td><span class="metodo get">GET</span></td><td><code>/api/metas</code></td><td>Lista las metas con su progreso</td><td>200</td></tr>
+      <tr><td><span class="metodo get">GET</span></td><td><code>/api/metas</code></td><td>Lista las metas con su progreso y abonos</td><td>200</td></tr>
       <tr><td><span class="metodo post">POST</span></td><td><code>/api/metas</code></td><td>Convierte un antojo en meta</td><td>201 · 422</td></tr>
       <tr><td><span class="metodo get">GET</span></td><td><code>/api/metas/{id}</code></td><td>Una meta con sus abonos</td><td>200 · 403 · 404</td></tr>
       <tr><td><span class="metodo put">PUT</span></td><td><code>/api/metas/{id}</code></td><td>Cambia precio, descuento, etc.</td><td>200 · 403 · 404 · 422</td></tr>
@@ -418,8 +418,9 @@ Route::<span class="f">middleware</span>(<span class="s">'auth:sanctum'</span>)-
     <tr><td><span class="metodo post">POST</span></td><td><code>/api/logout</code></td><td>Borra el token actual</td><td>204 · 401</td></tr>
     <tr><td><span class="metodo post">POST</span></td><td><code>/api/olvide-contrasena</code></td><td>Envía el correo con el enlace</td><td>200 · 422</td></tr>
     <tr><td><span class="metodo post">POST</span></td><td><code>/api/restablecer-contrasena</code></td><td>Guarda la contraseña nueva con el token del correo</td><td>200 · 422</td></tr>
+    <tr><td><span class="metodo post">PUT</span></td><td><code>/api/contrasena</code></td><td>Cambia la contraseña con sesión y cierra los demás dispositivos</td><td>200 · 401 · 422</td></tr>
   </table>
-  <p style="margin-top:8px">Siguen la misma arquitectura: <code>AuthController</code> → <code>AuthService</code> → <code>UsuarioRepository</code>, con los Form Requests <code>RegistroRequest</code>, <code>LoginRequest</code>, <code>OlvideContrasenaRequest</code> y <code>RestablecerContrasenaRequest</code>.</p>
+  <p style="margin-top:8px">Siguen la misma arquitectura: <code>AuthController</code> → <code>AuthService</code> → <code>UsuarioRepository</code>, con los Form Requests <code>RegistroRequest</code>, <code>LoginRequest</code>, <code>OlvideContrasenaRequest</code>, <code>RestablecerContrasenaRequest</code> y <code>CambiarContrasenaRequest</code>.</p>
 
   <h3>Solo el dueño toca su meta: <code>MetaPolicy</code></h3>
 <pre><span class="c">// app/Policies/MetaPolicy.php — Laravel la encuentra sola por el nombre (Meta → MetaPolicy)</span>
@@ -501,7 +502,7 @@ docker run --rm --network alcanza-api_sail -v "$PWD/postman":/etc/newman postman
     <tr><td>5. Abonos</td><td>Monto 0 → 422 · abonar 300.000 → 37,5 % · abonar 500.000 → 100 % y <b>cumplida</b>.</td></tr>
     <tr><td>6. Limpieza</td><td>Eliminar → 204 · consultarla → 404 · cerrar sesión → 204 · token viejo → 401.</td></tr>
   </table>
-  <div class="destacado" style="margin-top:10px"><b>Resultado actual:</b> 31 peticiones y <b>60 comprobaciones aprobadas, 0 fallidas</b>.</div>
+  <div class="destacado" style="margin-top:10px"><b>Resultado actual:</b> 34 peticiones y <b>65 comprobaciones aprobadas, 0 fallidas</b>.</div>
   <div class="alerta"><b>Ojo:</b> cada ejecución crea dos usuarios de prueba con correos <code>…@alcanza.test</code>. Se borran con: <code>sail artisan tinker --execute='App\Models\User::where("email","like","%@alcanza.test")-&gt;delete();'</code></div>
   <div class="pie"><span>ALCANZA · Documentación del backend</span><span>11</span></div>
 </section>
