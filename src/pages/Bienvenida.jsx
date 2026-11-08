@@ -1,6 +1,7 @@
 import { Navigate, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import BotonTema from '../components/BotonTema'
+import Logo from '../components/Logo'
 import SinConexion from '../components/SinConexion'
 import FormularioPerfil from '../components/bienvenida/FormularioPerfil'
 import RecorridoBienvenida from '../components/bienvenida/RecorridoBienvenida'
@@ -37,9 +38,7 @@ function Bienvenida() {
   return (
     <div className="flex min-h-screen flex-col">
       <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-3">
-        <span className="font-titulo text-2xl font-bold bg-gradient-to-r from-violeta to-rosa bg-clip-text text-transparent">
-          Alcanza
-        </span>
+        <Logo />
         <BotonTema />
       </header>
 

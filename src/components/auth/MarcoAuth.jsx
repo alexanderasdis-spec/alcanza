@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import BotonTema from '../BotonTema'
+import Logo from '../Logo'
 import { TRANSICION_ENTRADA } from '../../utils/animaciones'
 
 /**
@@ -18,8 +19,8 @@ function MarcoAuth({ titulo, subtitulo, children, pie }) {
   return (
     <div className="flex min-h-screen flex-col">
       <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-3">
-        <Link to="/" className="font-titulo text-2xl font-bold bg-gradient-to-r from-violeta to-rosa bg-clip-text text-transparent">
-          Alcanza
+        <Link to="/" aria-label="Alcanza, ir al inicio">
+          <Logo />
         </Link>
         <BotonTema />
       </header>

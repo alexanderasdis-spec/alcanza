@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Download, Sparkles, X } from 'lucide-react'
 import { toPng } from 'html-to-image'
+import Logo from '../Logo'
 import { formatearMes } from '../../utils/formato'
 
 /** Imagen transparente de 1×1 que se usa si una foto no se puede copiar a la imagen final. */
@@ -107,7 +108,7 @@ function ModalCompartir({ abierto, onCerrar, nombre, imagen, fecha, progreso, cu
             >
               <div aria-hidden="true" className="absolute -top-16 -right-16 size-48 rounded-full border-[14px] border-dashed border-white/20" />
               <div aria-hidden="true" className="absolute -bottom-10 -left-10 size-32 rounded-full bg-amarillo/40 blur-2xl" />
-              <p className="relative font-titulo text-lg font-bold">Alcanza</p>
+              <Logo claro className="relative" />
               <div className="relative mt-5 grid size-36 place-items-center overflow-hidden rounded-3xl bg-white">
                 {imagen ? (
                   <img src={imagen} alt="" crossOrigin="anonymous" className="size-full object-contain p-3" />

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { LogOut, Menu, X } from 'lucide-react'
 import BotonTema from './BotonTema'
+import Logo from './Logo'
 import MenuUsuario from './MenuUsuario'
 import SelectorMoneda from './SelectorMoneda'
 import { useAuth } from '../hooks/useAuth'
@@ -59,12 +60,8 @@ function Navbar() {
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200 bg-fondo/80 backdrop-blur dark:border-slate-800 dark:bg-fondo-oscuro/80">
       <nav className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
-        <Link
-          to="/"
-          onClick={cerrarMenu}
-          className="font-titulo text-2xl font-bold bg-gradient-to-r from-violeta to-rosa bg-clip-text text-transparent"
-        >
-          Alcanza
+        <Link to="/" onClick={cerrarMenu} aria-label="Alcanza, ir al inicio">
+          <Logo soloIconoEnCelular />
         </Link>
 
         {/* Enlaces en computador */}
