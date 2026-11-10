@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<title>Alcanza · Guía para la sustentación</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<!--
+  Fuente del PDF "ALCANZA_guia_sustentacion.pdf".
+  Para regenerarlo (Windows, con Microsoft Edge):
+  & "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --headless --disable-gpu --no-pdf-header-footer --virtual-time-budget=15000 --print-to-pdf="ALCANZA_guia_sustentacion.pdf" "docs/documento-defensa.html"
+-->
+<style>
+  @page { size: Letter; margin: 0; }
+  :root {
+    --violeta: #7c3aed; --menta: #10b981; --rosa: #ec4899; --amarillo: #facc15;
+    --fondo: #fafaf9; --noche: #0f172a; --tinta: #1e293b; --suave: #64748b; --borde: #e5e7eb;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { font-family: Inter, sans-serif; color: var(--tinta); font-size: 12.5px; line-height: 1.5; background: #ccc; }
+  b, strong { font-weight: 600; color: #0f172a; }
+  /* Sin ligaduras: que "=>" y "===" se vean tal como se escriben en el código */
+  code, pre, .arbol { font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0; }
+  code { font-family: "JetBrains Mono", monospace; font-size: 10.5px; color: #6d28d9; background: #f3e8ff; padding: 1px 4px; border-radius: 4px; }
+
+  .pagina { position: relative; width: 816px; height: 1056px; margin: 0 auto; overflow: hidden; background: var(--fondo); padding: 54px 72px 0; page-break-after: always; break-after: page; }
+  .pagina:last-child { page-break-after: auto; break-after: auto; }
+  .pagina::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 6px; background: linear-gradient(90deg, var(--violeta), var(--rosa), #fb923c, var(--amarillo)); }
+  .pie { position: absolute; left: 72px; right: 72px; bottom: 40px; display: flex; justify-content: space-between; border-top: 1px solid var(--borde); padding-top: 9px; font-size: 10.5px; color: var(--suave); }
+
+  /* Portada */
+  .portada { background: var(--noche); color: #e2e8f0; padding: 96px 86px 0; }
+  .portada::before { display: none; }
+  .luz { position: absolute; border-radius: 50%; }
+  .chip-portada { display: inline-block; font-family: Poppins; font-weight: 600; font-size: 11px; letter-spacing: .08em; color: #fff; padding: 6px 16px; border-radius: 999px; background: linear-gradient(90deg, var(--violeta), var(--rosa)); }
+  .logo { display: inline-block; margin-top: 200px; padding-bottom: 6px; font-family: Poppins; font-weight: 800; font-size: 96px; line-height: 1; letter-spacing: -2px; background: linear-gradient(90deg, #a78bfa, var(--rosa), #fb923c, var(--amarillo)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .portada h2 { margin-top: 18px; font-family: Poppins; font-weight: 600; font-size: 24px; color: #e2e8f0; }
+  .portada .lema { margin-top: 16px; max-width: 500px; font-size: 15px; color: #94a3b8; }
+  .datos { position: absolute; left: 86px; right: 86px; bottom: 96px; display: grid; grid-template-columns: 1.4fr 1.1fr 1.1fr; gap: 20px; border-top: 1px solid #334155; padding-top: 26px; }
+  .datos small { display: block; font-size: 12px; color: #94a3b8; }
+  .datos b { color: #fff; font-size: 14px; }
+
+  /* Títulos */
+  .seccion { display: flex; align-items: center; gap: 12px; margin: 0 0 12px; }
+  .num { display: grid; place-items: center; min-width: 30px; height: 30px; padding: 0 6px; border-radius: 8px; color: #fff; font-family: Poppins; font-weight: 700; font-size: 14px; background: linear-gradient(135deg, var(--violeta), var(--rosa)); }
+  .seccion h1 { font-family: Poppins; font-weight: 700; font-size: 22px; color: #0f172a; letter-spacing: -.3px; }
+  h3 { font-family: Poppins; font-weight: 600; font-size: 14px; color: var(--violeta); margin: 14px 0 6px; }
+  p + p { margin-top: 7px; }
+  .bloque { margin-top: 26px; }
+
+  .destacado { border: 1px solid #ddd6fe; border-radius: 14px; padding: 12px 18px; background: linear-gradient(120deg, #f5f3ff, #fdf2f8); margin-bottom: 10px; }
+  .tarjeta { background: #fff; border: 1px solid var(--borde); border-radius: 14px; padding: 12px 16px; box-shadow: 0 2px 8px rgba(15,23,42,.04); }
+  .rejilla2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .rejilla3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .tarjeta b.t { display: block; font-family: Poppins; font-size: 13px; margin-bottom: 2px; }
+
+  ul.lista { list-style: none; }
+  ul.lista li { position: relative; padding-left: 16px; margin-bottom: 3px; }
+  ul.lista li::before { content: ""; position: absolute; left: 2px; top: 7px; width: 6px; height: 6px; border-radius: 50%; background: var(--violeta); }
+  ol.pasos { list-style: none; counter-reset: paso; }
+  ol.pasos li { counter-increment: paso; position: relative; padding-left: 30px; margin-bottom: 6px; }
+  ol.pasos li::before { content: counter(paso); position: absolute; left: 0; top: 0; width: 20px; height: 20px; border-radius: 6px; display: grid; place-items: center; font-family: Poppins; font-weight: 700; font-size: 11px; color: #fff; background: linear-gradient(135deg, var(--violeta), var(--rosa)); }
+
+  table { width: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid var(--borde); border-radius: 12px; overflow: hidden; font-size: 11.5px; }
+  th { background: var(--noche); color: #fff; font-family: Poppins; font-weight: 600; text-align: left; padding: 8px 12px; font-size: 11px; }
+  td { padding: 6px 12px; vertical-align: top; border-top: 1px solid var(--borde); line-height: 1.4; }
+  tr:nth-child(even) td { background: #faf5ff; }
+  tr:nth-child(odd) td { background: #fff; }
+  td:first-child { font-weight: 600; color: #0f172a; white-space: nowrap; }
+  td code { white-space: nowrap; }
+
+  pre { font-family: "JetBrains Mono", monospace; font-size: 10.5px; line-height: 1.55; background: var(--noche); color: #e2e8f0; border-radius: 12px; padding: 12px 16px; white-space: pre; overflow: hidden; }
+  pre .c { color: #94a3b8; } pre .k { color: #c4b5fd; } pre .s { color: #6ee7b7; } pre .f { color: #f9a8d4; }
+
+  .arbol { font-family: "JetBrains Mono", monospace; font-size: 10.5px; line-height: 1.6; background: #fff; border: 1px solid var(--borde); border-radius: 12px; padding: 12px 16px; white-space: pre; }
+  .arbol .d { color: var(--violeta); font-weight: 500; } .arbol .x { color: var(--suave); font-family: Inter; }
+
+  .nota { margin-top: 10px; border-left: 4px solid var(--amarillo); background: #fefce8; border-radius: 0 10px 10px 0; padding: 10px 14px; font-size: 11.5px; }
+
+  /* Diagramas */
+  .flujo { display: flex; align-items: stretch; gap: 0; }
+  .caja { flex: 1; background: #fff; border: 1.5px solid #ddd6fe; border-radius: 12px; padding: 10px 10px; text-align: center; font-size: 11px; line-height: 1.35; }
+  .caja b { display: block; font-family: Poppins; font-size: 12px; color: var(--violeta); margin-bottom: 3px; }
+  .caja.menta { border-color: #a7f3d0; } .caja.menta b { color: #059669; }
+  .caja.rosa { border-color: #fbcfe8; } .caja.rosa b { color: #db2777; }
+  .caja.noche { background: var(--noche); border-color: var(--noche); color: #cbd5e1; } .caja.noche b { color: #fff; }
+  .flecha { display: grid; place-items: center; width: 22px; color: var(--violeta); font-weight: 700; font-size: 15px; }
+  .anidado { border: 1.5px dashed #c4b5fd; border-radius: 14px; padding: 8px 10px 10px; background: rgba(124,58,237,.03); }
+  .anidado > small { display: block; font-family: "JetBrains Mono", monospace; font-size: 10.5px; color: var(--violeta); font-weight: 500; margin-bottom: 6px; }
+  .anidado .anidado { margin-top: 4px; }
+  .estado { display: inline-block; font-family: Poppins; font-size: 10px; font-weight: 600; padding: 1px 8px; border-radius: 999px; }
+  .ok { background: #d1fae5; color: #047857; } .wip { background: #fef9c3; color: #854d0e; } .pend { background: #f1f5f9; color: #475569; }
+  table.densa { font-size: 10.5px; } table.densa td { padding: 3px 9px; } table.densa th { padding: 5px 9px; font-size: 10px; }
+  table.densa td:first-child, table.preguntas td:first-child { white-space: normal; }
+  table.densa code { font-size: 9.5px; padding: 0 3px; } table.preguntas { font-size: 10.5px; } table.preguntas td { padding: 4px 9px; }
+  table.preguntas code { font-size: 9.5px; padding: 0 3px; }
+</style>
+</head>
+<body>
+
+<section class="pagina portada">
+  <div class="luz" style="width:620px;height:620px;right:-230px;top:-200px;background:radial-gradient(circle, rgba(124,58,237,.75), rgba(124,58,237,.18) 45%, transparent 70%)"></div>
+  <div class="luz" style="width:440px;height:440px;left:-250px;top:520px;background:radial-gradient(circle, rgba(16,185,129,.45), rgba(16,185,129,.1) 45%, transparent 70%)"></div>
+  <div style="position:relative">
+    <span class="chip-portada">GUÍA PARA LA SUSTENTACIÓN · FRONTEND Y BACKEND</span>
+    <div class="logo">Alcanza</div>
+    <h2>Dónde está cada cosa y cómo se hizo</h2>
+    <p class="lema">Para encontrar en segundos cada petición a una API, el componente exacto de cada parte de la pantalla y la explicación de cómo funciona.</p>
+  </div>
+  <div class="datos">
+    <div><small>Autor</small><b>Harold Alexander Ceballos Henao</b></div>
+    <div><small>Módulo</small><b>Creación de páginas web 2</b></div>
+    <div><small>Fecha</small><b>8 de noviembre de 2026</b></div>
+  </div>
+</section>
+
+<section class="pagina">
+  <div class="seccion"><span class="num">1</span><h1>El camino que sigue todo dato</h1></div>
+  <div class="destacado">Si el profesor señala cualquier dato de la pantalla, la respuesta casi siempre es este recorrido. <b>Ningún componente llama directamente a una API:</b> lo hace por medio de un hook o un contexto, que usa un servicio.</div>
+  <div class="flujo">
+    <div class="caja"><b>Componente</b>Pinta el dato<br><code>pages/Antojos.jsx</code></div><div class="flecha">→</div>
+    <div class="caja rosa"><b>Hook o contexto</b>Guarda cargando, datos y error<br><code>useFetch</code></div><div class="flecha">→</div>
+    <div class="caja menta"><b>Servicio</b>Hace la petición con Axios<br><code>services/</code></div><div class="flecha">→</div>
+    <div class="caja noche"><b>API</b>DummyJSON, tasas de cambio o Laravel</div>
+  </div>
+
+  <h3>Cómo leer las referencias</h3>
+  <p><code>Antojos.jsx:69</code> significa: archivo <code>Antojos.jsx</code>, línea 69. En VS Code, <code>Ctrl + P</code>, escribe <code>Antojos.jsx:69</code> y Enter para llegar directo. Para buscar una palabra en todo el proyecto: <code>Ctrl + Shift + F</code>.</p>
+  <div class="nota"><b>Las líneas son las del 8 de noviembre de 2026.</b> Si después se edita un archivo, los números pueden moverse: busca el nombre de la función, que no cambia.</div>
+
+  <h3>El hook que hace las consultas: <code>hooks/useFetch.js:23</code></h3>
+<pre><span class="k">export function</span> <span class="f">useFetch</span>(cargar) {
+  <span class="c">// ...estado de la consulta y de la respuesta...</span>
+  <span class="f">useEffect</span>(() =&gt; {                      <span class="c">// línea 33: corre al montar el componente</span>
+    <span class="k">let</span> vigente = <span class="k">true</span>                    <span class="c">// evita guardar una respuesta vieja</span>
+    consulta.<span class="f">cargar</span>()
+      .<span class="f">then</span>((datos) =&gt; vigente &amp;&amp; <span class="f">setRespuesta</span>({ consulta, datos, error: <span class="k">null</span> }))
+      .<span class="f">catch</span>((error) =&gt; vigente &amp;&amp; <span class="f">setRespuesta</span>({ consulta, datos: <span class="k">null</span>, error }))
+    <span class="k">return</span> () =&gt; { vigente = <span class="k">false</span> }        <span class="c">// limpieza al desmontar</span>
+  }, [consulta])
+}</pre>
+
+  <h3>Un ejemplo completo: el catálogo</h3>
+<pre><span class="c">// 1. pages/Antojos.jsx:69, el componente pide los datos</span>
+<span class="k">const</span> { datos: antojos, cargando, error, reintentar } = <span class="f">useFetch</span>(obtenerAntojos)
+
+<span class="c">// 2. services/ofertasService.js:46, une la API con los productos propios</span>
+catalogoEnCache = fuente.<span class="f">listarProductos</span>().<span class="f">then</span>((p) =&gt; [...p, ...PRODUCTOS_ENTRETENIMIENTO])
+
+<span class="c">// 3. services/fuentes/dummyjson.js:83, aquí sale la petición HTTP</span>
+<span class="k">const</span> { data } = <span class="k">await</span> api.<span class="f">get</span>(<span class="s">'/products'</span>, { params: { limit: <span class="s">0</span>, select: CAMPOS_LISTADO } })</pre>
+  <div class="nota"><b>Por qué un servicio aparte:</b> para cambiar DummyJSON por Mercado Libre solo se reemplaza el adaptador de <code>services/fuentes/</code>, sin tocar las páginas.</div>
+  <div class="pie"><span>ALCANZA · Guía para la sustentación</span><span>2</span></div>
+</section>
+
+<section class="pagina">
+  <div class="seccion"><span class="num">2</span><h1>Todas las peticiones a APIs</h1></div>
+  <p style="margin-bottom:8px">Rutas relativas a <code>src/</code>. La columna "Sale en" es la línea exacta donde se hace la petición.</p>
+  <h3 style="margin-top:0">APIs externas</h3>
+  <table class="densa">
+    <tr><th style="width:18%">Dato</th><th style="width:30%">Lo pide</th><th style="width:27%">Sale en</th><th>Petición</th></tr>
+    <tr><td>Catálogo</td><td><code>pages/Antojos.jsx:69</code><br><code>pages/Comparador.jsx:126</code><br><code>inicio/OfertasDestacadas.jsx:30</code></td><td><code>ofertasService.js:46</code><br><code>fuentes/dummyjson.js:83</code></td><td>GET dummyjson.com/products</td></tr>
+    <tr><td>Un producto</td><td><code>pages/DetalleAntojo.jsx:122</code> y <code>:123</code></td><td><code>ofertasService.js:66</code><br><code>fuentes/dummyjson.js:95</code></td><td>GET dummyjson.com/products/{id}</td></tr>
+    <tr><td>Tasas de cambio</td><td><code>context/MonedaProvider.jsx:33</code></td><td><code>monedaService.js:41</code></td><td>GET open.er-api.com/v6/latest/USD</td></tr>
+  </table>
+  <h3>API propia (Laravel), con el token agregado en <code>api.js:60</code></h3>
+  <table class="densa">
+    <tr><th style="width:18%">Acción</th><th style="width:30%">Lo pide</th><th style="width:27%">Sale en</th><th>Petición</th></tr>
+    <tr><td>Revisar sesión</td><td><code>context/AuthProvider.jsx:40</code></td><td><code>authService.js:60</code></td><td>GET /usuario</td></tr>
+    <tr><td>Iniciar sesión</td><td><code>context/AuthProvider.jsx:63</code></td><td><code>authService.js:46</code></td><td>POST /login</td></tr>
+    <tr><td>Registrarse</td><td><code>context/AuthProvider.jsx:67</code></td><td><code>authService.js:32</code></td><td>POST /registro</td></tr>
+    <tr><td>Cerrar sesión</td><td><code>context/AuthProvider.jsx:71</code></td><td><code>authService.js:76</code></td><td>POST /logout</td></tr>
+    <tr><td>Olvidé contraseña</td><td><code>pages/OlvideContrasena.jsx:29</code></td><td><code>authService.js:91</code></td><td>POST /olvide-contrasena</td></tr>
+    <tr><td>Restablecer</td><td><code>pages/RestablecerContrasena.jsx:29</code></td><td><code>authService.js:103</code></td><td>POST /restablecer-contrasena</td></tr>
+    <tr><td>Cambiar contraseña</td><td><code>pages/MiPerfil.jsx:97</code></td><td><code>authService.js:121</code></td><td>PUT /contrasena</td></tr>
+    <tr><td>Consultar perfil</td><td><code>context/PerfilProvider.jsx:29</code></td><td><code>perfilService.js:41</code></td><td>GET /perfil</td></tr>
+    <tr><td>Guardar perfil</td><td><code>pages/Bienvenida.jsx:34</code><br><code>context/PerfilProvider.jsx:51</code></td><td><code>perfilService.js:57</code></td><td>POST /perfil</td></tr>
+    <tr><td>Subir foto</td><td><code>perfil/SelectorFoto.jsx:71</code><br><code>context/PerfilProvider.jsx:62</code></td><td><code>perfilService.js:72</code></td><td>POST /perfil/foto</td></tr>
+    <tr><td>Quitar foto</td><td><code>context/PerfilProvider.jsx:72</code></td><td><code>perfilService.js:82</code></td><td>DELETE /perfil/foto</td></tr>
+    <tr><td>Listar metas</td><td><code>context/MetasProvider.jsx:44</code></td><td><code>metasService.js:72</code></td><td>GET /metas</td></tr>
+    <tr><td>Crear meta</td><td><code>metas/BotonConvertirMeta.jsx:48</code><br><code>context/MetasProvider.jsx:62</code></td><td><code>metasService.js:95</code></td><td>POST /metas</td></tr>
+    <tr><td>Abonar</td><td><code>metas/FormularioAbono.jsx:32</code><br><code>context/MetasProvider.jsx:69</code></td><td><code>metasService.js:126</code></td><td>POST /metas/{id}/abonos</td></tr>
+    <tr><td>Eliminar meta</td><td><code>context/MetasProvider.jsx:77</code></td><td><code>metasService.js:114</code></td><td>DELETE /metas/{id}</td></tr>
+  </table>
+  <div class="nota"><b>Si te preguntan:</b> <code>GET /metas/{id}</code> y <code>PUT /metas/{id}</code> existen en la API y se prueban en Postman, pero la interfaz no los usa todavía.</div>
+  <div class="pie"><span>ALCANZA · Guía para la sustentación</span><span>3</span></div>
+</section>
+
+<section class="pagina">
+  <div class="seccion"><span class="num">3</span><h1>Qué componente pinta cada parte</h1></div>
+  <p style="margin-bottom:8px">Primero las piezas comunes y luego cada página. Rutas relativas a <code>src/</code>.</p>
+  <h3 style="margin-top:0">En todas las páginas</h3>
+  <table class="densa">
+    <tr><th style="width:38%">Lo que se ve</th><th style="width:34%">Componente</th><th>Dónde se pone</th></tr>
+    <tr><td>Marco: menú, contenido y pie</td><td><code>layouts/LayoutPrincipal.jsx</code></td><td><code>App.jsx</code></td></tr>
+    <tr><td>Logo</td><td><code>components/Logo.jsx</code></td><td><code>Navbar.jsx:67</code></td></tr>
+    <tr><td>COP, USD, EUR</td><td><code>components/SelectorMoneda.jsx</code></td><td><code>Navbar.jsx:82</code></td></tr>
+    <tr><td>Luna y sol (tema)</td><td><code>components/BotonTema.jsx</code></td><td><code>Navbar.jsx:83</code></td></tr>
+    <tr><td>Foto o inicial y su menú</td><td><code>MenuUsuario.jsx</code>, <code>perfil/Avatar.jsx</code></td><td><code>Navbar.jsx:86</code></td></tr>
+    <tr><td>Pie, redes y consejo del día</td><td><code>components/Footer.jsx</code></td><td><code>LayoutPrincipal.jsx:41</code></td></tr>
+    <tr><td>Luces de colores del fondo</td><td><code>animaciones/FondoAnimado.jsx</code></td><td><code>App.jsx</code></td></tr>
+  </table>
+
+  <h3>Inicio (<code>pages/Inicio.jsx</code>)</h3>
+  <table class="densa">
+    <tr><th style="width:38%">Lo que se ve</th><th style="width:34%">Componente</th><th>Línea en la página</th></tr>
+    <tr><td>Banner "¿Qué te quieres comprar?"</td><td>Escrito en la misma página</td><td><code>Inicio.jsx</code></td></tr>
+    <tr><td>Cifras que suben contando</td><td><code>animaciones/ContadorAnimado.jsx</code></td><td><code>Inicio.jsx:122</code></td></tr>
+    <tr><td>Barra de progreso</td><td><code>animaciones/BarraProgreso.jsx</code></td><td><code>Inicio.jsx:185</code></td></tr>
+    <tr><td>Línea de tiempo</td><td><code>inicio/LineaDeTiempo.jsx</code></td><td><code>Inicio.jsx:223</code></td></tr>
+    <tr><td>Ofertas destacadas</td><td><code>inicio/OfertasDestacadas.jsx</code></td><td><code>Inicio.jsx:247</code></td></tr>
+  </table>
+
+  <h3>Antojos (<code>pages/Antojos.jsx</code>)</h3>
+  <table class="densa">
+    <tr><th style="width:38%">Lo que se ve</th><th style="width:34%">Componente</th><th>Línea en la página</th></tr>
+    <tr><td>Buscador</td><td><code>antojos/Buscador.jsx</code></td><td><code>Antojos.jsx:125</code></td></tr>
+    <tr><td>Botones de categoría</td><td><code>antojos/FiltroCategorias.jsx</code></td><td><code>Antojos.jsx:126</code></td></tr>
+    <tr><td>Tarjeta de producto</td><td><code>antojos/TarjetaAntojo.jsx</code></td><td><code>Antojos.jsx:180</code></td></tr>
+    <tr><td>Etiqueta de descuento</td><td><code>animaciones/EtiquetaDescuento.jsx</code></td><td><code>TarjetaAntojo.jsx:34</code></td></tr>
+  </table>
+
+  <h3>Detalle del antojo (<code>pages/DetalleAntojo.jsx</code>)</h3>
+  <table class="densa">
+    <tr><th style="width:38%">Lo que se ve</th><th style="width:34%">Componente</th><th>Línea en la página</th></tr>
+    <tr><td>Fotos y miniaturas</td><td><code>Galeria</code>, misma página, línea 33</td><td><code>DetalleAntojo.jsx:191</code></td></tr>
+    <tr><td>"Lo alcanzas en…"</td><td><code>CuandoLoAlcanzo</code>, misma página, línea 82</td><td><code>DetalleAntojo.jsx:226</code></td></tr>
+    <tr><td>Convertir en meta</td><td><code>metas/BotonConvertirMeta.jsx</code></td><td><code>DetalleAntojo.jsx:253</code></td></tr>
+    <tr><td>Compartir</td><td><code>compartir/BotonCompartir.jsx</code></td><td><code>DetalleAntojo.jsx:254</code></td></tr>
+    <tr><td>Simulador "¿y si...?"</td><td><code>simulador/SimuladorYSi.jsx</code></td><td><code>DetalleAntojo.jsx:234</code></td></tr>
+  </table>
+  <div class="pie"><span>ALCANZA · Guía para la sustentación</span><span>4</span></div>
+</section>
+
+<section class="pagina">
+  <div class="seccion"><span class="num">4</span><h1>Las demás páginas</h1></div>
+  <h3 style="margin-top:0">Comparador (<code>pages/Comparador.jsx</code>)</h3>
+  <table class="densa">
+    <tr><th style="width:38%">Lo que se ve</th><th style="width:34%">Componente</th><th>Línea en la página</th></tr>
+    <tr><td>Listas para elegir</td><td><code>SelectorAntojo</code>, misma página, línea 28</td><td><code>Comparador.jsx:208</code> y <code>:209</code></td></tr>
+    <tr><td>Columna de cada antojo</td><td><code>ColumnaAntojo</code>, misma página, línea 63</td><td><code>Comparador.jsx:236</code></td></tr>
+    <tr><td>Cálculo de cada columna</td><td><code>simularAlcance</code></td><td><code>Comparador.jsx:153</code></td></tr>
+  </table>
+
+  <h3>Mis metas (<code>pages/MisMetas.jsx</code>)</h3>
+  <table class="densa">
+    <tr><th style="width:38%">Lo que se ve</th><th style="width:34%">Componente</th><th>Línea en la página</th></tr>
+    <tr><td>Gráfico mes a mes</td><td><code>metas/GraficoAhorro.jsx</code></td><td><code>MisMetas.jsx:110</code></td></tr>
+    <tr><td>Tarjeta de cada meta</td><td><code>metas/TarjetaMeta.jsx</code></td><td><code>MisMetas.jsx:124</code></td></tr>
+    <tr><td>Formulario de abono</td><td><code>metas/FormularioAbono.jsx</code></td><td><code>TarjetaMeta.jsx:108</code></td></tr>
+    <tr><td>Confeti</td><td><code>utils/celebrar.js</code></td><td><code>MisMetas.jsx:43</code></td></tr>
+  </table>
+
+  <h3>Mi perfil (<code>pages/MiPerfil.jsx</code>)</h3>
+  <table class="densa">
+    <tr><th style="width:38%">Lo que se ve</th><th style="width:34%">Componente</th><th>Línea</th></tr>
+    <tr><td>Foto de perfil</td><td><code>perfil/SelectorFoto.jsx</code></td><td><code>MiPerfil.jsx:170</code></td></tr>
+    <tr><td>Tus datos</td><td><code>FormularioDatos</code>, misma página</td><td><code>MiPerfil.jsx:49</code></td></tr>
+    <tr><td>Cambiar contraseña</td><td><code>FormularioContrasena</code>, misma página</td><td><code>MiPerfil.jsx:93</code></td></tr>
+  </table>
+
+  <h3>Cuenta y bienvenida</h3>
+  <table class="densa">
+    <tr><th style="width:38%">Lo que se ve</th><th style="width:34%">Componente</th><th>Ruta</th></tr>
+    <tr><td>Iniciar sesión</td><td><code>pages/IniciarSesion.jsx</code></td><td><code>/ingresar</code></td></tr>
+    <tr><td>Registro</td><td><code>pages/Registro.jsx</code></td><td><code>/registro</code></td></tr>
+    <tr><td>Olvidé mi contraseña</td><td><code>pages/OlvideContrasena.jsx</code></td><td><code>/olvide-contrasena</code></td></tr>
+    <tr><td>Contraseña nueva</td><td><code>pages/RestablecerContrasena.jsx</code></td><td><code>/restablecer</code></td></tr>
+    <tr><td>Tarjeta centrada de esas páginas</td><td><code>auth/MarcoAuth.jsx</code></td><td>Las cuatro anteriores</td></tr>
+    <tr><td>Campo con error animado</td><td><code>formulario/CampoTexto.jsx</code></td><td>Todos los formularios</td></tr>
+    <tr><td>Recorrido de tres pantallas</td><td><code>bienvenida/RecorridoBienvenida.jsx</code></td><td><code>Bienvenida.jsx:68</code></td></tr>
+    <tr><td>Perfil rápido</td><td><code>bienvenida/FormularioPerfil.jsx</code></td><td><code>Bienvenida.jsx:58</code></td></tr>
+    <tr><td>Página 404</td><td><code>pages/NoEncontrada.jsx</code></td><td>Cualquier otra dirección</td></tr>
+  </table>
+
+  <h3>Quién protege las rutas</h3>
+  <table class="densa">
+    <tr><th style="width:38%">Guardián</th><th>Qué hace</th></tr>
+    <tr><td><code>RequiereSesion.jsx</code></td><td>Sin sesión, manda a <code>/ingresar</code>.</td></tr>
+    <tr><td><code>SoloInvitados.jsx</code></td><td>Con sesión, no deja volver a ingresar o registrarse.</td></tr>
+    <tr><td><code>RequierePerfil.jsx</code></td><td>Sin perfil, manda a <code>/bienvenida</code>.</td></tr>
+  </table>
+  <div class="pie"><span>ALCANZA · Guía para la sustentación</span><span>5</span></div>
+</section>
+
+<section class="pagina">
+  <div class="seccion"><span class="num">5</span><h1>Frontend: ¿cómo hiciste…?</h1></div>
+  <table class="preguntas">
+    <tr><th style="width:27%">Pregunta</th><th>Respuesta corta</th><th style="width:24%">Muéstralo en</th></tr>
+    <tr><td>…la fecha de "¿cuándo me lo compro?"</td><td>Divide el precio en pesos por el ahorro mensual, redondea hacia arriba y suma esos meses a hoy.</td><td><code>useAlcance.js:18</code><br><code>calculos.js:52</code>, <code>:64</code></td></tr>
+    <tr><td>…el descuento</td><td>Es una función pura que quita el porcentaje al precio.</td><td><code>calculos.js:18</code></td></tr>
+    <tr><td>…el cambio de moneda</td><td>Las tasas se piden una vez al abrir la app, se guardan en un contexto y <code>formatear</code> convierte cada precio.</td><td><code>MonedaProvider.jsx:33</code><br><code>calculos.js:35</code></td></tr>
+    <tr><td>…para no repetir consultas</td><td>El servicio guarda la promesa en una variable. Si falla, la borra para poder reintentar.</td><td><code>ofertasService.js:47</code><br><code>monedaService.js:39</code></td></tr>
+    <tr><td>…el filtro y el buscador</td><td>Viven en la URL con <code>useSearchParams</code>, y la lista se filtra con <code>filter</code>.</td><td><code>Antojos.jsx:70</code>, <code>:98</code>, <code>:110</code></td></tr>
+    <tr><td>…la ruta con parámetro</td><td><code>useParams</code> lee el <code>id</code> de la URL. <code>useCallback</code> hace que la consulta se repita solo si cambia ese <code>id</code>.</td><td><code>App.jsx:77</code><br><code>DetalleAntojo.jsx:119</code></td></tr>
+    <tr><td>…el simulador</td><td>Tres estados con <code>useState</code>. En cada cambio, <code>simularAlcance</code> recalcula sin consultar APIs.</td><td><code>SimuladorYSi.jsx:44</code><br><code>calculos.js:91</code></td></tr>
+    <tr><td>…el comparador</td><td>Los dos ids van en la URL (<code>?a=78&amp;b=100</code>), y gana el que tenga menos meses.</td><td><code>Comparador.jsx:131</code></td></tr>
+    <tr><td>…el gráfico</td><td><code>ahorroPorMes</code> agrupa los abonos por mes y Recharts los dibuja.</td><td><code>GraficoAhorro.jsx:57</code><br><code>calculos.js:111</code></td></tr>
+    <tr><td>…la imagen para compartir</td><td><code>html-to-image</code> convierte la tarjeta en PNG. El modal usa un portal para cubrir toda la pantalla.</td><td><code>ModalCompartir.jsx:70</code>, <code>:84</code></td></tr>
+    <tr><td>…la foto de perfil</td><td>Un <code>canvas</code> la recorta a 320 × 320, se envía con <code>FormData</code> y el contexto actualiza el menú.</td><td><code>imagen.js:37</code><br><code>perfilService.js:68</code></td></tr>
+    <tr><td>…el estado global</td><td>Context API: un proveedor guarda el estado y un hook lo entrega. Están en <code>context/</code> y <code>hooks/</code>.</td><td><code>App.jsx</code><br><code>hooks/useMetas.js</code></td></tr>
+    <tr><td>…la sesión</td><td>El token se guarda en <code>localStorage</code> y un interceptor lo agrega a cada petición. Un 401 cierra la sesión.</td><td><code>api.js:58</code>, <code>:65</code></td></tr>
+    <tr><td>…los formularios</td><td>Son controlados: el valor vive en el estado. <code>useFormulario</code> valida y muestra los errores de la API.</td><td><code>useFormulario.js:31</code><br><code>validaciones.js</code></td></tr>
+    <tr><td>…el modo oscuro</td><td>Un booleano en <code>localStorage</code> pone o quita la clase <code>.dark</code>.</td><td><code>TemaProvider.jsx:27</code>, <code>:30</code></td></tr>
+    <tr><td>…la carga por páginas</td><td><code>React.lazy</code> descarga cada página al abrirla, y <code>Suspense</code> muestra el indicador de carga.</td><td><code>App.jsx:22</code><br><code>LayoutPrincipal.jsx</code></td></tr>
+    <tr><td>¿Por qué Axios y no <code>fetch</code>?</td><td>Convierte el JSON solo, permite tiempo límite y tiene interceptores para el token.</td><td><code>api.js:15</code></td></tr>
+  </table>
+  <div class="pie"><span>ALCANZA · Guía para la sustentación</span><span>6</span></div>
+</section>
+
+<section class="pagina">
+  <div class="seccion"><span class="num">6</span><h1>Backend: de la ruta a la base de datos</h1></div>
+  <div class="destacado">Rutas en <code>routes/api.php</code>. Cada fila sigue el orden <b>Ruta → Form Request → Controlador → Servicio → Repositorio → Modelo</b>. Prefijo <code>/api</code>; archivos en <code>app/</code>.</div>
+  <table class="densa">
+    <tr><th style="width:27%">Ruta (línea)</th><th style="width:20%">Valida</th><th style="width:18%">Controlador</th><th style="width:17%">Servicio</th><th>Repositorio</th></tr>
+    <tr><td>POST registro (13)</td><td>RegistroRequest</td><td><code>Auth:26</code></td><td><code>Auth:32</code></td><td><code>Usuario:13</code></td></tr>
+    <tr><td>POST login (14)</td><td>LoginRequest</td><td><code>Auth:34</code></td><td><code>Auth:48</code></td><td><code>Usuario:18</code></td></tr>
+    <tr><td>POST olvide-contrasena (15)</td><td>OlvideContrasena…</td><td><code>Auth:74</code></td><td><code>Auth:82</code></td><td>Sistema de Laravel</td></tr>
+    <tr><td>POST restablecer-contrasena (16)</td><td>Restablecer…</td><td><code>Auth:86</code></td><td><code>Auth:95</code></td><td>Sistema de Laravel</td></tr>
+    <tr><td>GET usuario (22)</td><td>Token</td><td><code>Auth:44</code></td><td><code>Auth:114</code></td><td>No usa</td></tr>
+    <tr><td>POST logout (23)</td><td>Token</td><td><code>Auth:52</code></td><td><code>Auth:63</code></td><td>No usa</td></tr>
+    <tr><td>PUT contrasena (24)</td><td>CambiarContrasena…</td><td><code>Auth:63</code></td><td><code>Auth:72</code></td><td>No usa</td></tr>
+    <tr><td>GET perfil (27)</td><td>Token</td><td><code>Perfil:25</code></td><td><code>Perfil:24</code></td><td><code>Perfil:14</code></td></tr>
+    <tr><td>POST perfil (28)</td><td>PerfilRequest</td><td><code>Perfil:40</code></td><td><code>Perfil:35</code></td><td><code>Perfil:19</code>, <code>:24</code></td></tr>
+    <tr><td>POST perfil/foto (31)</td><td>PerfilFotoRequest</td><td><code>Perfil:50</code></td><td><code>Perfil:51</code></td><td><code>Perfil:24</code></td></tr>
+    <tr><td>DELETE perfil/foto (32)</td><td>Token</td><td><code>Perfil:60</code></td><td><code>Perfil:71</code></td><td><code>Perfil:24</code></td></tr>
+    <tr><td>GET metas (35)</td><td>Token</td><td><code>Metas:26</code></td><td><code>Meta:26</code></td><td><code>Meta:15</code></td></tr>
+    <tr><td>POST metas (35)</td><td>MetaStoreRequest</td><td><code>Metas:34</code></td><td><code>Meta:48</code></td><td><code>Meta:27</code></td></tr>
+    <tr><td>GET metas/{id} (35)</td><td>Política</td><td><code>Metas:46</code></td><td><code>Meta:36</code></td><td><code>Meta:22</code></td></tr>
+    <tr><td>PUT metas/{id} (35)</td><td>MetaUpdateRequest</td><td><code>Metas:56</code></td><td><code>Meta:68</code></td><td><code>Meta:32</code></td></tr>
+    <tr><td>DELETE metas/{id} (35)</td><td>Política</td><td><code>Metas:67</code></td><td><code>Meta:79</code></td><td><code>Meta:39</code></td></tr>
+    <tr><td>POST metas/{id}/abonos (38)</td><td>AbonoStoreRequest</td><td><code>Abonos:24</code></td><td><code>Abono:26</code></td><td><code>Abono:14</code></td></tr>
+  </table>
+  <div class="nota"><b>Cómo leerla:</b> <code>Metas:26</code> en Controlador es <code>MetasController.php</code>, línea 26. <code>Meta:26</code> en Servicio es <code>MetaService.php</code>, línea 26. Las cinco rutas de metas marcadas con 35 salen todas de <code>Route::apiResource</code>.</div>
+
+  <h3>Un recorrido completo: registrar un abono</h3>
+<pre><span class="c">// app/Http/Controllers/AbonosController.php:24</span>
+<span class="k">public function</span> <span class="f">store</span>(AbonoStoreRequest $request, Meta $meta)  <span class="c">// valida antes de entrar</span>
+{
+    Gate::<span class="f">authorize</span>(<span class="s">'update'</span>, $meta);                        <span class="c">// si no es el dueño: 403</span>
+    $resultado = $this-&gt;abonoService-&gt;<span class="f">registrar</span>($meta, $request-&gt;<span class="f">validated</span>());
+    <span class="k">return</span> <span class="f">response</span>()-&gt;<span class="f">json</span>($resultado, <span class="s">201</span>);
+}</pre>
+  <p style="margin-top:8px"><code>AbonoService.php:26</code> pone la fecha de hoy si no llega ninguna, guarda el abono con el repositorio y llama a <code>revisarEstado</code> (<code>MetaService.php:88</code>), que marca la meta como cumplida si ya se llegó al precio.</p>
+  <div class="pie"><span>ALCANZA · Guía para la sustentación</span><span>7</span></div>
+</section>
+
+<section class="pagina">
+  <div class="seccion"><span class="num">7</span><h1>Backend: ¿cómo hiciste…?</h1></div>
+  <table class="preguntas">
+    <tr><th style="width:27%">Pregunta</th><th>Respuesta corta</th><th style="width:26%">Muéstralo en</th></tr>
+    <tr><td>…la arquitectura</td><td>El controlador recibe y responde, el servicio tiene la lógica, el repositorio habla con la base de datos y el modelo representa la tabla.</td><td><code>app/Http/Controllers</code><br><code>app/Services</code><br><code>app/Repositories</code></td></tr>
+    <tr><td>¿Para qué la interfaz del repositorio?</td><td>El servicio depende del contrato y no de Eloquent. La unión contrato e implementación se hace en un solo lugar.</td><td><code>Repositories/Contracts</code><br><code>AppServiceProvider.php:31</code></td></tr>
+    <tr><td>…las tablas</td><td>Con migraciones, para reconstruir la base en cualquier computador con <code>sail artisan migrate</code>.</td><td><code>database/migrations</code></td></tr>
+    <tr><td>…la validación</td><td>Con Form Requests: si los datos fallan, Laravel responde 422 antes de entrar al controlador. Los mensajes están en español.</td><td><code>app/Http/Requests</code></td></tr>
+    <tr><td>…el inicio de sesión</td><td>Sanctum crea un token, React lo envía como <code>Bearer</code> y el grupo <code>auth:sanctum</code> protege las rutas. Sin token: 401.</td><td><code>AuthService.php:48</code>, <code>:124</code><br><code>routes/api.php:21</code></td></tr>
+    <tr><td>…que nadie toque metas ajenas</td><td><code>MetaPolicy</code> compara el dueño del perfil de la meta con el usuario. Si no coinciden: 403.</td><td><code>MetaPolicy.php:20</code></td></tr>
+    <tr><td>…el límite de intentos</td><td>Un limitador permite 10 intentos por minuto por IP y ruta. Al pasarse: 429.</td><td><code>AppServiceProvider.php:44</code></td></tr>
+    <tr><td>…recuperar la contraseña</td><td>Laravel crea un token, envía el correo (Mailpit en desarrollo) con enlace a React, y al cambiarla se borran los tokens de sesión.</td><td><code>AuthService.php:82</code>, <code>:95</code><br><code>AppServiceProvider.php:47</code></td></tr>
+    <tr><td>…cambiar la contraseña</td><td><code>current_password:sanctum</code> revisa la actual. Se cierran las otras sesiones y esta sigue activa.</td><td><code>CambiarContrasenaRequest.php</code><br><code>AuthService.php:72</code></td></tr>
+    <tr><td>…el progreso de una meta</td><td>No se guarda: son atributos calculados del modelo, que salen en el JSON con <code>$appends</code>.</td><td><code>Meta.php:47</code>, <code>:83</code>, <code>:92</code>, <code>:100</code></td></tr>
+    <tr><td>…para no hacer muchas consultas</td><td><code>with('abonos')</code> y <code>withSum</code> traen abonos y totales juntos, y evitan una consulta por cada meta.</td><td><code>MetaRepository.php:15</code></td></tr>
+    <tr><td>…la foto de perfil</td><td>El archivo va al disco <code>public</code>, la tabla guarda la ruta y el modelo entrega <code>foto_url</code>. Se borra la anterior para no acumular.</td><td><code>PerfilService.php:51</code><br><code>Perfil.php</code></td></tr>
+    <tr><td>…la conexión con React</td><td>CORS permite solo las direcciones de <code>FRONTEND_URLS</code>. React usa <code>VITE_API_URL</code>.</td><td><code>config/cors.php:25</code><br><code>src/services/api.js:16</code></td></tr>
+    <tr><td>…la base de datos</td><td>MySQL 8.4 en Docker con Laravel Sail. La base se llama <code>data_alcanza</code>.</td><td><code>compose.yaml</code><br><code>.env</code></td></tr>
+    <tr><td>…las pruebas</td><td>Colección de Postman con 37 peticiones y 72 comprobaciones, que se corre con Newman.</td><td><code>postman/</code></td></tr>
+  </table>
+
+  <h3>Códigos de respuesta que debes saber</h3>
+  <table class="densa">
+    <tr><th style="width:14%">Código</th><th>Significa</th><th style="width:14%">Código</th><th>Significa</th></tr>
+    <tr><td>200</td><td>Todo bien</td><td>403</td><td>Hay sesión, pero no es el dueño</td></tr>
+    <tr><td>201</td><td>Se creó algo</td><td>404</td><td>No existe</td></tr>
+    <tr><td>204</td><td>Bien, sin contenido</td><td>422</td><td>Datos inválidos</td></tr>
+    <tr><td>401</td><td>Falta el token o no sirve</td><td>429</td><td>Demasiados intentos</td></tr>
+  </table>
+  <div class="pie"><span>ALCANZA · Guía para la sustentación</span><span>8</span></div>
+</section>
+
+</body>
+</html>
