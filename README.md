@@ -37,7 +37,7 @@ Proyecto final del módulo **Creación de páginas web 2** · Harold Alexander C
 | Estilos y animación | Tailwind CSS 4, Framer Motion, Lucide React |
 | Funciones especiales | Recharts (gráfico), html-to-image (tarjeta en PNG), canvas-confetti |
 | Datos | Axios, DummyJSON (productos), ExchangeRate-API (tasas de cambio) |
-| Seguridad | Cloudflare Turnstile (anti-robots), tokens de Laravel Sanctum, límite de intentos |
+| Seguridad | Cloudflare Turnstile (anti-robots), tokens de Laravel Sanctum, límites de peticiones por IP y por usuario |
 | Backend | Laravel 13, Sanctum, MySQL 8.4 (`data_alcanza`), Sail/Docker, Mailpit |
 | Calidad y documentación | oxlint, TypeDoc, Postman + Newman |
 

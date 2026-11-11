@@ -103,3 +103,21 @@ export function erroresDeValidacion(error, nombres = {}) {
 export function esDemasiadosIntentos(error) {
   return axios.isAxiosError(error) && error.response?.status === 429
 }
+
+/** Mensaje cuando la API frena por exceso de peticiones (429). */
+export const MENSAJE_DEMASIADAS = 'Hiciste demasiadas peticiones seguidas. Espera un minuto y vuelve a intentarlo.'
+
+/**
+ * Elige el mensaje para un error que no es de un campo: si fue un 429 pide esperar;
+ * si no, usa el mensaje que se pasa.
+ *
+ * @param {unknown} error
+ * @param {string} porDefecto - Mensaje para cualquier otro error.
+ * @returns {string}
+ *
+ * @example
+ * setError(mensajeDeError(error, 'No pudimos registrar el abono.'))
+ */
+export function mensajeDeError(error, porDefecto) {
+  return esDemasiadosIntentos(error) ? MENSAJE_DEMASIADAS : porDefecto
+}

@@ -5,6 +5,7 @@ import Magnetico from '../animaciones/Magnetico'
 import { useAlcance } from '../../hooks/useAlcance'
 import { useMetas } from '../../hooks/useMetas'
 import { useMoneda } from '../../hooks/useMoneda'
+import { mensajeDeError } from '../../services/api'
 import { convertirMoneda, precioConDescuento } from '../../utils/calculos'
 import { aFechaApi } from '../../utils/formato'
 
@@ -55,8 +56,8 @@ function BotonConvertirMeta({ antojo }) {
         fechaEstimada: alcance ? aFechaApi(alcance.fecha) : null,
       })
       navigate('/metas')
-    } catch {
-      setError('No pudimos crear la meta. Revisa que el servidor esté encendido e inténtalo de nuevo.')
+    } catch (problema) {
+      setError(mensajeDeError(problema, 'No pudimos crear la meta. Revisa que el servidor esté encendido e inténtalo de nuevo.'))
       setCreando(false)
     }
   }

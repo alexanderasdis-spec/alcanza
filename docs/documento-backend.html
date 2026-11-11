@@ -227,7 +227,7 @@
 ├─ <span class="d">app/Repositories/</span>       <span class="x">Usuario, Perfil, Meta y Abono Repository</span>
 │  └─ <span class="d">Contracts/</span>           <span class="x">Las cuatro interfaces de los repositorios</span>
 ├─ <span class="d">app/Services/</span>           <span class="x">AuthService, PerfilService, MetaService, AbonoService</span>
-├─ <span class="d">app/Providers/</span>          <span class="x">AppServiceProvider: interfaces, límite de intentos y correo</span>
+├─ <span class="d">app/Providers/</span>          <span class="x">AppServiceProvider: interfaces, límites de peticiones y correo</span>
 ├─ <span class="d">database/migrations/</span>    <span class="x">Tablas perfiles, metas, abonos y el user_id de perfiles</span>
 ├─ <span class="d">lang/es.json</span>            <span class="x">Traducción de la plantilla de correo de Laravel</span>
 ├─ <span class="d">routes/api.php</span>          <span class="x">Las rutas de la API (públicas y protegidas)</span>
@@ -582,6 +582,35 @@ docker run --rm --network alcanza-api_sail -v "$PWD/postman":/etc/newman postman
   </table>
   <div class="nota"><b>Conclusión:</b> la API nunca falló, ni con 50 usuarios. Responde bien hasta unos 25 usuarios simultáneos. Con 50, PHP usa cerca del 330 % de los 400 % de CPU y MySQL solo un 30 %: el límite es el servidor de desarrollo (<code>php artisan serve</code>) en un solo computador, no la base de datos. Para más usuarios hace falta un servidor de producción (Nginx con PHP-FPM, o Laravel Octane) y <code>php artisan optimize</code> al desplegar.</div>
   <div class="pie"><span>ALCANZA · Documentación del backend</span><span>13</span></div>
+</section>
+
+<!-- 14 · Límites de peticiones -->
+<section class="pagina">
+  <div class="seccion"><span class="num">18</span><h1>Límites de peticiones</h1></div>
+  <div class="destacado">Para que una sola IP o una sola cuenta no acapare el servidor, la API cuenta las peticiones de cada una por minuto. Al pasarse responde <b>429</b> con el encabezado <code>Retry-After</code> (cuántos segundos esperar). Los valores están en <code>config/limites.php</code> y se cambian desde el <code>.env</code>.</div>
+  <table>
+    <tr><th style="width:20%">Límite</th><th style="width:12%">Por minuto</th><th style="width:16%">Se cuenta por</th><th>Dónde va</th></tr>
+    <tr><td>Filtro temprano</td><td>300</td><td>IP</td><td><code>LimiteTemprano</code>, antes de revisar el token</td></tr>
+    <tr><td>Filtro temprano</td><td>120</td><td>Token</td><td>El mismo middleware</td></tr>
+    <tr><td>Con sesión</td><td>120</td><td>Usuario</td><td><code>throttle:por_usuario</code></td></tr>
+    <tr><td>Escrituras</td><td>30</td><td>Usuario</td><td><code>throttle:escrituras</code>: crear, cambiar, borrar y abonar</td></tr>
+    <tr><td>Cuentas</td><td>10</td><td>IP y ruta</td><td><code>throttle:cuentas</code>: registro, login, contraseñas y foto</td></tr>
+  </table>
+
+  <h3>Por qué un filtro temprano</h3>
+  <p>La primera versión usaba solo <code>throttle</code> en las rutas. La prueba de ataque mostró dos problemas. Laravel revisa el token <b>antes</b> que cualquier <code>throttle</code>, así que una IP con tokens falsos recibía 401 y nunca llegaba al límite. Y rechazar costaba casi lo mismo que atender. El middleware <code>LimiteTemprano</code> corre antes que todo, cuenta por IP y por token (resumido con un hash, sin consultar la base de datos) y guarda los contadores en archivos.</p>
+
+  <h3>Prueba de ataque con k6 (<code>pruebas/carga/ataque.js</code>)</h3>
+  <p>30 conexiones mandan peticiones sin pausa con una misma cuenta, mientras otra persona consulta su perfil una vez por segundo.</p>
+  <table>
+    <tr><th style="width:46%">Versión</th><th>Rechazos por segundo</th><th>Persona normal (95 %)</th></tr>
+    <tr><td>Sin límite</td><td>0 (atendía todo)</td><td>2,33 s</td></tr>
+    <tr><td>Límite después de revisar el token</td><td>17,8</td><td>1,76 s</td></tr>
+    <tr><td>Filtro temprano, contadores en archivos</td><td>34,0</td><td>1,40 s</td></tr>
+  </table>
+  <p style="margin-top:8px">En las tres versiones con límite, el atacante quedó en 120 peticiones atendidas por minuto. Con tokens falsos distintos, la IP quedó frenada a partir de la petición 301.</p>
+  <div class="nota"><b>El límite de la aplicación no basta contra un ataque grande:</b> cada petición rechazada igual pasa por PHP. Un ataque desde muchos equipos se frena antes de llegar al servidor, con reglas de límite de Cloudflare o <code>limit_req</code> de Nginx al desplegar. Detrás de Cloudflare hay que configurar los proxies de confianza para que Laravel vea la IP real.</div>
+  <div class="pie"><span>ALCANZA · Documentación del backend</span><span>14</span></div>
 </section>
 
 </body>

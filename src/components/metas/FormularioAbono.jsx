@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Plus } from 'lucide-react'
-import { erroresDeValidacion } from '../../services/api'
+import { erroresDeValidacion, mensajeDeError } from '../../services/api'
 import { formatearMoneda } from '../../utils/formato'
 
 /**
@@ -32,9 +32,9 @@ function FormularioAbono({ metaId, onAbonar }) {
       await onAbonar(valor)
       setMonto('')
     } catch (problema) {
-      // Si la API rechazó el monto (422) se muestra su mensaje; si no, un aviso general.
+      // Si la API rechazó el monto (422) se muestra su mensaje; si frenó por exceso (429), pide esperar.
       const delServidor = erroresDeValidacion(problema)
-      setError(delServidor?.monto ?? 'No pudimos registrar el abono. Inténtalo de nuevo.')
+      setError(delServidor?.monto ?? mensajeDeError(problema, 'No pudimos registrar el abono. Inténtalo de nuevo.'))
     } finally {
       setEnviando(false)
     }
