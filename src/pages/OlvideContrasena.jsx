@@ -6,7 +6,9 @@ import AvisoFormulario from '../components/auth/AvisoFormulario'
 import BotonEnviar from '../components/auth/BotonEnviar'
 import MarcoAuth from '../components/auth/MarcoAuth'
 import CampoTexto from '../components/formulario/CampoTexto'
+import VerificacionHumana from '../components/formulario/VerificacionHumana'
 import { useFormulario } from '../hooks/useFormulario'
+import { useVerificacion } from '../hooks/useVerificacion'
 import { olvideContrasena } from '../services/authService'
 import { validarCorreo } from '../utils/validaciones'
 
@@ -15,7 +17,7 @@ const BUZON_DESARROLLO = 'http://localhost:8025'
 
 /**
  * Página "Olvidé mi contraseña" (ruta `/olvide-contrasena`).
- * Pide el correo y la API envía un enlace para cambiar la contraseña.
+ * Pide el correo y la verificación "no soy un robot", y la API envía un enlace para cambiar la contraseña.
  * Por seguridad, la respuesta es la misma exista o no la cuenta.
  *
  * @returns {JSX.Element}
@@ -23,10 +25,21 @@ const BUZON_DESARROLLO = 'http://localhost:8025'
 function OlvideContrasena() {
   const [mensaje, setMensaje] = useState('')
 
+  const verificacion = useVerificacion()
+
   const { datos, errores, errorGeneral, enviando, alCambiar, alEnviar } = useFormulario(
     { email: '' },
     validarCorreo,
-    async ({ email }) => setMensaje(await olvideContrasena(email.trim())),
+    async ({ email }) => {
+      if (!verificacion.exigir()) return
+      try {
+        setMensaje(await olvideContrasena(email.trim(), verificacion.token))
+      } catch (error) {
+        // El código de Turnstile ya se gastó: se prepara uno nuevo para el siguiente intento.
+        verificacion.reiniciar()
+        throw error
+      }
+    },
   )
 
   const volver = (
@@ -77,6 +90,7 @@ function OlvideContrasena() {
           onChange={alCambiar}
           error={errores.email}
         />
+        <VerificacionHumana key={verificacion.vuelta} onCambiar={verificacion.alCambiar} error={verificacion.error || errores.turnstile} />
         <AvisoFormulario mensaje={errorGeneral} />
         <BotonEnviar enviando={enviando} texto="Enviar enlace" textoEnviando="Enviando…" />
       </form>

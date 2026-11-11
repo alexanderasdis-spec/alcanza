@@ -422,7 +422,6 @@ Route::<span class="f">middleware</span>(<span class="s">'auth:sanctum'</span>)-
     <tr><td><span class="metodo post">PUT</span></td><td><code>/api/contrasena</code></td><td>Cambia la contraseña con sesión y cierra los demás dispositivos</td><td>200 · 401 · 422</td></tr>
   </table>
   <p style="margin-top:8px">Siguen la misma arquitectura: <code>AuthController</code> → <code>AuthService</code> → <code>UsuarioRepository</code>, con los Form Requests <code>RegistroRequest</code>, <code>LoginRequest</code>, <code>OlvideContrasenaRequest</code>, <code>RestablecerContrasenaRequest</code> y <code>CambiarContrasenaRequest</code>.</p>
-
   <h3>Solo el dueño toca su meta: <code>MetaPolicy</code></h3>
 <pre><span class="c">// app/Policies/MetaPolicy.php — Laravel la encuentra sola por el nombre (Meta → MetaPolicy)</span>
 <span class="k">private function</span> <span class="f">esDueno</span>(User $usuario, Meta $meta): <span class="k">bool</span>
@@ -479,6 +478,7 @@ Route::<span class="f">middleware</span>(<span class="s">'auth:sanctum'</span>)-
     <tr><td><span class="metodo post">DELETE</span></td><td><code>/api/perfil/foto</code></td><td>Quita la foto y borra el archivo</td><td>200 · 404</td></tr>
   </table>
   <p style="margin-top:8px"><code>PerfilFotoRequest</code> acepta JPG, PNG o WebP de hasta 2 MB. El archivo va al disco <code>public</code>, la tabla guarda su ruta y la API entrega <code>foto_url</code>. Para que se vea hay que ejecutar una vez <code>./vendor/bin/sail artisan storage:link</code>.</p>
+  <p style="margin-top:6px"><b>Anti-robots:</b> registro, login y olvidé contraseña exigen el campo <code>turnstile</code> (Cloudflare Turnstile). La regla <code>app/Rules/Turnstile.php</code> lo comprueba con Cloudflare usando <code>TURNSTILE_SECRET_KEY</code>; si no es válido, responde 422.</p>
   <div class="pie"><span>ALCANZA · Documentación del backend</span><span>10</span></div>
 </section>
 
@@ -510,7 +510,7 @@ docker run --rm --network alcanza-api_sail -v "$PWD/postman":/etc/newman postman
     <tr><td>5. Abonos</td><td>Monto 0 → 422 · abonar 300.000 → 37,5 % · abonar 500.000 → 100 % y <b>cumplida</b>.</td></tr>
     <tr><td>6. Limpieza</td><td>Eliminar → 204 · consultarla → 404 · cerrar sesión → 204 · token viejo → 401.</td></tr>
   </table>
-  <div class="destacado" style="margin-top:10px"><b>Resultado actual:</b> 37 peticiones y <b>72 comprobaciones aprobadas, 0 fallidas</b>.</div>
+  <div class="destacado" style="margin-top:10px"><b>Resultado actual:</b> 37 peticiones y <b>74 comprobaciones aprobadas, 0 fallidas</b>.</div>
   <div class="alerta"><b>Ojo:</b> cada ejecución crea dos usuarios de prueba con correos <code>…@alcanza.test</code>. Se borran con: <code>sail artisan tinker --execute='App\Models\User::where("email","like","%@alcanza.test")-&gt;delete();'</code></div>
   <div class="pie"><span>ALCANZA · Documentación del backend</span><span>11</span></div>
 </section>

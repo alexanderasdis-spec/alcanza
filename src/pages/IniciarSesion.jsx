@@ -3,8 +3,10 @@ import AvisoFormulario from '../components/auth/AvisoFormulario'
 import BotonEnviar from '../components/auth/BotonEnviar'
 import MarcoAuth from '../components/auth/MarcoAuth'
 import CampoTexto from '../components/formulario/CampoTexto'
+import VerificacionHumana from '../components/formulario/VerificacionHumana'
 import { useAuth } from '../hooks/useAuth'
 import { useFormulario } from '../hooks/useFormulario'
+import { useVerificacion } from '../hooks/useVerificacion'
 import { validarIngreso } from '../utils/validaciones'
 
 /**
@@ -12,6 +14,7 @@ import { validarIngreso } from '../utils/validaciones'
  *
  * Si el usuario llegó aquí porque intentó entrar a una página protegida, después de iniciar
  * sesión vuelve a esa página (la guarda `RequiereSesion` en `location.state.desde`).
+ * Antes de enviar exige la verificación "no soy un robot" de Cloudflare Turnstile.
  *
  * @returns {JSX.Element}
  */
@@ -23,11 +26,20 @@ function IniciarSesion() {
   // Mensaje que deja la página de restablecer contraseña al terminar.
   const aviso = location.state?.aviso
 
+  const verificacion = useVerificacion()
+
   const { datos, errores, errorGeneral, enviando, alCambiar, alEnviar } = useFormulario(
     { email: '', password: '' },
     validarIngreso,
     async ({ email, password }) => {
-      await iniciarSesion(email.trim(), password)
+      if (!verificacion.exigir()) return
+      try {
+        await iniciarSesion(email.trim(), password, verificacion.token)
+      } catch (error) {
+        // El código de Turnstile ya se gastó: se prepara uno nuevo para el siguiente intento.
+        verificacion.reiniciar()
+        throw error
+      }
       navigate(destino, { replace: true })
     },
   )
@@ -74,6 +86,7 @@ function IniciarSesion() {
             ¿Olvidaste tu contraseña?
           </Link>
         </div>
+        <VerificacionHumana key={verificacion.vuelta} onCambiar={verificacion.alCambiar} error={verificacion.error || errores.turnstile} />
         <AvisoFormulario mensaje={errorGeneral} />
         <BotonEnviar enviando={enviando} texto="Iniciar sesión" textoEnviando="Entrando…" />
       </form>

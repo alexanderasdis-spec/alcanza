@@ -3,12 +3,14 @@ import AvisoFormulario from '../components/auth/AvisoFormulario'
 import BotonEnviar from '../components/auth/BotonEnviar'
 import MarcoAuth from '../components/auth/MarcoAuth'
 import CampoTexto from '../components/formulario/CampoTexto'
+import VerificacionHumana from '../components/formulario/VerificacionHumana'
 import { useAuth } from '../hooks/useAuth'
 import { useFormulario } from '../hooks/useFormulario'
+import { useVerificacion } from '../hooks/useVerificacion'
 import { validarRegistro } from '../utils/validaciones'
 
 /**
- * Página de registro (ruta `/registro`): nombre, correo y contraseña.
+ * Página de registro (ruta `/registro`): nombre, correo, contraseña y verificación "no soy un robot".
  * Al crear la cuenta la sesión queda iniciada y el usuario pasa a la bienvenida,
  * donde ve el recorrido y escribe su ahorro mensual.
  *
@@ -18,11 +20,20 @@ function Registro() {
   const { registrarse } = useAuth()
   const navigate = useNavigate()
 
+  const verificacion = useVerificacion()
+
   const { datos, errores, errorGeneral, enviando, alCambiar, alEnviar } = useFormulario(
     { nombre: '', email: '', password: '', confirmacion: '' },
     validarRegistro,
     async ({ nombre, email, password, confirmacion }) => {
-      await registrarse({ nombre: nombre.trim(), email: email.trim(), password, confirmacion })
+      if (!verificacion.exigir()) return
+      try {
+        await registrarse({ nombre: nombre.trim(), email: email.trim(), password, confirmacion, turnstile: verificacion.token })
+      } catch (error) {
+        // El código de Turnstile ya se gastó: se prepara uno nuevo para el siguiente intento.
+        verificacion.reiniciar()
+        throw error
+      }
       navigate('/bienvenida', { replace: true })
     },
     // La API llama "password_confirmation" a la confirmación; el formulario, "confirmacion".
@@ -81,6 +92,7 @@ function Registro() {
           onChange={alCambiar}
           error={errores.confirmacion}
         />
+        <VerificacionHumana key={verificacion.vuelta} onCambiar={verificacion.alCambiar} error={verificacion.error || errores.turnstile} />
         <AvisoFormulario mensaje={errorGeneral} />
         <BotonEnviar enviando={enviando} texto="Crear mi cuenta" textoEnviando="Creando tu cuenta…" />
       </form>

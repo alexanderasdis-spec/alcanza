@@ -11,7 +11,7 @@ import * as authService from '../services/authService'
  * @property {boolean} cargando - `true` mientras se comprueba si el token guardado sigue sirviendo.
  * @property {Error | null} error - Error si la API no respondió al comprobar la sesión.
  * @property {() => void} reintentar - Vuelve a comprobar la sesión.
- * @property {(email: string, password: string) => Promise<void>} iniciarSesion
+ * @property {(email: string, password: string, turnstile: string) => Promise<void>} iniciarSesion
  * @property {(datos: Parameters<typeof authService.registrar>[0]) => Promise<void>} registrarse
  * @property {() => Promise<void>} cerrarSesion
  */
@@ -59,8 +59,8 @@ export function AuthProvider({ children }) {
     setIntento((n) => n + 1)
   }, [])
 
-  const iniciarSesion = async (email, password) => {
-    setUsuario(await authService.iniciarSesion(email, password))
+  const iniciarSesion = async (email, password, turnstile) => {
+    setUsuario(await authService.iniciarSesion(email, password, turnstile))
   }
 
   const registrarse = async (datos) => {

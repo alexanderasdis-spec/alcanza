@@ -24,12 +24,13 @@ import { api, guardarToken, obtenerToken } from './api'
 /**
  * Crea una cuenta y deja la sesión iniciada.
  *
- * @param {{ nombre: string, email: string, password: string, confirmacion: string }} datos
+ * @param {{ nombre: string, email: string, password: string, confirmacion: string, turnstile: string }} datos
+ *   `turnstile` es el código de la verificación "no soy un robot".
  * @returns {Promise<Usuario>}
- * @throws {Error} 422 si algún dato no es válido o el correo ya existe.
+ * @throws {Error} 422 si algún dato no es válido, el correo ya existe o la verificación falló.
  */
-export async function registrar({ nombre, email, password, confirmacion }) {
-  const { data } = await api.post('/registro', { nombre, email, password, password_confirmation: confirmacion })
+export async function registrar({ nombre, email, password, confirmacion, turnstile }) {
+  const { data } = await api.post('/registro', { nombre, email, password, password_confirmation: confirmacion, turnstile })
   guardarToken(data.token)
   return data.usuario
 }
@@ -39,11 +40,12 @@ export async function registrar({ nombre, email, password, confirmacion }) {
  *
  * @param {string} email
  * @param {string} password
+ * @param {string} turnstile - Código de la verificación "no soy un robot".
  * @returns {Promise<Usuario>}
- * @throws {Error} 422 si el correo o la contraseña no son correctos; 429 si hubo demasiados intentos.
+ * @throws {Error} 422 si el correo, la contraseña o la verificación no son correctos; 429 si hubo demasiados intentos.
  */
-export async function iniciarSesion(email, password) {
-  const { data } = await api.post('/login', { email, password })
+export async function iniciarSesion(email, password, turnstile) {
+  const { data } = await api.post('/login', { email, password, turnstile })
   guardarToken(data.token)
   return data.usuario
 }
@@ -85,10 +87,11 @@ export async function cerrarSesion() {
  * Pide el correo con el enlace para cambiar la contraseña.
  *
  * @param {string} email
+ * @param {string} turnstile - Código de la verificación "no soy un robot".
  * @returns {Promise<string>} Mensaje de la API (el mismo exista o no la cuenta).
  */
-export async function olvideContrasena(email) {
-  const { data } = await api.post('/olvide-contrasena', { email })
+export async function olvideContrasena(email, turnstile) {
+  const { data } = await api.post('/olvide-contrasena', { email, turnstile })
   return data.message
 }
 

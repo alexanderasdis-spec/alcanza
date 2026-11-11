@@ -8,7 +8,7 @@ Proyecto final del módulo **Creación de páginas web 2** · Harold Alexander C
 
 ## Qué se puede hacer
 
-- **Crear una cuenta**, iniciar sesión y recuperar la contraseña por correo.
+- **Crear una cuenta**, iniciar sesión y recuperar la contraseña por correo, con verificación anti-robots de Cloudflare Turnstile.
 - **Buscar antojos** en un catálogo con filtro por categorías y buscador.
 - **Ver precios en COP, USD o EUR** con tasas de cambio reales.
 - **Saber cuándo alcanzas cada producto** según tu ahorro mensual.
@@ -37,6 +37,7 @@ Proyecto final del módulo **Creación de páginas web 2** · Harold Alexander C
 | Estilos y animación | Tailwind CSS 4, Framer Motion, Lucide React |
 | Funciones especiales | Recharts (gráfico), html-to-image (tarjeta en PNG), canvas-confetti |
 | Datos | Axios, DummyJSON (productos), ExchangeRate-API (tasas de cambio) |
+| Seguridad | Cloudflare Turnstile (anti-robots), tokens de Laravel Sanctum, límite de intentos |
 | Backend | Laravel 13, Sanctum, MySQL 8.4 (`data_alcanza`), Sail/Docker, Mailpit |
 | Calidad y documentación | oxlint, TypeDoc, Postman + Newman |
 
@@ -76,6 +77,8 @@ npm run dev
 ```
 
 Abre `http://localhost:5173`. La dirección de la API se toma de `VITE_API_URL`; si necesitas cambiarla, copia `.env.example` como `.env`.
+
+La verificación anti-robots usa por defecto la clave de prueba de Cloudflare Turnstile, que siempre aprueba y muestra la franja "Solo para pruebas". Al desplegar se pone la clave real en `VITE_TURNSTILE_SITE_KEY`, y su clave secreta en el backend.
 
 ## Cómo se usa
 

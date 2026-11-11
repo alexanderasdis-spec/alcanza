@@ -168,13 +168,13 @@ catalogoEnCache = fuente.<span class="f">listarProductos</span>().<span class="f
   <h3>API propia (Laravel), con el token agregado en <code>api.js:60</code></h3>
   <table class="densa">
     <tr><th style="width:18%">Acción</th><th style="width:30%">Lo pide</th><th style="width:27%">Sale en</th><th>Petición</th></tr>
-    <tr><td>Revisar sesión</td><td><code>context/AuthProvider.jsx:40</code></td><td><code>authService.js:60</code></td><td>GET /usuario</td></tr>
-    <tr><td>Iniciar sesión</td><td><code>context/AuthProvider.jsx:63</code></td><td><code>authService.js:46</code></td><td>POST /login</td></tr>
-    <tr><td>Registrarse</td><td><code>context/AuthProvider.jsx:67</code></td><td><code>authService.js:32</code></td><td>POST /registro</td></tr>
-    <tr><td>Cerrar sesión</td><td><code>context/AuthProvider.jsx:71</code></td><td><code>authService.js:76</code></td><td>POST /logout</td></tr>
-    <tr><td>Olvidé contraseña</td><td><code>pages/OlvideContrasena.jsx:29</code></td><td><code>authService.js:91</code></td><td>POST /olvide-contrasena</td></tr>
-    <tr><td>Restablecer</td><td><code>pages/RestablecerContrasena.jsx:29</code></td><td><code>authService.js:103</code></td><td>POST /restablecer-contrasena</td></tr>
-    <tr><td>Cambiar contraseña</td><td><code>pages/MiPerfil.jsx:97</code></td><td><code>authService.js:121</code></td><td>PUT /contrasena</td></tr>
+    <tr><td>Revisar sesión</td><td><code>context/AuthProvider.jsx:40</code></td><td><code>authService.js:62</code></td><td>GET /usuario</td></tr>
+    <tr><td>Iniciar sesión</td><td><code>context/AuthProvider.jsx:63</code></td><td><code>authService.js:48</code></td><td>POST /login</td></tr>
+    <tr><td>Registrarse</td><td><code>context/AuthProvider.jsx:67</code></td><td><code>authService.js:33</code></td><td>POST /registro</td></tr>
+    <tr><td>Cerrar sesión</td><td><code>context/AuthProvider.jsx:71</code></td><td><code>authService.js:78</code></td><td>POST /logout</td></tr>
+    <tr><td>Olvidé contraseña</td><td><code>pages/OlvideContrasena.jsx:36</code></td><td><code>authService.js:94</code></td><td>POST /olvide-contrasena</td></tr>
+    <tr><td>Restablecer</td><td><code>pages/RestablecerContrasena.jsx:29</code></td><td><code>authService.js:106</code></td><td>POST /restablecer-contrasena</td></tr>
+    <tr><td>Cambiar contraseña</td><td><code>pages/MiPerfil.jsx:97</code></td><td><code>authService.js:124</code></td><td>PUT /contrasena</td></tr>
     <tr><td>Consultar perfil</td><td><code>context/PerfilProvider.jsx:29</code></td><td><code>perfilService.js:41</code></td><td>GET /perfil</td></tr>
     <tr><td>Guardar perfil</td><td><code>pages/Bienvenida.jsx:34</code><br><code>context/PerfilProvider.jsx:51</code></td><td><code>perfilService.js:57</code></td><td>POST /perfil</td></tr>
     <tr><td>Subir foto</td><td><code>perfil/SelectorFoto.jsx:71</code><br><code>context/PerfilProvider.jsx:62</code></td><td><code>perfilService.js:72</code></td><td>POST /perfil/foto</td></tr>
@@ -305,6 +305,7 @@ catalogoEnCache = fuente.<span class="f">listarProductos</span>().<span class="f
     <tr><td>…los formularios</td><td>Son controlados: el valor vive en el estado. <code>useFormulario</code> valida y muestra los errores de la API.</td><td><code>useFormulario.js:31</code><br><code>validaciones.js</code></td></tr>
     <tr><td>…el modo oscuro</td><td>Un booleano en <code>localStorage</code> pone o quita la clase <code>.dark</code>.</td><td><code>TemaProvider.jsx:27</code>, <code>:30</code></td></tr>
     <tr><td>…la carga por páginas</td><td><code>React.lazy</code> descarga cada página al abrirla, y <code>Suspense</code> muestra el indicador de carga.</td><td><code>App.jsx:22</code><br><code>LayoutPrincipal.jsx</code></td></tr>
+    <tr><td>…la verificación anti-robots</td><td>Widget de Cloudflare Turnstile en registro, login y olvidé contraseña. Entrega un código de un solo uso; si el envío falla, se crea un widget nuevo.</td><td><code>VerificacionHumana.jsx</code><br><code>useVerificacion.js:26</code></td></tr>
     <tr><td>¿Por qué Axios y no <code>fetch</code>?</td><td>Convierte el JSON solo, permite tiempo límite y tiene interceptores para el token.</td><td><code>api.js:15</code></td></tr>
   </table>
   <div class="pie"><span>ALCANZA · Guía para la sustentación</span><span>6</span></div>
@@ -363,9 +364,10 @@ catalogoEnCache = fuente.<span class="f">listarProductos</span>().<span class="f
     <tr><td>…el progreso de una meta</td><td>No se guarda: son atributos calculados del modelo, que salen en el JSON con <code>$appends</code>.</td><td><code>Meta.php:47</code>, <code>:83</code>, <code>:92</code>, <code>:100</code></td></tr>
     <tr><td>…para no hacer muchas consultas</td><td><code>with('abonos')</code> y <code>withSum</code> traen abonos y totales juntos, y evitan una consulta por cada meta.</td><td><code>MetaRepository.php:21</code></td></tr>
     <tr><td>…la foto de perfil</td><td>El archivo va al disco <code>public</code>, la tabla guarda la ruta y el modelo entrega <code>foto_url</code>. Se borra la anterior para no acumular.</td><td><code>PerfilService.php:51</code><br><code>Perfil.php</code></td></tr>
+    <tr><td>…la verificación anti-robots</td><td>La regla <code>Turnstile</code> manda el código a Cloudflare con la clave secreta. Si no es válido: 422.</td><td><code>app/Rules/Turnstile.php</code></td></tr>
     <tr><td>…la conexión con React</td><td>CORS permite solo las direcciones de <code>FRONTEND_URLS</code>. React usa <code>VITE_API_URL</code>.</td><td><code>config/cors.php:25</code><br><code>src/services/api.js:16</code></td></tr>
     <tr><td>…la base de datos</td><td>MySQL 8.4 en Docker con Laravel Sail. La base se llama <code>data_alcanza</code>.</td><td><code>compose.yaml</code><br><code>.env</code></td></tr>
-    <tr><td>…las pruebas</td><td>Colección de Postman con 37 peticiones y 72 comprobaciones, que se corre con Newman.</td><td><code>postman/</code></td></tr>
+    <tr><td>…las pruebas</td><td>Colección de Postman con 37 peticiones y 74 comprobaciones, que se corre con Newman.</td><td><code>postman/</code></td></tr>
   </table>
 
   <h3>Códigos de respuesta que debes saber</h3>
