@@ -18,6 +18,7 @@ Proyecto final del módulo **Creación de páginas web 2** · Harold Alexander C
 - **Ver tu ahorro mes a mes** en un gráfico y tus metas en una línea de tiempo.
 - **Descargar una tarjeta** de tu antojo como imagen para compartirla.
 - **Editar tu perfil**, poner tu foto, cambiar la contraseña y usar modo oscuro.
+- **Usarla con tranquilidad:** la API limita las peticiones de cada IP y de cada cuenta, para que nadie pueda acaparar el servidor.
 
 ## Capturas
 
@@ -39,7 +40,7 @@ Proyecto final del módulo **Creación de páginas web 2** · Harold Alexander C
 | Datos | Axios, DummyJSON (productos), ExchangeRate-API (tasas de cambio) |
 | Seguridad | Cloudflare Turnstile (anti-robots), tokens de Laravel Sanctum, límites de peticiones por IP y por usuario |
 | Backend | Laravel 13, Sanctum, MySQL 8.4 (`data_alcanza`), Sail/Docker, Mailpit |
-| Calidad y documentación | oxlint, TypeDoc, Postman + Newman |
+| Calidad y documentación | oxlint, TypeDoc, Postman + Newman, k6 (pruebas de carga) |
 
 ## Instalación
 
@@ -123,6 +124,8 @@ docs/          fuentes de los PDF, capturas y documentación generada
 - **Montos guardados en pesos.** Las metas se guardan en COP y se convierten solo al mostrarlas, según la moneda elegida.
 - **La URL como estado.** Los filtros del catálogo y los antojos del comparador van en la dirección, así que un enlace conserva lo elegido.
 - **Backend por capas.** Ruta → Controlador → Servicio → Repositorio con interfaz → Modelo, con Form Requests para validar y políticas para que cada persona solo toque sus metas.
+- **Protección del backend.** Verificación anti-robots en las cuentas y límites de peticiones por IP, por token y por usuario, con un primer filtro que rechaza antes de tocar la base de datos.
+- **Probado bajo carga.** Con k6, la API no tuvo errores con 50 usuarios simultáneos y responde bien hasta unos 25. Los detalles están en el README del backend.
 - **Estilo "Fintech festival".** 80 % limpio y 20 % fiesta: degradados violeta y rosa, acentos menta y amarillo, Poppins en títulos e Inter en textos. Las animaciones respetan la preferencia de movimiento reducido del sistema.
 
 ## Documentación
@@ -130,6 +133,7 @@ docs/          fuentes de los PDF, capturas y documentación generada
 - [Documento de la idea](ALCANZA_idea_presentable.pdf)
 - [Cómo funciona el código](ALCANZA_documentacion_codigo.pdf)
 - [El backend, paso a paso](ALCANZA_documentacion_backend.pdf)
+- [Guía para la sustentación](ALCANZA_guia_sustentacion.pdf): dónde está cada petición, qué componente pinta cada parte y cómo se hizo cada cosa.
 - Referencia del código: ejecuta `npm run docs` y abre `docs/codigo/index.html`.
 
 ## Créditos

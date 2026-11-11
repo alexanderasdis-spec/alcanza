@@ -136,6 +136,8 @@
     <tr><td>Laravel Sanctum</td><td>Crea los <b>tokens de sesión</b>: React envía el token en cada petición para demostrar quién es el usuario.</td></tr>
     <tr><td>Mailpit</td><td>Buzón de correo de prueba: atrapa los correos de "Olvidé mi contraseña" y los muestra en <code>http://localhost:8025</code>.</td></tr>
     <tr><td>Postman + Newman</td><td>Probar cada ruta. Newman es la versión de consola de Postman y corre toda la colección con un comando.</td></tr>
+    <tr><td>k6</td><td>Pruebas de carga y de ataque: muchos usuarios a la vez, para medir tiempos y comprobar los límites (secciones 17 y 18).</td></tr>
+    <tr><td>Cloudflare Turnstile</td><td>Verificación "no soy un robot" en registro, login y olvidé contraseña, comprobada por el backend.</td></tr>
   </table>
 
   <div class="bloque">
@@ -211,6 +213,7 @@
     <li><b>Crear las migraciones, modelos, repositorios, servicios, Form Requests, controladores y rutas</b> (secciones 7 a 11) y ejecutar <code>./vendor/bin/sail artisan migrate</code>.</li>
     <li><b>Agregar Mailpit y el correo:</b> servicio <code>mailpit</code> en <code>compose.yaml</code>, y en el <code>.env</code> <code>MAIL_MAILER=smtp</code>, <code>MAIL_HOST=mailpit</code>, <code>MAIL_PORT=1025</code>, <code>APP_LOCALE=es</code> y <code>FRONTEND_URL</code> (sección 11).</li>
     <li><b>Crear la colección de Postman</b> en la carpeta <code>postman/</code> y probarla con Newman (sección 14). Guardar cada avance con un commit de <b>Git</b>.</li>
+    <li><b>Proteger y medir:</b> verificación de Turnstile en las cuentas, límites de peticiones y pruebas de carga y ataque con k6 (secciones 11, 17 y 18).</li>
   </ol>
   <div class="nota"><b>Errores en JSON:</b> en <code>bootstrap/app.php</code>, Laravel 13 ya trae configurado que las rutas <code>api/*</code> respondan los errores (404, 422, 500) en JSON y no como página HTML.</div>
   <div class="pie"><span>ALCANZA · Documentación del backend</span><span>4</span></div>
@@ -222,6 +225,8 @@
 <div class="arbol"><span class="d">~/alcanza-api/</span>
 ├─ <span class="d">app/Http/Controllers/</span>   <span class="x">AuthController, PerfilController, MetasController, AbonosController</span>
 ├─ <span class="d">app/Http/Requests/</span>      <span class="x">Registro, Login, OlvideContrasena, RestablecerContrasena, Perfil, Meta…</span>
+├─ <span class="d">app/Http/Middleware/</span>    <span class="x">LimiteTemprano: límite por IP y por token (sección 18)</span>
+├─ <span class="d">app/Rules/</span>              <span class="x">Turnstile: comprueba el "no soy un robot" con Cloudflare</span>
 ├─ <span class="d">app/Models/</span>             <span class="x">User, Perfil, Meta, Abono</span>
 ├─ <span class="d">app/Policies/</span>           <span class="x">MetaPolicy: solo el dueño puede tocar su meta</span>
 ├─ <span class="d">app/Repositories/</span>       <span class="x">Usuario, Perfil, Meta y Abono Repository</span>
@@ -231,8 +236,8 @@
 ├─ <span class="d">database/migrations/</span>    <span class="x">Tablas perfiles, metas, abonos y el user_id de perfiles</span>
 ├─ <span class="d">lang/es.json</span>            <span class="x">Traducción de la plantilla de correo de Laravel</span>
 ├─ <span class="d">routes/api.php</span>          <span class="x">Las rutas de la API (públicas y protegidas)</span>
-├─ <span class="d">config/cors.php</span>         <span class="x">Qué direcciones pueden usar la API desde el navegador</span>
-├─ <span class="d">postman/</span>                <span class="x">Colección y entorno de Postman</span>
+├─ <span class="d">config/</span>                 <span class="x">cors.php (quién usa la API) y limites.php (peticiones por minuto)</span>
+├─ <span class="d">postman/ · pruebas/carga/</span> <span class="x">Colección de Postman y pruebas de k6</span>
 ├─ compose.yaml            <span class="x">Los contenedores de Sail (laravel.test, mysql y mailpit)</span>
 └─ .env                    <span class="x">Configuración local (no se sube a Git)</span></div>
 
