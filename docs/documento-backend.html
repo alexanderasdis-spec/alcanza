@@ -551,5 +551,38 @@ docker run --rm --network alcanza-api_sail -v "$PWD/postman":/etc/newman postman
   <div class="pie"><span>ALCANZA · Documentación del backend</span><span>12</span></div>
 </section>
 
+<!-- 13 · Prueba de carga -->
+<section class="pagina">
+  <div class="seccion"><span class="num">17</span><h1>Prueba de carga con k6</h1></div>
+  <div class="destacado">Una <b>prueba de carga</b> (o de estrés) manda muchas peticiones a la vez para medir cuánto tarda la API, si falla y en qué punto deja de responder bien. Se le hace al <b>backend</b>, porque es el que atiende a todos los usuarios al mismo tiempo. Herramienta: <b>k6</b>, gratis, corriendo en Docker.</div>
+
+  <h3>Cómo se hizo</h3>
+  <p><code>pruebas/carga/estres.js</code> sube de 1 a 50 usuarios virtuales en 2 minutos. Cada uno lista las metas, consulta el perfil y registra un abono, una vez por segundo. <b>Meta:</b> que el 95 % de las peticiones tarde menos de 0,8 s y que fallen menos del 1 %.</p>
+<pre>docker run --rm --network alcanza-api_sail -v "$(pwd)/pruebas/carga:/scripts" \
+  grafana/k6:0.54.0 run /scripts/estres.js</pre>
+
+  <h3>Qué se encontró y qué se corrigió</h3>
+  <table>
+    <tr><th style="width:34%">Hallazgo</th><th>Corrección</th></tr>
+    <tr><td><code>GET /metas</code> se volvía lento con muchos abonos: devolvía todas sus columnas (0,31 s y 98 KB con 673 abonos)</td><td><code>MetaRepository</code> pide solo <code>id</code>, <code>monto</code> y <code>fecha</code>: <b>0,15 s y 32 KB</b>.</td></tr>
+    <tr><td>Cada abono tardaba más que el anterior: la respuesta repetía la lista completa de abonos</td><td><code>AbonoService</code> devuelve solo el total y el estado; el frontend le suma el abono nuevo.</td></tr>
+    <tr><td>PHP compilaba el código en cada petición</td><td>OPcache activo en Sail: <code>docker/php/opcache.ini</code>, montado en <code>compose.yaml</code>.</td></tr>
+  </table>
+
+  <h3>Resultados (10 de noviembre de 2026, computador de 4 núcleos)</h3>
+  <table>
+    <tr><th style="width:52%">Medición</th><th>Antes</th><th>Después</th></tr>
+    <tr><td>Peticiones fallidas</td><td>0 %</td><td>0 %</td></tr>
+    <tr><td>95 % de las peticiones, con 1 a 50 usuarios</td><td>4,12 s</td><td>2,61 s</td></tr>
+    <tr><td>Peticiones por segundo</td><td>16,5</td><td>22,3</td></tr>
+    <tr><td>Con 10 usuarios fijos</td><td>–</td><td>0,26 s <span class="estado ok">cumple</span></td></tr>
+    <tr><td>Con 25 usuarios fijos</td><td>–</td><td>0,80 s <span class="estado wip">en el límite</span></td></tr>
+    <tr><td>Con 50 usuarios fijos</td><td>–</td><td>2,07 s <span class="estado pend">no cumple</span></td></tr>
+    <tr><td>50 usuarios en modo producción (<code>APP_DEBUG=false</code> y caché)</td><td>–</td><td>1,64 s y 36 por segundo</td></tr>
+  </table>
+  <div class="nota"><b>Conclusión:</b> la API nunca falló, ni con 50 usuarios. Responde bien hasta unos 25 usuarios simultáneos. Con 50, PHP usa cerca del 330 % de los 400 % de CPU y MySQL solo un 30 %: el límite es el servidor de desarrollo (<code>php artisan serve</code>) en un solo computador, no la base de datos. Para más usuarios hace falta un servidor de producción (Nginx con PHP-FPM, o Laravel Octane) y <code>php artisan optimize</code> al desplegar.</div>
+  <div class="pie"><span>ALCANZA · Documentación del backend</span><span>13</span></div>
+</section>
+
 </body>
 </html>

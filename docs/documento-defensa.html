@@ -326,12 +326,12 @@ catalogoEnCache = fuente.<span class="f">listarProductos</span>().<span class="f
     <tr><td>POST perfil (28)</td><td>PerfilRequest</td><td><code>Perfil:40</code></td><td><code>Perfil:35</code></td><td><code>Perfil:19</code>, <code>:24</code></td></tr>
     <tr><td>POST perfil/foto (31)</td><td>PerfilFotoRequest</td><td><code>Perfil:50</code></td><td><code>Perfil:51</code></td><td><code>Perfil:24</code></td></tr>
     <tr><td>DELETE perfil/foto (32)</td><td>Token</td><td><code>Perfil:60</code></td><td><code>Perfil:71</code></td><td><code>Perfil:24</code></td></tr>
-    <tr><td>GET metas (35)</td><td>Token</td><td><code>Metas:26</code></td><td><code>Meta:26</code></td><td><code>Meta:15</code></td></tr>
-    <tr><td>POST metas (35)</td><td>MetaStoreRequest</td><td><code>Metas:34</code></td><td><code>Meta:48</code></td><td><code>Meta:27</code></td></tr>
-    <tr><td>GET metas/{id} (35)</td><td>Política</td><td><code>Metas:46</code></td><td><code>Meta:36</code></td><td><code>Meta:22</code></td></tr>
-    <tr><td>PUT metas/{id} (35)</td><td>MetaUpdateRequest</td><td><code>Metas:56</code></td><td><code>Meta:68</code></td><td><code>Meta:32</code></td></tr>
-    <tr><td>DELETE metas/{id} (35)</td><td>Política</td><td><code>Metas:67</code></td><td><code>Meta:79</code></td><td><code>Meta:39</code></td></tr>
-    <tr><td>POST metas/{id}/abonos (38)</td><td>AbonoStoreRequest</td><td><code>Abonos:24</code></td><td><code>Abono:26</code></td><td><code>Abono:14</code></td></tr>
+    <tr><td>GET metas (35)</td><td>Token</td><td><code>Metas:26</code></td><td><code>Meta:26</code></td><td><code>Meta:21</code></td></tr>
+    <tr><td>POST metas (35)</td><td>MetaStoreRequest</td><td><code>Metas:34</code></td><td><code>Meta:48</code></td><td><code>Meta:47</code></td></tr>
+    <tr><td>GET metas/{id} (35)</td><td>Política</td><td><code>Metas:46</code></td><td><code>Meta:36</code></td><td><code>Meta:39</code></td></tr>
+    <tr><td>PUT metas/{id} (35)</td><td>MetaUpdateRequest</td><td><code>Metas:56</code></td><td><code>Meta:68</code></td><td><code>Meta:52</code></td></tr>
+    <tr><td>DELETE metas/{id} (35)</td><td>Política</td><td><code>Metas:67</code></td><td><code>Meta:79</code></td><td><code>Meta:59</code></td></tr>
+    <tr><td>POST metas/{id}/abonos (38)</td><td>AbonoStoreRequest</td><td><code>Abonos:24</code></td><td><code>Abono:30</code></td><td><code>Abono:14</code></td></tr>
   </table>
   <div class="nota"><b>Cómo leerla:</b> <code>Metas:26</code> en Controlador es <code>MetasController.php</code>, línea 26. <code>Meta:26</code> en Servicio es <code>MetaService.php</code>, línea 26. Las cinco rutas de metas marcadas con 35 salen todas de <code>Route::apiResource</code>.</div>
 
@@ -343,7 +343,7 @@ catalogoEnCache = fuente.<span class="f">listarProductos</span>().<span class="f
     $resultado = $this-&gt;abonoService-&gt;<span class="f">registrar</span>($meta, $request-&gt;<span class="f">validated</span>());
     <span class="k">return</span> <span class="f">response</span>()-&gt;<span class="f">json</span>($resultado, <span class="s">201</span>);
 }</pre>
-  <p style="margin-top:8px"><code>AbonoService.php:26</code> pone la fecha de hoy si no llega ninguna, guarda el abono con el repositorio y llama a <code>revisarEstado</code> (<code>MetaService.php:88</code>), que marca la meta como cumplida si ya se llegó al precio.</p>
+  <p style="margin-top:8px"><code>AbonoService.php:30</code> pone la fecha de hoy si no llega ninguna, guarda el abono con el repositorio y llama a <code>revisarEstado</code> (<code>MetaService.php:88</code>), que marca la meta como cumplida si ya se llegó al precio.</p>
   <div class="pie"><span>ALCANZA · Guía para la sustentación</span><span>7</span></div>
 </section>
 
@@ -361,7 +361,7 @@ catalogoEnCache = fuente.<span class="f">listarProductos</span>().<span class="f
     <tr><td>…recuperar la contraseña</td><td>Laravel crea un token, envía el correo (Mailpit en desarrollo) con enlace a React, y al cambiarla se borran los tokens de sesión.</td><td><code>AuthService.php:82</code>, <code>:95</code><br><code>AppServiceProvider.php:47</code></td></tr>
     <tr><td>…cambiar la contraseña</td><td><code>current_password:sanctum</code> revisa la actual. Se cierran las otras sesiones y esta sigue activa.</td><td><code>CambiarContrasenaRequest.php</code><br><code>AuthService.php:72</code></td></tr>
     <tr><td>…el progreso de una meta</td><td>No se guarda: son atributos calculados del modelo, que salen en el JSON con <code>$appends</code>.</td><td><code>Meta.php:47</code>, <code>:83</code>, <code>:92</code>, <code>:100</code></td></tr>
-    <tr><td>…para no hacer muchas consultas</td><td><code>with('abonos')</code> y <code>withSum</code> traen abonos y totales juntos, y evitan una consulta por cada meta.</td><td><code>MetaRepository.php:15</code></td></tr>
+    <tr><td>…para no hacer muchas consultas</td><td><code>with('abonos')</code> y <code>withSum</code> traen abonos y totales juntos, y evitan una consulta por cada meta.</td><td><code>MetaRepository.php:21</code></td></tr>
     <tr><td>…la foto de perfil</td><td>El archivo va al disco <code>public</code>, la tabla guarda la ruta y el modelo entrega <code>foto_url</code>. Se borra la anterior para no acumular.</td><td><code>PerfilService.php:51</code><br><code>Perfil.php</code></td></tr>
     <tr><td>…la conexión con React</td><td>CORS permite solo las direcciones de <code>FRONTEND_URLS</code>. React usa <code>VITE_API_URL</code>.</td><td><code>config/cors.php:25</code><br><code>src/services/api.js:16</code></td></tr>
     <tr><td>…la base de datos</td><td>MySQL 8.4 en Docker con Laravel Sail. La base se llama <code>data_alcanza</code>.</td><td><code>compose.yaml</code><br><code>.env</code></td></tr>
