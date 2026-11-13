@@ -56,7 +56,6 @@ docker run --rm -u "$(id -u):$(id -g)" -v "$(pwd):/var/www/html" -w /var/www/htm
 ./vendor/bin/sail up -d
 ./vendor/bin/sail artisan key:generate
 ./vendor/bin/sail artisan migrate
-./vendor/bin/sail artisan storage:link
 ```
 
 La API queda en `http://localhost/api` y los correos de prueba se ven en Mailpit: `http://localhost:8025`.
@@ -80,6 +79,10 @@ npm run dev
 Abre `http://localhost:5173`. La dirección de la API se toma de `VITE_API_URL`; si necesitas cambiarla, copia `.env.example` como `.env`.
 
 La verificación anti-robots usa por defecto la clave de prueba de Cloudflare Turnstile, que siempre aprueba y muestra la franja "Solo para pruebas". Al desplegar se pone la clave real en `VITE_TURNSTILE_SITE_KEY`, y su clave secreta en el backend.
+
+### 3. Publicar en internet
+
+El proyecto está preparado para publicarse gratis: **Cloudflare Pages** para este frontend (el archivo `public/_redirects` hace que las rutas funcionen al recargar), **Render** para la API con su `Dockerfile`, **TiDB Cloud** para la base de datos y **Brevo** para el correo. En Cloudflare Pages se configuran `VITE_API_URL` con la dirección pública de la API y `VITE_TURNSTILE_SITE_KEY` con la clave real. Los pasos del backend están en su README.
 
 ## Cómo se usa
 

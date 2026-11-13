@@ -110,7 +110,7 @@
   <div class="datos">
     <div><small>Autor</small><b>Harold Alexander Ceballos Henao</b></div>
     <div><small>Módulo</small><b>Creación de páginas web 2</b></div>
-    <div><small>Fecha</small><b>8 de noviembre de 2026</b></div>
+    <div><small>Fecha</small><b>13 de noviembre de 2026</b></div>
   </div>
 </section>
 
@@ -139,7 +139,7 @@
       <tr><th style="width:24%">Comando</th><th>Qué hace</th></tr>
       <tr><td><code>npm install</code></td><td>Instala las dependencias de <code>package.json</code> (solo la primera vez).</td></tr>
       <tr><td><code>npm run dev</code></td><td>Levanta el servidor de desarrollo en <code>http://localhost:5173</code>. Cada vez que se guarda un archivo, la página se actualiza sola.</td></tr>
-      <tr><td><code>npm run build</code></td><td>Compila la versión de producción en la carpeta <code>dist/</code>, lista para Vercel o Netlify.</td></tr>
+      <tr><td><code>npm run build</code></td><td>Compila la versión de producción en la carpeta <code>dist/</code>, lista para Cloudflare Pages (<code>public/_redirects</code> hace que las rutas funcionen al recargar).</td></tr>
       <tr><td><code>npm run lint</code></td><td>Revisa todo el código con oxlint.</td></tr>
       <tr><td><code>npm run docs</code></td><td>Genera la documentación del código en <code>docs/codigo/</code> (abrir <code>index.html</code>).</td></tr>
     </table>
@@ -493,9 +493,9 @@ api.interceptors.response.<span class="f">use</span>((respuesta) =&gt; respuesta
       </div>
       <div class="tarjeta"><b class="t" style="color:#854d0e">Pendiente</b>
         <ul class="lista">
-          <li>Subir a GitHub y desplegar gratis.</li>
+          <li>Subir a GitHub y publicar (código listo).</li>
           <li>Claves reales de Turnstile y Cloudflare.</li>
-          <li>Fotos y correo en servicios externos.</li>
+          <li>Correo real con Brevo.</li>
         </ul>
       </div>
     </div>
@@ -559,7 +559,7 @@ api.interceptors.response.<span class="f">use</span>((respuesta) =&gt; respuesta
     <tr><td>Gráfico de ahorro</td><td><code>metas/GraficoAhorro</code></td><td><code>ahorroPorMes</code> agrupa los abonos de todas las metas: barras para lo abonado en el mes y área para el acumulado.</td></tr>
     <tr><td>Mi perfil</td><td><code>pages/MiPerfil</code></td><td>Reutiliza <code>useFormulario</code>. Cambiar la <code>key</code> del formulario de contraseña lo vacía después de un cambio exitoso.</td></tr>
     <tr><td>Anti-robots</td><td><code>VerificacionHumana</code>, <code>useVerificacion</code></td><td>Carga el widget de Cloudflare Turnstile en registro, login y olvidé contraseña. El código va a la API, que lo comprueba con Cloudflare. Si el envío falla, se crea un widget nuevo.</td></tr>
-    <tr><td>Foto de perfil</td><td><code>SelectorFoto</code>, <code>Avatar</code>, <code>utils/imagen</code></td><td><code>recortarCuadrada</code> usa un <code>canvas</code> para dejarla en 320 × 320 antes de subirla. <code>PerfilProvider</code> actualiza el perfil y el menú la muestra de una vez; sin foto, <code>Avatar</code> muestra la inicial.</td></tr>
+    <tr><td>Foto de perfil</td><td><code>SelectorFoto</code>, <code>Avatar</code>, <code>utils/imagen</code></td><td><code>recortarCuadrada</code> usa un <code>canvas</code> para dejarla en 320 × 320 antes de subirla. <code>PerfilProvider</code> actualiza el perfil y el menú la muestra de una vez; sin foto, <code>Avatar</code> muestra la inicial. La API guarda la foto en la base de datos.</td></tr>
     <tr><td>Logo y pie de página</td><td><code>Logo</code>, <code>Footer</code>, <code>data/redesSociales</code></td><td>El logo es un SVG en React: signo de pesos con rama de olivo y moneda dorada. Las redes del pie se cambian en un solo archivo.</td></tr>
   </table>
 

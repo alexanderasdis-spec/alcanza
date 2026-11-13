@@ -112,7 +112,7 @@
   <div class="datos">
     <div><small>Autor</small><b>Harold Alexander Ceballos Henao</b></div>
     <div><small>Módulo</small><b>Creación de páginas web 2</b></div>
-    <div><small>Fecha</small><b>8 de noviembre de 2026</b></div>
+    <div><small>Fecha</small><b>13 de noviembre de 2026</b></div>
   </div>
 </section>
 
@@ -325,8 +325,9 @@ catalogoEnCache = fuente.<span class="f">listarProductos</span>().<span class="f
     <tr><td>PUT contrasena (30)</td><td>CambiarContrasena…</td><td><code>Auth:63</code></td><td><code>Auth:72</code></td><td>No usa</td></tr>
     <tr><td>GET perfil (33)</td><td>Token</td><td><code>Perfil:25</code></td><td><code>Perfil:24</code></td><td><code>Perfil:14</code></td></tr>
     <tr><td>POST perfil (38)</td><td>PerfilRequest</td><td><code>Perfil:40</code></td><td><code>Perfil:35</code></td><td><code>Perfil:19</code>, <code>:24</code></td></tr>
-    <tr><td>POST perfil/foto (39)</td><td>PerfilFotoRequest</td><td><code>Perfil:50</code></td><td><code>Perfil:51</code></td><td><code>Perfil:24</code></td></tr>
-    <tr><td>DELETE perfil/foto (40)</td><td>Token</td><td><code>Perfil:60</code></td><td><code>Perfil:71</code></td><td><code>Perfil:24</code></td></tr>
+    <tr><td>POST perfil/foto (39)</td><td>PerfilFotoRequest</td><td><code>Perfil:50</code></td><td><code>Perfil:52</code></td><td><code>Perfil:24</code></td></tr>
+    <tr><td>DELETE perfil/foto (40)</td><td>Token</td><td><code>Perfil:60</code></td><td><code>Perfil:72</code></td><td><code>Perfil:24</code></td></tr>
+    <tr><td>GET fotos/{clave} (53)</td><td>Pública</td><td><code>Perfil:69</code></td><td><code>Perfil:88</code></td><td><code>Perfil:31</code></td></tr>
     <tr><td>GET metas (34)</td><td>Token</td><td><code>Metas:26</code></td><td><code>Meta:26</code></td><td><code>Meta:21</code></td></tr>
     <tr><td>POST metas (43)</td><td>MetaStoreRequest</td><td><code>Metas:34</code></td><td><code>Meta:48</code></td><td><code>Meta:47</code></td></tr>
     <tr><td>GET metas/{id} (34)</td><td>Política</td><td><code>Metas:46</code></td><td><code>Meta:36</code></td><td><code>Meta:39</code></td></tr>
@@ -363,11 +364,11 @@ catalogoEnCache = fuente.<span class="f">listarProductos</span>().<span class="f
     <tr><td>…cambiar la contraseña</td><td><code>current_password:sanctum</code> revisa la actual. Se cierran las otras sesiones y esta sigue activa.</td><td><code>CambiarContrasenaRequest.php</code><br><code>AuthService.php:72</code></td></tr>
     <tr><td>…el progreso de una meta</td><td>No se guarda: son atributos calculados del modelo, que salen en el JSON con <code>$appends</code>.</td><td><code>Meta.php:47</code>, <code>:83</code>, <code>:92</code>, <code>:100</code></td></tr>
     <tr><td>…para no hacer muchas consultas</td><td><code>with('abonos')</code> y <code>withSum</code> traen abonos y totales juntos, y evitan una consulta por cada meta.</td><td><code>MetaRepository.php:21</code></td></tr>
-    <tr><td>…la foto de perfil</td><td>El archivo va al disco <code>public</code>, la tabla guarda la ruta y el modelo entrega <code>foto_url</code>. Se borra la anterior para no acumular.</td><td><code>PerfilService.php:51</code><br><code>Perfil.php</code></td></tr>
+    <tr><td>…la foto de perfil</td><td>Se guarda dentro de la base de datos y se muestra en <code>GET /api/fotos/{clave}</code>, con una clave al azar. Así no se pierde al reiniciar el servidor.</td><td><code>PerfilService.php:52</code><br><code>PerfilController.php:69</code></td></tr>
     <tr><td>…la verificación anti-robots</td><td>La regla <code>Turnstile</code> manda el código a Cloudflare con la clave secreta. Si no es válido: 422.</td><td><code>app/Rules/Turnstile.php</code></td></tr>
     <tr><td>…la conexión con React</td><td>CORS permite solo las direcciones de <code>FRONTEND_URLS</code>. React usa <code>VITE_API_URL</code>.</td><td><code>config/cors.php:25</code><br><code>src/services/api.js:16</code></td></tr>
     <tr><td>…la base de datos</td><td>MySQL 8.4 en Docker con Laravel Sail. La base se llama <code>data_alcanza</code>.</td><td><code>compose.yaml</code><br><code>.env</code></td></tr>
-    <tr><td>…las pruebas</td><td>Colección de Postman con 37 peticiones y 74 comprobaciones, que se corre con Newman.</td><td><code>postman/</code></td></tr>
+    <tr><td>…las pruebas</td><td>Colección de Postman con 39 peticiones y 77 comprobaciones, que se corre con Newman.</td><td><code>postman/</code></td></tr>
   </table>
 
   <h3>Códigos de respuesta que debes saber</h3>
