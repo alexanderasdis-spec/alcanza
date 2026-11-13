@@ -303,7 +303,7 @@
     <tr><td>localStorage</td><td>Guarda en el navegador las preferencias (modo oscuro, moneda, recorrido visto) y el token de la sesión, para que siga abierta al recargar.</td></tr>
     <tr><td>Axios</td><td>Peticiones a las APIs. Un interceptor agrega el token de la sesión a cada petición a Laravel.</td></tr>
     <tr><td>JSDoc + TypeDoc</td><td>Comentarios JSDoc en componentes, hooks y servicios; TypeDoc genera con ellos el sitio de documentación del código.</td></tr>
-    <tr><td>Git y GitHub</td><td>Control de versiones del proyecto; desde GitHub se publica gratis en Cloudflare Pages (React) y Render (Laravel).</td></tr>
+    <tr><td>Git y GitHub</td><td>Control de versiones del proyecto.</td></tr>
   </table>
   <div class="pie"><span>ALCANZA · Documento de idea</span><span>7</span></div>
 </section>
@@ -371,9 +371,7 @@
     <li>El enlace del correo vence en 60 minutos y, al cambiar la contraseña, se cierran todas las sesiones abiertas.</li>
   </ul>
   <h3>10.5 Conexión entre React y Laravel</h3>
-  <p>React consume la API con Axios, usando la dirección guardada en la variable <code>VITE_API_URL</code> del archivo <code>.env</code>. En Laravel se configura CORS (archivo <code>config/cors.php</code>) para permitir solo las peticiones del frontend (<code>localhost:5173</code> en desarrollo y la dirección pública al publicar).</p>
-  <h3>10.6 Publicación en internet</h3>
-  <p>El proyecto está preparado para publicarse con planes gratuitos: <b>Cloudflare Pages</b> para React, <b>Render</b> para Laravel (con una imagen de Docker), <b>TiDB Cloud</b> como base de datos compatible con MySQL y <b>Brevo</b> para los correos. Las fotos se guardan en la base de datos para no perderse al reiniciar el servidor.</p>
+  <p>React consume la API con Axios, usando la dirección guardada en la variable <code>VITE_API_URL</code> del archivo <code>.env</code>. En Laravel se configura CORS (archivo <code>config/cors.php</code>) para permitir solo las peticiones del frontend (<code>localhost:5173</code>).</p>
   <div class="pie"><span>ALCANZA · Documento de idea</span><span>9</span></div>
 </section>
 

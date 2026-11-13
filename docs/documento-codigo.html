@@ -139,7 +139,7 @@
       <tr><th style="width:24%">Comando</th><th>Qué hace</th></tr>
       <tr><td><code>npm install</code></td><td>Instala las dependencias de <code>package.json</code> (solo la primera vez).</td></tr>
       <tr><td><code>npm run dev</code></td><td>Levanta el servidor de desarrollo en <code>http://localhost:5173</code>. Cada vez que se guarda un archivo, la página se actualiza sola.</td></tr>
-      <tr><td><code>npm run build</code></td><td>Compila la versión de producción en la carpeta <code>dist/</code>, lista para Cloudflare Pages (<code>public/_redirects</code> hace que las rutas funcionen al recargar).</td></tr>
+      <tr><td><code>npm run build</code></td><td>Compila la versión de producción en la carpeta <code>dist/</code>.</td></tr>
       <tr><td><code>npm run lint</code></td><td>Revisa todo el código con oxlint.</td></tr>
       <tr><td><code>npm run docs</code></td><td>Genera la documentación del código en <code>docs/codigo/</code> (abrir <code>index.html</code>).</td></tr>
     </table>
@@ -493,9 +493,9 @@ api.interceptors.response.<span class="f">use</span>((respuesta) =&gt; respuesta
       </div>
       <div class="tarjeta"><b class="t" style="color:#854d0e">Pendiente</b>
         <ul class="lista">
-          <li>Subir a GitHub y publicar (código listo).</li>
+          <li>Subir a GitHub y publicar en internet.</li>
           <li>Claves reales de Turnstile y Cloudflare.</li>
-          <li>Correo real con Brevo.</li>
+          <li>Correo real para recuperar la contraseña.</li>
         </ul>
       </div>
     </div>
