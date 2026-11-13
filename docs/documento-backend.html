@@ -195,7 +195,7 @@
 <!-- 4 · Cómo se creó -->
 <section class="pagina">
   <div class="seccion"><span class="num">4</span><h1>Paso a paso: cómo se creó el proyecto</h1></div>
-  <p style="margin-bottom:10px">Estos pasos ya están hechos; quedan documentados para poder repetirlos en otro computador.</p>
+  <p style="margin-bottom:10px">Estos pasos ya están hechos; quedan documentados para poder repetirlos en otro computador. Si el computador está vacío, primero va la sección 19; los comandos para crear cada archivo están en la 20.</p>
   <ol class="pasos">
     <li><b>Crear Laravel con Sail y MySQL.</b> Normalmente se usa <code>curl -s "https://laravel.build/alcanza-api?with=mysql" | bash</code>, pero ese script termina pidiendo la contraseña de <code>sudo</code>. Se hizo lo mismo con un contenedor que trabaja con el usuario de Ubuntu, así no hace falta <code>sudo</code>:
 <pre>docker run --rm -u "$(id -u):$(id -g)" -e HOME=/tmp -e COMPOSER_HOME=/tmp/composer \
@@ -620,5 +620,136 @@ docker run --rm --network alcanza-api_sail -v "$PWD/postman":/etc/newman postman
 </section>
 
 
+<!-- 15 · Desde cero: preparar el computador -->
+<section class="pagina">
+  <div class="seccion"><span class="num">19</span><h1>Desde cero: preparar el computador</h1></div>
+  <div class="destacado">Así se dejó listo el computador antes de crear el backend (Windows 11). Se hace <b>una sola vez</b>. Después de esto se sigue con la sección 4 y la 20.</div>
+
+  <h3>1. Instalar WSL con Ubuntu 24.04 (en Windows)</h3>
+  <p>Abrir <b>PowerShell como administrador</b> y ejecutar:</p>
+<pre>wsl --install -d Ubuntu-24.04</pre>
+  <p style="margin-top:6px">Reiniciar el computador. Al abrir Ubuntu por primera vez pide crear un usuario y una contraseña de Linux. Ubuntu 24.04 en WSL ya trae <code>systemd</code> activo (<code>/etc/wsl.conf</code> con <code>systemd=true</code>), que necesita Docker para arrancar solo.</p>
+
+  <h3>2. Instalar Docker dentro de Ubuntu (repositorio oficial)</h3>
+  <p>En este proyecto Docker se instaló <b>dentro de Ubuntu</b>, no con Docker Desktop. En la terminal de Ubuntu:</p>
+<pre><span class="c"># Llave y repositorio oficiales de Docker</span>
+sudo apt update &amp;&amp; sudo apt install -y ca-certificates curl
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+sudo tee /etc/apt/sources.list.d/docker.sources &lt;&lt;EOF
+Types: deb
+URIs: https://download.docker.com/linux/ubuntu
+Suites: $(. /etc/os-release &amp;&amp; echo "$VERSION_CODENAME")
+Components: stable
+Signed-By: /etc/apt/keyrings/docker.asc
+EOF
+
+<span class="c"># Docker, Compose y Buildx</span>
+sudo apt update
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+<span class="c"># Usar Docker sin sudo (cerrar y volver a abrir Ubuntu después)</span>
+sudo usermod -aG docker $USER</pre>
+  <p style="margin-top:6px">Para comprobar: <code>docker run --rm hello-world</code> debe mostrar "Hello from Docker!".</p>
+
+  <h3>3. El atajo <code>sail</code> y el editor</h3>
+<pre><span class="c"># En ~/.bashrc: escribir "sail" en vez de "./vendor/bin/sail"</span>
+alias sail='sh $([ -f sail ] &amp;&amp; echo sail || echo vendor/bin/sail)'</pre>
+  <p style="margin-top:6px">Para editar el código desde Windows se usa <b>VS Code</b> con la extensión <b>WSL</b>: dentro de la carpeta del proyecto, <code>code .</code> abre VS Code conectado a Ubuntu. Postman se instala aparte en Windows. No hace falta instalar PHP, Composer ni MySQL: todo corre en los contenedores de Sail.</p>
+  <div class="nota"><b>Versiones con las que se hizo:</b> Windows 11, WSL 2.7, Ubuntu 24.04.5, Docker 29.9 con Compose 5.6, Laravel 13.40 y PHP 8.5 en el contenedor de Sail.</div>
+  <div class="pie"><span>ALCANZA · Documentación del backend</span><span>15</span></div>
+</section>
+
+<!-- 16 · Desde cero: crear cada pieza -->
+<section class="pagina">
+  <div class="seccion"><span class="num">20</span><h1>Desde cero: comandos para crear cada pieza</h1></div>
+  <div class="destacado">Después de crear el proyecto (sección 4), estos comandos generan cada archivo vacío o con su plantilla; luego se escribe su contenido, explicado en la sección que se indica. Van en este orden porque cada capa usa la anterior. Todos se ejecutan en Ubuntu, dentro de <code>~/alcanza-api</code>.</div>
+  <table style="font-size:10.5px">
+    <tr><th style="width:56%">Comando</th><th>Qué crea · dónde se explica</th></tr>
+    <tr><td><code>sail artisan install:api</code></td><td>Rutas de API y Sanctum (sección 4)</td></tr>
+    <tr><td><code>sail artisan config:publish cors</code></td><td><code>config/cors.php</code> (sección 4)</td></tr>
+    <tr><td><code>sail artisan make:model Perfil</code> · <code>Meta</code> · <code>Abono</code></td><td>Modelos (sección 7)</td></tr>
+    <tr><td><code>sail artisan make:migration create_perfiles_table</code><br><code>… create_metas_table</code> · <code>… create_abonos_table</code></td><td>Tablas, en ese orden (sección 7)</td></tr>
+    <tr><td><code>sail artisan make:migration add_user_id_to_perfiles_table</code><br><code>… add_foto_to_perfiles_table</code> · <code>… guardar_foto_en_perfiles</code></td><td>Cambios posteriores: cuenta y foto (secciones 7 y 11)</td></tr>
+    <tr><td><code>sail artisan migrate</code></td><td>Crea las tablas en <code>data_alcanza</code></td></tr>
+    <tr><td><code>sail artisan make:interface Repositories/Contracts/PerfilRepositoryInterface</code><br>y lo mismo para <code>Usuario</code>, <code>Meta</code> y <code>Abono</code></td><td>Contratos de los repositorios (sección 8)</td></tr>
+    <tr><td><code>sail artisan make:class Repositories/PerfilRepository</code><br>y lo mismo para <code>Usuario</code>, <code>Meta</code> y <code>Abono</code></td><td>Repositorios con Eloquent (sección 8)</td></tr>
+    <tr><td><code>sail artisan make:class Services/PerfilService</code><br>y <code>AuthService</code>, <code>MetaService</code>, <code>AbonoService</code></td><td>Lógica del negocio (sección 8)</td></tr>
+    <tr><td><code>sail artisan make:request RegistroRequest</code><br>y los otros 9, todos terminados en <code>Request</code>: <code>Login</code>, <code>OlvideContrasena</code>, <code>RestablecerContrasena</code>, <code>CambiarContrasena</code>, <code>Perfil</code>, <code>PerfilFoto</code>, <code>MetaStore</code>, <code>MetaUpdate</code>, <code>AbonoStore</code></td><td>Validación con mensajes en español (sección 9)</td></tr>
+    <tr><td><code>sail artisan make:controller AuthController</code> · <code>PerfilController</code><br><code>sail artisan make:controller MetasController --api</code> · <code>AbonosController</code></td><td>Controladores (sección 10)</td></tr>
+    <tr><td><code>sail artisan make:policy MetaPolicy --model=Meta</code></td><td>Solo el dueño toca su meta (sección 11)</td></tr>
+    <tr><td><code>sail artisan make:rule Turnstile</code></td><td>Verificación anti-robots (sección 11)</td></tr>
+    <tr><td><code>sail artisan make:middleware LimiteTemprano</code></td><td>Primer filtro de límites (sección 18)</td></tr>
+  </table>
+
+  <div class="pie"><span>ALCANZA · Documentación del backend</span><span>16</span></div>
+</section>
+
+<!-- 17 · Lo que se escribe a mano y anexo -->
+<section class="pagina">
+  <div class="seccion"><span class="num">20</span><h1>Desde cero: lo que se escribe a mano</h1></div>
+  <p style="margin-bottom:8px">Estos archivos no tienen un comando <code>make</code>: se crean o se editan directamente.</p>
+  <table style="font-size:10.5px">
+    <tr><th style="width:36%">Archivo</th><th>Qué se agrega</th></tr>
+    <tr><td><code>routes/api.php</code></td><td>Todas las rutas y sus límites (sección 10)</td></tr>
+    <tr><td><code>AppServiceProvider.php</code></td><td>Unir cada contrato con su repositorio, límites y correo en español</td></tr>
+    <tr><td><code>bootstrap/app.php</code></td><td>Registrar <code>LimiteTemprano</code> y <code>trustProxies</code></td></tr>
+    <tr><td><code>config/limites.php</code> · <code>config/services.php</code></td><td>Valores de los límites y la clave de Turnstile</td></tr>
+    <tr><td><code>lang/es.json</code></td><td>Traducción del correo de recuperación</td></tr>
+    <tr><td><code>compose.yaml</code> · <code>docker/php/opcache.ini</code></td><td>Servicio Mailpit y OPcache</td></tr>
+    <tr><td><code>postman/</code> · <code>pruebas/carga/</code></td><td>Colección de Postman y pruebas de k6 (secciones 14, 17 y 18)</td></tr>
+  </table>
+
+  <div class="bloque">
+  <div class="seccion"><span class="num">21</span><h1>Anexo: archivo por archivo</h1></div>
+  <p style="margin-bottom:8px">Todos los archivos propios del backend, dentro de <code>~/alcanza-api</code>. El código completo de cada uno está en el repositorio, con comentarios en español.</p>
+    <table style="font-size:10px">
+    <tr><th style="width:42%">Archivo</th><th>Qué hace</th></tr>
+    <tr><td><code>Controllers/AuthController.php</code></td><td>Registro, login, logout, usuario actual y contraseñas</td></tr>
+    <tr><td><code>Controllers/PerfilController.php</code></td><td>Consultar y guardar el perfil; subir, quitar y mostrar la foto</td></tr>
+    <tr><td><code>Controllers/MetasController.php</code></td><td>Listar, crear, ver, cambiar y borrar metas</td></tr>
+    <tr><td><code>Controllers/AbonosController.php</code></td><td>Registrar un abono (revisa que la meta sea del usuario)</td></tr>
+    <tr><td><code>Middleware/LimiteTemprano.php</code></td><td>Límite de peticiones por IP y por token, antes de todo</td></tr>
+    <tr><td><code>Requests/</code> (10 archivos)</td><td>Validación de cada formulario, con mensajes en español</td></tr>
+    <tr><td><code>Models/User.php</code></td><td>Cuenta: nombre, correo, contraseña cifrada y tokens de Sanctum</td></tr>
+    <tr><td><code>Models/Perfil.php</code></td><td>Nombre, ahorro mensual y foto; entrega <code>foto_url</code></td></tr>
+    <tr><td><code>Models/Meta.php</code></td><td>Meta; calcula <code>precio_final</code>, <code>ahorrado</code> y <code>progreso</code></td></tr>
+    <tr><td><code>Models/Abono.php</code></td><td>Aporte de dinero a una meta</td></tr>
+    <tr><td><code>Policies/MetaPolicy.php</code></td><td>Solo el dueño puede ver, cambiar o abonar su meta (403)</td></tr>
+    <tr><td><code>Providers/AppServiceProvider.php</code></td><td>Une contratos y repositorios; límites; correo en español</td></tr>
+    <tr><td><code>Repositories/Contracts/</code> (4 interfaces)</td><td>Qué puede pedir cada servicio a la base de datos</td></tr>
+    <tr><td><code>Repositories/UsuarioRepository.php</code></td><td>Crear usuarios y buscarlos por correo</td></tr>
+  </table>
+  </div>
+  <div class="pie"><span>ALCANZA · Documentación del backend</span><span>17</span></div>
+</section>
+
+<!-- 18 · Anexo (continuación) -->
+<section class="pagina">
+  <div class="seccion"><span class="num">21</span><h1>Anexo: archivo por archivo (continuación)</h1></div>
+  <table style="font-size:10px">
+    <tr><th style="width:42%">Archivo</th><th>Qué hace</th></tr>
+    <tr><td><code>Repositories/PerfilRepository.php</code></td><td>Perfil del usuario; buscar una foto por su clave</td></tr>
+    <tr><td><code>Repositories/MetaRepository.php</code></td><td>Metas con sus abonos y la suma ahorrada</td></tr>
+    <tr><td><code>Repositories/AbonoRepository.php</code></td><td>Guardar abonos</td></tr>
+    <tr><td><code>Rules/Turnstile.php</code></td><td>Pregunta a Cloudflare si el "no soy un robot" es válido</td></tr>
+    <tr><td><code>Services/AuthService.php</code></td><td>Cuentas, tokens y recuperación de contraseña</td></tr>
+    <tr><td><code>Services/PerfilService.php</code></td><td>Crear o actualizar el perfil y manejar la foto</td></tr>
+    <tr><td><code>Services/MetaService.php</code></td><td>Metas del usuario y su estado (en progreso o cumplida)</td></tr>
+    <tr><td><code>Services/AbonoService.php</code></td><td>Registrar el abono y revisar si la meta se cumplió</td></tr>
+    <tr><td><code>database/migrations/</code> (9 archivos)</td><td>Tablas <code>users</code>, <code>perfiles</code>, <code>metas</code>, <code>abonos</code>, tokens y sus cambios</td></tr>
+    <tr><td><code>routes/api.php</code></td><td>Las 18 rutas de la API y sus límites</td></tr>
+    <tr><td><code>config/cors.php</code> · <code>limites.php</code> · <code>services.php</code></td><td>Quién usa la API, límites por minuto y clave de Turnstile</td></tr>
+    <tr><td><code>bootstrap/app.php</code></td><td>Errores en JSON, filtro temprano y proxies de confianza</td></tr>
+    <tr><td><code>lang/es.json</code></td><td>Correo de recuperación en español</td></tr>
+    <tr><td><code>compose.yaml</code></td><td>Contenedores de Sail: Laravel, MySQL y Mailpit</td></tr>
+    <tr><td><code>docker/php/opcache.ini</code></td><td>OPcache en el contenedor de desarrollo</td></tr>
+    <tr><td><code>Dockerfile</code> · <code>docker/produccion/iniciar.sh</code></td><td>Imagen de Docker con Apache y su arranque</td></tr>
+    <tr><td><code>postman/</code></td><td>Colección (39 peticiones), entorno y la imagen de prueba</td></tr>
+    <tr><td><code>pruebas/carga/estres.js</code> · <code>ataque.js</code></td><td>Pruebas de carga y de ataque con k6</td></tr>
+  </table>
+  <div class="pie"><span>ALCANZA · Documentación del backend</span><span>18</span></div>
+</section>
 </body>
 </html>
