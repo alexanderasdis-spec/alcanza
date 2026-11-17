@@ -14,7 +14,9 @@ import axios from 'axios'
  */
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? 'http://localhost/api',
-  timeout: 10000,
+  // 70 segundos: en el plan gratis de Render la API "se duerme" y la primera petición
+  // puede tardar cerca de un minuto en despertarla.
+  timeout: 70000,
   // Pide siempre JSON: así Laravel responde los errores (422, 404) en JSON y no en HTML.
   headers: { Accept: 'application/json' },
 })

@@ -1,0 +1,17 @@
+# Blueprint de Render: publica el frontend de Alcanza como sitio estático.
+# Render lee este archivo al crear el Blueprint ("New > Blueprint") y pide VITE_API_URL,
+# la dirección de la API ya publicada terminada en /api.
+services:
+  - type: web
+    name: alcanza
+    runtime: static
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./dist
+    envVars:
+      - key: VITE_API_URL
+        sync: false
+    # React Router maneja las rutas en el navegador: toda dirección devuelve index.html.
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
